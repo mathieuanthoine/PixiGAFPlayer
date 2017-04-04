@@ -4,7 +4,7 @@ import pixi.core.math.Matrix;
 import pixi.core.textures.Texture;
 
 /**
- * AS3 Conversion
+ * TODO
  * @author Mathieu Anthoine
  * @private
  */

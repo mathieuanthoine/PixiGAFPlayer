@@ -38,7 +38,7 @@ import pixi.extras.MovieClip;
  * TODO
  * @author Mathieu Anthoine
  */
-class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements IGAFDisplayObject implements IMaxSize
+class GAFMovieClip extends Container implements IAnimatable implements IGAFDisplayObject implements IMaxSize
 {
 	public static inline var EVENT_TYPE_SEQUENCE_START:String="typeSequenceStart";
 	public static inline var EVENT_TYPE_SEQUENCE_END:String="typeSequenceEnd";
@@ -128,8 +128,7 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 	 */
 	public function new(gafTimeline:GAFTimeline, pFps:Int=-1, addToJuggler:Bool=true)
 	{
-		//TODO: tableau de textures...
-		super(null);
+		super();
 		
 		_gafTimeline=gafTimeline;
 		_config=gafTimeline.config;
@@ -286,9 +285,8 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 	 * @param applyToAllChildren Specifies whether playhead should be moved in the timeline of the movie clip
 	 *(<code>false</code>)or also in the timelines of all child movie clips(<code>true</code>).
 	 */
-	override public function play(/*TODO:crer une méthode additionnelle ?  applyToAllChildren:Bool=false*/):Void
+	public function play(applyToAllChildren:Bool=false):Void
 	{
-		// TEMP (lié au TODO)
 		var applyToAllChildren:Bool = false;
 		
 		_started=true;
@@ -313,10 +311,8 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 	 * @param applyToAllChildren Specifies whether playhead should be stopped in the timeline of the
 	 * movie clip(<code>false</code>)or also in the timelines of all child movie clips(<code>true</code>)
 	 */
-	override public function stop(/*TODO:crer une méthode additionnelle ?  applyToAllChildren:Bool=false*/):Void
+	public function stop(applyToAllChildren:Bool=false):Void
 	{
-		// TEMP (lié au TODO)
-		var applyToAllChildren:Bool = false;
 		
 		_started=false;
 
@@ -337,7 +333,7 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 	 *
 	 * @param frame A number representing the frame number, or a string representing the label of the frame, to which the playhead is sent.
 	 */
-	override public function gotoAndStop(frame:Dynamic):Void
+	public function gotoAndStop(frame:Dynamic):Void
 	{
 		checkAndSetCurrentFrame(frame);
 
@@ -349,7 +345,7 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 	 *
 	 * @param frame A number representing the frame number, or a string representing the label of the frame, to which the playhead is sent.
 	 */
-	override public function gotoAndPlay(frame:Dynamic):Void
+	public function gotoAndPlay(frame:Dynamic):Void
 	{
 		checkAndSetCurrentFrame(frame);
 
@@ -566,7 +562,7 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 					childMC=cast(child, GAFMovieClip);
 					if(calledByUser!=null)
 					{
-						childMC.play(/*TODO: true*/);
+						childMC.play(true);
 					}
 					else
 					{
@@ -598,7 +594,7 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 					childMC=cast(child, GAFMovieClip);
 					if(calledByUser!=null)
 					{
-						childMC.stop(/*TODO: true*/);
+						childMC.stop(true);
 					}
 					else
 					{
@@ -977,12 +973,13 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 
 		var animationObjectsDictionary:Map<String,CAnimationObject>=_config.animationObjects.animationObjectsDictionary;
 
-		var displayObject:DisplayObject;
+		var displayObject:DisplayObject=null;
 		for (animationObjectConfig in animationObjectsDictionary)
 		{
 			switch(animationObjectConfig.type)
 			{
 				case CAnimationObject.TYPE_TEXTURE:
+					
 					var texture:IGAFTexture=textureAtlas.getTexture(animationObjectConfig.regionID);
 					if(Std.is(texture, GAFScale9Texture) && !animationObjectConfig.mask)// GAFScale9Image doesn't work as mask
 					{
@@ -1248,7 +1245,7 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 		var l:Int=_displayObjectsVector.length;
 		for(i in 0...l)
 		{
-			_displayObjectsVector[i].dispose();
+			_displayObjectsVector[i].destroy();
 		}
 
 		//for(key in _stencilMasksDictionary)
@@ -1458,20 +1455,20 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 	/**
 	 * Specifies the number of the frame in which the playhead is located in the timeline of the GAFMovieClip instance. First frame is "1"
 	 */
-	//public var currentFrame(get_currentFrame, set_currentFrame):Int;
- 	//private function get_currentFrame():Int
-	//{
-		//return _currentFrame + 1;// Like in standart AS3 API for MovieClip first frame is "1" instead of "0"(but Internally used "0")
-	//}
+	public var currentFrame(get_currentFrame, null):Int;
+ 	private function get_currentFrame():Int
+	{
+		return _currentFrame + 1;// Like in standart AS3 API for MovieClip first frame is "1" instead of "0"(but Internally used "0")
+	}
 
 	/**
 	 * The total number of frames in the GAFMovieClip instance.
 	 */
-	//public var totalFrames(get_totalFrames, set_totalFrames):Int;
- 	//private function get_totalFrames():Int
-	//{
-		//return _totalFrames;
-	//}
+	public var totalFrames(get_totalFrames, null):Int;
+ 	private function get_totalFrames():Int
+	{
+		return _totalFrames;
+	}
 
 	/**
 	 * Indicates whether GAFMovieClip instance already in play
@@ -1485,16 +1482,16 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 	/**
 	 * Indicates whether GAFMovieClip instance continue playing from start frame after playback reached animation end
 	 */
-	//public var loop(get_loop, set_loop):Bool;
- 	//private function get_loop():Bool
-	//{
-		//return _loop;
-	//}
+	public var loop(get_loop, set_loop):Bool;
+ 	private function get_loop():Bool
+	{
+		return _loop;
+	}
 
-	//private function set_loop(loop:Bool):Void
-	//{
-		//_loop=loop;
-	//}
+	private function set_loop(loop:Bool):Bool
+	{
+		return _loop=loop;
+	}
 
 	/**
 	 * The smoothing filter that is used for the texture. Possible values are<code>TextureSmoothing.BILINEAR, TextureSmoothing.NONE, TextureSmoothing.TRILINEAR</code>
@@ -1640,20 +1637,20 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 	}
 
 	/** @private */
-	//public var pivotMatrix(get_pivotMatrix, set_pivotMatrix):Matrix;
- 	//private function get_pivotMatrix():Matrix
-	//{
-		////HELPER_MATRIX.copyFrom(_pivotMatrix);
-		//HELPER_MATRIX.identity();
-//
-		//if(_pivotChanged)
-		//{
+	public var pivotMatrix(get_pivotMatrix, null):Matrix;
+ 	private function get_pivotMatrix():Matrix
+	{
+		//HELPER_MATRIX.copyFrom(_pivotMatrix);
+		HELPER_MATRIX.identity();
+
+		if(_pivotChanged)
+		{
 			//HELPER_MATRIX.tx=pivotX;
 			//HELPER_MATRIX.ty=pivotY;
-		//}
-//
-		//return HELPER_MATRIX;
-	//}
+		}
+
+		return HELPER_MATRIX;
+	}
 
 	//--------------------------------------------------------------------------
 	//
@@ -1668,4 +1665,16 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 		displayObject.pivotMatrix.copy(matrix);
 		return matrix;
 	}
+	
+	
+	/////////////////////////////////////////////
+	
+	///// MATCH WITH PIXI JS ////////////////////
+	
+	/////////////////////////////////////////////
+	
+	public var transformationMatrix(get_transformationMatrix,set_transformationMatrix):Matrix;
+	private function get_transformationMatrix():Matrix { return null; }
+	private function set_transformationMatrix(matrix:Matrix):Matrix { return null; }
+	
 }

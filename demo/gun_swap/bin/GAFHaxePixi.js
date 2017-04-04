@@ -9,6 +9,13 @@ function $extend(from, fields) {
 }
 var HxOverrides = function() { };
 HxOverrides.__name__ = ["HxOverrides"];
+HxOverrides.cca = function(s,index) {
+	var x = s.charCodeAt(index);
+	if(x != x) {
+		return undefined;
+	}
+	return x;
+};
 HxOverrides.substr = function(s,pos,len) {
 	if(len == null) {
 		len = s.length;
@@ -34,6 +41,16 @@ Std.__name__ = ["Std"];
 Std.string = function(s) {
 	return js_Boot.__string_rec(s,"");
 };
+Std.parseInt = function(x) {
+	var v = parseInt(x,10);
+	if(v == 0 && (HxOverrides.cca(x,1) == 120 || HxOverrides.cca(x,1) == 88)) {
+		v = parseInt(x);
+	}
+	if(isNaN(v)) {
+		return null;
+	}
+	return v;
+};
 var Type = function() { };
 Type.__name__ = ["Type"];
 Type.getClassName = function(c) {
@@ -45,6 +62,14 @@ Type.getClassName = function(c) {
 };
 var _$UInt_UInt_$Impl_$ = {};
 _$UInt_UInt_$Impl_$.__name__ = ["_UInt","UInt_Impl_"];
+_$UInt_UInt_$Impl_$.gt = function(a,b) {
+	var aNeg = a < 0;
+	if(aNeg != b < 0) {
+		return aNeg;
+	} else {
+		return a > b;
+	}
+};
 _$UInt_UInt_$Impl_$.toFloat = function(this1) {
 	if(this1 < 0) {
 		return 4294967296.0 + this1;
@@ -345,6 +370,14 @@ com_github_haxePixiGAF_core_ZipToGAFAssetConverter.prototype = $extend(EventEmit
 		timeline.set_gafgfxData(this._gfxData);
 		timeline.set_gafSoundData(this._soundData);
 		timeline.set_gafAsset(asset);
+		switch(com_github_haxePixiGAF_core_ZipToGAFAssetConverter.actionWithAtlases) {
+		case "actionLoadAllInGPUMemory":
+			timeline.loadInVideoMemory("contentAll");
+			break;
+		case "actionLoadInGPUMemoryOnlyDefault":
+			timeline.loadInVideoMemory("contentDefault");
+			break;
+		}
 		return timeline;
 	}
 	,getAssetId: function(configName) {
@@ -926,7 +959,7 @@ com_github_haxePixiGAF_data_GAFTimeline.prototype = {
 		this._gafgfxData = null;
 		this._gafSoundData = null;
 	}
-	,loadInVideoMemory: function(content,scale,csf) {
+	,loadInVideoMemory: function(content,pScale,csf) {
 		if(content == null) {
 			content = "contentDefault";
 		}
@@ -950,6 +983,7 @@ com_github_haxePixiGAF_data_GAFTimeline.prototype = {
 					this._gafgfxData.createTextures(scaleConfig.get_scale(),csfConfig1.get_csf());
 					textures = this._gafgfxData.getTextures(scaleConfig.get_scale(),csfConfig1.get_csf());
 					if(csfConfig1.get_atlas() == null && textures != null) {
+						console.log("A");
 						csfConfig1.set_atlas(com_github_haxePixiGAF_data_config_CTextureAtlas.createFromTextures(textures,csfConfig1));
 					}
 				}
@@ -960,22 +994,23 @@ com_github_haxePixiGAF_data_GAFTimeline.prototype = {
 			if(csfConfig == null) {
 				return;
 			}
-			if(csfConfig.get_atlas() == null && this._gafgfxData.createTextures(scale,this.get_contentScaleFactor()) != null) {
-				csfConfig.set_atlas(com_github_haxePixiGAF_data_config_CTextureAtlas.createFromTextures(this._gafgfxData.getTextures(scale,this.get_contentScaleFactor()),csfConfig));
+			if(csfConfig.get_atlas() == null && this._gafgfxData.createTextures(this.get_scale(),this.get_contentScaleFactor()) != null) {
+				csfConfig.set_atlas(com_github_haxePixiGAF_data_config_CTextureAtlas.createFromTextures(this._gafgfxData.getTextures(this.get_scale(),this.get_contentScaleFactor()),csfConfig));
 			}
 			return;
 		case "contentSpecify":
-			csfConfig = this.getCSFConfig(scale,csf);
+			csfConfig = this.getCSFConfig(pScale,csf);
 			if(csfConfig == null) {
 				return;
 			}
-			if(csfConfig.get_atlas() == null && this._gafgfxData.createTextures(scale,csf) != null) {
-				csfConfig.set_atlas(com_github_haxePixiGAF_data_config_CTextureAtlas.createFromTextures(this._gafgfxData.getTextures(scale,csf),csfConfig));
+			if(csfConfig.get_atlas() == null && this._gafgfxData.createTextures(pScale,csf) != null) {
+				console.log("C");
+				csfConfig.set_atlas(com_github_haxePixiGAF_data_config_CTextureAtlas.createFromTextures(this._gafgfxData.getTextures(pScale,csf),csfConfig));
 			}
 			return;
 		}
 	}
-	,unloadFromVideoMemory: function(content,scale,csf) {
+	,unloadFromVideoMemory: function(content,pScale,csf) {
 		if(content == null) {
 			content = "contentDefault";
 		}
@@ -989,13 +1024,13 @@ com_github_haxePixiGAF_data_GAFTimeline.prototype = {
 			this._config.dispose();
 			return;
 		case "contentDefault":
-			this._gafgfxData.disposeTextures(scale,this.get_contentScaleFactor());
+			this._gafgfxData.disposeTextures(pScale,this.get_contentScaleFactor());
 			this._config.get_textureAtlas().get_contentScaleFactor().dispose();
 			return;
 		case "contentSpecify":
-			csfConfig = this.getCSFConfig(scale,csf);
+			csfConfig = this.getCSFConfig(pScale,csf);
 			if(csfConfig != null) {
-				this._gafgfxData.disposeTextures(scale,csf);
+				this._gafgfxData.disposeTextures(pScale,csf);
 				csfConfig.dispose();
 			}
 			return;
@@ -1925,12 +1960,34 @@ com_github_haxePixiGAF_data_config_CTextFieldObjects.prototype = {
 	,__class__: com_github_haxePixiGAF_data_config_CTextFieldObjects
 };
 var com_github_haxePixiGAF_data_config_CTextureAtlas = function(textureAtlasesDictionary,textureAtlasConfig) {
+	console.log("CTEXTURE_ATLAS");
 	this._textureAtlasesDictionary = textureAtlasesDictionary;
 	this._textureAtlasConfig = textureAtlasConfig;
 };
 com_github_haxePixiGAF_data_config_CTextureAtlas.__name__ = ["com","github","haxePixiGAF","data","config","CTextureAtlas"];
 com_github_haxePixiGAF_data_config_CTextureAtlas.createFromTextures = function(texturesDictionary,textureAtlasConfig) {
 	var atlasesDictionary = new haxe_ds_StringMap();
+	var atlas;
+	var _g = 0;
+	var _g1 = textureAtlasConfig.get_elements().get_elementsVector();
+	while(_g < _g1.length) {
+		var element = _g1[_g];
+		++_g;
+		var key = element.get_atlasID();
+		if((__map_reserved[key] != null?atlasesDictionary.getReserved(key):atlasesDictionary.h[key]) == null) {
+			var k = element.get_atlasID();
+			var key1 = element.get_atlasID();
+			var v = new com_github_haxePixiGAF_data_textures_TextureAtlas(__map_reserved[key1] != null?texturesDictionary.getReserved(key1):texturesDictionary.h[key1]);
+			if(__map_reserved[k] != null) {
+				atlasesDictionary.setReserved(k,v);
+			} else {
+				atlasesDictionary.h[k] = v;
+			}
+		}
+		var key2 = element.get_atlasID();
+		atlas = __map_reserved[key2] != null?atlasesDictionary.getReserved(key2):atlasesDictionary.h[key2];
+		atlas.addRegion(element.get_id(),element.get_region(),null,element.get_rotated());
+	}
 	return new com_github_haxePixiGAF_data_config_CTextureAtlas(atlasesDictionary,textureAtlasConfig);
 };
 com_github_haxePixiGAF_data_config_CTextureAtlas.prototype = {
@@ -1954,8 +2011,7 @@ com_github_haxePixiGAF_data_config_CTextureAtlas.prototype = {
 	}
 	,getTextureByIDAndAtlasID: function(id,atlasID) {
 		var _this = this._textureAtlasesDictionary;
-		var textureAtlas = __map_reserved[atlasID] != null?_this.getReserved(atlasID):_this.h[atlasID];
-		return textureAtlas.getTexture(id);
+		return (__map_reserved[atlasID] != null?_this.getReserved(atlasID):_this.h[atlasID]).getTexture(id);
 	}
 	,__class__: com_github_haxePixiGAF_data_config_CTextureAtlas
 };
@@ -2449,7 +2505,7 @@ com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.prototype = $e
 				}
 				contentScaleFactor = this.getTextureAtlasCSF(scale,csf);
 				this.updateTextureAtlasSources(contentScaleFactor,atlasID == null?"null":"" + atlasID,source);
-				if(contentScaleFactor.get_elements() != null) {
+				if(contentScaleFactor.get_elements() == null) {
 					contentScaleFactor.set_elements(elements);
 				}
 			}
@@ -3005,7 +3061,7 @@ com_github_haxePixiGAF_data_tagfx_TAGFXsourcePixi.prototype = $extend(com_github
 	}
 	,__class__: com_github_haxePixiGAF_data_tagfx_TAGFXsourcePixi
 });
-var com_github_haxePixiGAF_data_textures_SubTexture = function(parent,region,ownsParent,frame,rotated,scaleModifier) {
+var com_github_haxePixiGAF_data_textures_SubTexture = function(parent,region,ownsParent,pFrame,rotated,scaleModifier) {
 	if(scaleModifier == null) {
 		scaleModifier = 1;
 	}
@@ -3015,13 +3071,13 @@ var com_github_haxePixiGAF_data_textures_SubTexture = function(parent,region,own
 	if(ownsParent == null) {
 		ownsParent = false;
 	}
-	PIXI.Texture.call(this,null,null,null,null,null);
-	this.setTo(parent,region,ownsParent,frame,rotated,scaleModifier);
+	PIXI.Texture.call(this,parent.baseTexture,pFrame,pFrame,pFrame,rotated);
+	this.setTo(parent,region,ownsParent,pFrame,rotated,scaleModifier);
 };
 com_github_haxePixiGAF_data_textures_SubTexture.__name__ = ["com","github","haxePixiGAF","data","textures","SubTexture"];
 com_github_haxePixiGAF_data_textures_SubTexture.__super__ = PIXI.Texture;
 com_github_haxePixiGAF_data_textures_SubTexture.prototype = $extend(PIXI.Texture.prototype,{
-	setTo: function(parent,region,ownsParent,frame,rotated,scaleModifier) {
+	setTo: function(parent,region,ownsParent,pFrame,rotated,scaleModifier) {
 		if(scaleModifier == null) {
 			scaleModifier = 1;
 		}
@@ -3045,20 +3101,24 @@ com_github_haxePixiGAF_data_textures_SubTexture.prototype = $extend(PIXI.Texture
 			this._region.width = parent.width;
 			this._region.height = parent.height;
 		}
-		if(frame != null) {
-			frame.x = frame.x;
-			frame.y = frame.x;
-			frame.width = frame.width;
-			frame.height = frame.height;
+		if(pFrame != null) {
+			if(this.frame != null) {
+				this.frame.x = pFrame.x;
+				this.frame.y = pFrame.x;
+				this.frame.width = pFrame.width;
+				this.frame.height = pFrame.height;
+			} else {
+				this.frame = pFrame.clone();
+			}
 		} else {
-			frame = frame.clone();
+			this.frame = null;
 		}
 		this._parent = parent;
 		this._ownsParent = ownsParent;
 		this._rotated = rotated;
 		this.width = (rotated != null?this._region.height:this._region.width) / scaleModifier;
 		this.height = (rotated != null?this._region.width:this._region.height) / scaleModifier;
-		if(frame != null && (frame.x > 0 || frame.y > 0 || frame.x + frame.width < this.width || frame.y + frame.height < this.height)) {
+		if(this.frame != null && (this.frame.x > 0 || this.frame.y > 0 || this.frame.x + this.frame.width < this.width || this.frame.y + this.frame.height < this.height)) {
 			console.log("[Starling] Warning:frames inside the texture's region are unsupported.");
 		}
 		this.updateMatrices();
@@ -3253,6 +3313,732 @@ com_github_haxePixiGAF_data_textures_TextureAtlas.prototype = {
 	}
 	,__class__: com_github_haxePixiGAF_data_textures_TextureAtlas
 };
+var com_github_haxePixiGAF_display_IGAFDebug = function() { };
+com_github_haxePixiGAF_display_IGAFDebug.__name__ = ["com","github","haxePixiGAF","display","IGAFDebug"];
+com_github_haxePixiGAF_display_IGAFDebug.prototype = {
+	__class__: com_github_haxePixiGAF_display_IGAFDebug
+};
+var com_github_haxePixiGAF_display_IMaxSize = function() { };
+com_github_haxePixiGAF_display_IMaxSize.__name__ = ["com","github","haxePixiGAF","display","IMaxSize"];
+com_github_haxePixiGAF_display_IMaxSize.prototype = {
+	__class__: com_github_haxePixiGAF_display_IMaxSize
+};
+var com_github_haxePixiGAF_display_IGAFDisplayObject = function() { };
+com_github_haxePixiGAF_display_IGAFDisplayObject.__name__ = ["com","github","haxePixiGAF","display","IGAFDisplayObject"];
+com_github_haxePixiGAF_display_IGAFDisplayObject.prototype = {
+	__class__: com_github_haxePixiGAF_display_IGAFDisplayObject
+};
+var com_github_haxePixiGAF_display_IGAFImage = function() { };
+com_github_haxePixiGAF_display_IGAFImage.__name__ = ["com","github","haxePixiGAF","display","IGAFImage"];
+com_github_haxePixiGAF_display_IGAFImage.__interfaces__ = [com_github_haxePixiGAF_display_IGAFDisplayObject];
+com_github_haxePixiGAF_display_IGAFImage.prototype = {
+	__class__: com_github_haxePixiGAF_display_IGAFImage
+};
+var com_github_haxePixiGAF_display_GAFImage = function(assetTexture) {
+	this._assetTexture = assetTexture.clone();
+	PIXI.Sprite.call(this,this._assetTexture.get_texture());
+};
+com_github_haxePixiGAF_display_GAFImage.__name__ = ["com","github","haxePixiGAF","display","GAFImage"];
+com_github_haxePixiGAF_display_GAFImage.__interfaces__ = [com_github_haxePixiGAF_display_IGAFDebug,com_github_haxePixiGAF_display_IMaxSize,com_github_haxePixiGAF_display_IGAFImage];
+com_github_haxePixiGAF_display_GAFImage.__super__ = PIXI.Sprite;
+com_github_haxePixiGAF_display_GAFImage.prototype = $extend(PIXI.Sprite.prototype,{
+	invalidateOrientation: function() {
+		this._orientationChanged = true;
+	}
+	,set_debugColors: function(value) {
+		return null;
+	}
+	,setFilterConfig: function(value,scale) {
+		if(scale == null) {
+			scale = 1;
+		}
+	}
+	,get_maxSize: function() {
+		return this._maxSize;
+	}
+	,set_maxSize: function(value) {
+		return this._maxSize = value;
+	}
+	,get_assetTexture: function() {
+		return this._assetTexture;
+	}
+	,get_pivotMatrix: function() {
+		this._assetTexture.get_pivotMatrix().copy(com_github_haxePixiGAF_display_GAFImage.HELPER_MATRIX);
+		return com_github_haxePixiGAF_display_GAFImage.HELPER_MATRIX;
+	}
+	,get_transformationMatrix: function() {
+		return null;
+	}
+	,set_transformationMatrix: function(matrix) {
+		return null;
+	}
+	,__class__: com_github_haxePixiGAF_display_GAFImage
+});
+var com_github_haxePixiGAF_display_IAnimatable = function() { };
+com_github_haxePixiGAF_display_IAnimatable.__name__ = ["com","github","haxePixiGAF","display","IAnimatable"];
+com_github_haxePixiGAF_display_IAnimatable.prototype = {
+	__class__: com_github_haxePixiGAF_display_IAnimatable
+};
+var com_github_haxePixiGAF_display_GAFMovieClip = function(gafTimeline,pFps,addToJuggler) {
+	if(addToJuggler == null) {
+		addToJuggler = true;
+	}
+	if(pFps == null) {
+		pFps = -1;
+	}
+	this.__debugOriginalAlpha = null;
+	this._lastFrameTime = 0;
+	this._currentTime = 0;
+	this._skipFrames = true;
+	this._loop = true;
+	PIXI.Container.call(this);
+	this._gafTimeline = gafTimeline;
+	this._config = gafTimeline.get_config();
+	this._scale = gafTimeline.get_scale();
+	this._contentScaleFactor = gafTimeline.get_contentScaleFactor();
+	this._addToJuggler = addToJuggler;
+	this.initialize(gafTimeline.get_textureAtlas(),gafTimeline.get_gafAsset());
+	if(this._config.get_bounds() != null) {
+		this._timelineBounds = this._config.get_bounds().clone();
+	}
+	if(pFps > 0) {
+		this.set_fps(pFps);
+	}
+	this.draw();
+};
+com_github_haxePixiGAF_display_GAFMovieClip.__name__ = ["com","github","haxePixiGAF","display","GAFMovieClip"];
+com_github_haxePixiGAF_display_GAFMovieClip.__interfaces__ = [com_github_haxePixiGAF_display_IMaxSize,com_github_haxePixiGAF_display_IGAFDisplayObject,com_github_haxePixiGAF_display_IAnimatable];
+com_github_haxePixiGAF_display_GAFMovieClip.getTransformMatrix = function(displayObject,matrix) {
+	displayObject.get_pivotMatrix().copy(matrix);
+	return matrix;
+};
+com_github_haxePixiGAF_display_GAFMovieClip.__super__ = PIXI.Container;
+com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.prototype,{
+	getChildByID: function(id) {
+		var _this = this._displayObjectsDictionary;
+		return __map_reserved[id] != null?_this.getReserved(id):_this.h[id];
+	}
+	,getMaskByID: function(id) {
+		var _this = this._stencilMasksDictionary;
+		return __map_reserved[id] != null?_this.getReserved(id):_this.h[id];
+	}
+	,showMaskByID: function(id) {
+		var _this = this._displayObjectsDictionary;
+		var maskObject = __map_reserved[id] != null?_this.getReserved(id):_this.h[id];
+		var maskAsDisplayObject = js_Boot.__cast(maskObject , PIXI.DisplayObject);
+		var _this1 = this._stencilMasksDictionary;
+		var stencilMaskObject = __map_reserved[id] != null?_this1.getReserved(id):_this1.h[id];
+		if(maskObject != null && stencilMaskObject != null) {
+			maskAsDisplayObject.mask = stencilMaskObject;
+			this.addChild(stencilMaskObject);
+			this.addChild(maskAsDisplayObject);
+		} else {
+			console.log("WARNING:mask object is missing. It might be disposed.");
+		}
+	}
+	,hideMaskByID: function(id) {
+		var _this = this._displayObjectsDictionary;
+		var maskAsDisplayObject = js_Boot.__cast(__map_reserved[id] != null?_this.getReserved(id):_this.h[id] , PIXI.DisplayObject);
+		var _this1 = this._stencilMasksDictionary;
+		var stencilMaskObject = __map_reserved[id] != null?_this1.getReserved(id):_this1.h[id];
+		if(stencilMaskObject != null) {
+			if(stencilMaskObject.parent == this) {
+				stencilMaskObject.parent.mask = null;
+				this.removeChild(stencilMaskObject);
+				this.removeChild(maskAsDisplayObject);
+			}
+		} else {
+			console.log("WARNING:mask object is missing. It might be disposed.");
+		}
+	}
+	,clearSequence: function() {
+		this._playingSequence = null;
+	}
+	,get_currentSequence: function() {
+		var tmp = this.get_currentFrame();
+		var sequence = this._config.get_animationSequences().getSequenceByFrame(tmp);
+		if(sequence != null) {
+			return sequence.get_id();
+		}
+		return null;
+	}
+	,setSequence: function(id,play) {
+		if(play == null) {
+			play = true;
+		}
+		this._playingSequence = this._config.get_animationSequences().getSequenceByID(id);
+		if(this._playingSequence != null) {
+			var startFrame = this._reverse?this._playingSequence.get_endFrameNo() - 1:this._playingSequence.get_startFrameNo();
+			if(play) {
+				this.gotoAndPlay(startFrame);
+			} else {
+				this.gotoAndStop(startFrame);
+			}
+		}
+		return this._playingSequence;
+	}
+	,play: function(applyToAllChildren) {
+		if(applyToAllChildren == null) {
+			applyToAllChildren = false;
+		}
+		this._started = true;
+		this._play(false,true);
+	}
+	,stop: function(applyToAllChildren) {
+		if(applyToAllChildren == null) {
+			applyToAllChildren = false;
+		}
+		this._started = false;
+		if(applyToAllChildren) {
+			var i = this._mcVector.length;
+			while(i-- > 0) this._mcVector[i]._started = false;
+		}
+		this._stop(applyToAllChildren,true);
+	}
+	,gotoAndStop: function(frame) {
+		this.checkAndSetCurrentFrame(frame);
+		this.stop();
+	}
+	,gotoAndPlay: function(frame) {
+		this.checkAndSetCurrentFrame(frame);
+		this.play();
+	}
+	,loopAll: function(loop) {
+		var i = this._mcVector.length;
+		while(i-- > 0) this._mcVector[i].set_loop(loop);
+	}
+	,advanceTime: function(passedTime) {
+		if(this._disposed) {
+			console.log("WARNING:GAFMovieClip is disposed but is not removed from the Juggler");
+			return;
+		} else if(this._config.get_disposed()) {
+			this.destroy();
+			return;
+		}
+		if(this._inPlay && this._frameDuration != Infinity) {
+			this._currentTime += passedTime;
+			var framesToPlay = (this._currentTime - this._lastFrameTime) / this._frameDuration | 0;
+			if(this._skipFrames) {
+				var _g1 = 0;
+				while(_g1 < framesToPlay) {
+					var i = _g1++;
+					if(this._inPlay) {
+						this.changeCurrentFrame(i + 1 != framesToPlay);
+					} else {
+						if(!this._disposed) {
+							this.draw();
+						}
+						break;
+					}
+				}
+			} else if(framesToPlay > 0) {
+				this.changeCurrentFrame(false);
+			}
+		}
+		if(this._mcVector != null) {
+			var _g11 = 0;
+			var _g = this._mcVector.length;
+			while(_g11 < _g) this._mcVector[_g11++].advanceTime(passedTime);
+		}
+	}
+	,showBounds: function(value) {
+		var tmp = this._config.get_bounds() != null;
+	}
+	,setFilterConfig: function(value,scale) {
+		if(scale == null) {
+			scale = 1;
+		}
+	}
+	,invalidateOrientation: function() {
+		this._orientationChanged = true;
+	}
+	,copy: function() {
+		return new com_github_haxePixiGAF_display_GAFMovieClip(this._gafTimeline,this.get_fps() | 0,this._addToJuggler);
+	}
+	,_gotoAndStop: function(frame) {
+		this.checkAndSetCurrentFrame(frame);
+		this._stop();
+	}
+	,_play: function(applyToAllChildren,calledByUser) {
+		if(calledByUser == null) {
+			calledByUser = false;
+		}
+		if(applyToAllChildren == null) {
+			applyToAllChildren = false;
+		}
+		if(this._inPlay && !applyToAllChildren) {
+			return;
+		}
+		var l;
+		if(this._totalFrames > 1) {
+			this._inPlay = true;
+		}
+		if(applyToAllChildren && this._config.get_animationConfigFrames().get_frames().length > 0) {
+			var frameConfig = this._config.get_animationConfigFrames().get_frames()[this._currentFrame];
+			if(frameConfig.get_actions() != null) {
+				var action;
+				var l1 = frameConfig.get_actions().length;
+				var _g1 = 0;
+				var _g = l1;
+				while(_g1 < _g) {
+					var i = _g1++;
+					action = frameConfig.get_actions()[i];
+					if(action.type == 0 || action.type == 2 && Std.parseInt(action.params[0]) == this.get_currentFrame()) {
+						this._inPlay = false;
+						return;
+					}
+				}
+			}
+			var child;
+			var childMC;
+			l = this.children.length;
+			var _g11 = 0;
+			while(_g11 < l) {
+				child = js_Boot.__cast(this.getChildAt(_g11++) , PIXI.Container);
+				if(js_Boot.__instanceof(child,com_github_haxePixiGAF_display_GAFMovieClip)) {
+					childMC = js_Boot.__cast(child , com_github_haxePixiGAF_display_GAFMovieClip);
+					if(calledByUser != null) {
+						childMC.play(true);
+					} else {
+						childMC._play(true);
+					}
+				}
+			}
+		}
+		this.runActions();
+		this._reset = false;
+	}
+	,_stop: function(applyToAllChildren,calledByUser) {
+		if(calledByUser == null) {
+			calledByUser = false;
+		}
+		if(applyToAllChildren == null) {
+			applyToAllChildren = false;
+		}
+		this._inPlay = false;
+		if(applyToAllChildren && this._config.get_animationConfigFrames().get_frames().length > 0) {
+			var child;
+			var childMC;
+			var _g1 = 0;
+			var _g = this.children.length;
+			while(_g1 < _g) {
+				child = js_Boot.__cast(this.getChildAt(_g1++) , PIXI.Container);
+				if(js_Boot.__instanceof(child,com_github_haxePixiGAF_display_GAFMovieClip)) {
+					childMC = js_Boot.__cast(child , com_github_haxePixiGAF_display_GAFMovieClip);
+					if(calledByUser != null) {
+						childMC.stop(true);
+					} else {
+						childMC._stop(true);
+					}
+				}
+			}
+		}
+	}
+	,checkPlaybackEvents: function() {
+	}
+	,runActions: function() {
+		if(this._config.get_animationConfigFrames().get_frames().length == 0) {
+			return;
+		}
+		var actions = this._config.get_animationConfigFrames().get_frames()[this._currentFrame].get_actions();
+		if(actions != null) {
+			var action;
+			var l = actions.length;
+			var _g1 = 0;
+			var _g = l;
+			while(_g1 < _g) {
+				action = actions[_g1++];
+				switch(action.type) {
+				case 0:
+					this.stop();
+					break;
+				case 1:
+					this.play();
+					break;
+				case 2:
+					this.gotoAndStop(action.params[0]);
+					break;
+				case 3:
+					this.gotoAndPlay(action.params[0]);
+					break;
+				case 4:
+					break;
+				}
+			}
+		}
+	}
+	,checkAndSetCurrentFrame: function(frame) {
+		if(_$UInt_UInt_$Impl_$.gt(js_Boot.__cast(frame , Int),0)) {
+			if(frame > this._totalFrames) {
+				frame = this._totalFrames;
+			}
+		} else if(typeof(frame) == "string") {
+			var label = frame;
+			frame = this._config.get_animationSequences().getStartFrameNo(label);
+			if(frame == 0) {
+				throw new js__$Boot_HaxeError("Frame label " + label + " not found");
+			}
+		} else {
+			frame = 1;
+		}
+		if(this._playingSequence != null && !this._playingSequence.isSequenceFrame(frame)) {
+			this._playingSequence = null;
+		}
+		if(this._currentFrame != frame - 1) {
+			this._currentFrame = js_Boot.__cast(frame , Int) - 1;
+			this.runActions();
+			if(!this._disposed) {
+				this.draw();
+			}
+		}
+	}
+	,clearDisplayList: function() {
+		this.removeChildren();
+	}
+	,draw: function() {
+		var i;
+		var l;
+		if(this._config.get_debugRegions() != null) {
+			this.clearDisplayList();
+		} else {
+			var l1 = this._displayObjectsVector.length;
+			var _g1 = 0;
+			var _g = l1;
+			while(_g1 < _g) this._displayObjectsVector[_g1++].alpha = 0;
+			l1 = this._mcVector.length;
+			var _g11 = 0;
+			var _g2 = l1;
+			while(_g11 < _g2) this._mcVector[_g11++]._hidden = true;
+		}
+		var frames = this._config.get_animationConfigFrames().get_frames();
+		if(frames.length > this._currentFrame) {
+			var mc;
+			var objectPivotMatrix;
+			var displayObject;
+			var instance;
+			var animationObjectsDictionary = this._config.get_animationObjects().get_animationObjectsDictionary();
+			var frameConfig = frames[this._currentFrame];
+			var instances = frameConfig.get_instances();
+			l = instances.length;
+			i = 0;
+			while(i < l) {
+				instance = instances[i++];
+				var key = instance.get_id();
+				var _this = this._displayObjectsDictionary;
+				if(__map_reserved[key] != null) {
+					displayObject = _this.getReserved(key);
+				} else {
+					displayObject = _this.h[key];
+				}
+				if(displayObject != null) {
+					objectPivotMatrix = com_github_haxePixiGAF_display_GAFMovieClip.getTransformMatrix(displayObject,com_github_haxePixiGAF_display_GAFMovieClip.HELPER_MATRIX);
+					mc = js_Boot.__cast(displayObject , com_github_haxePixiGAF_display_GAFMovieClip);
+					if(mc != null) {
+						if(instance.get_alpha() < 0) {
+							mc.reset();
+						} else if(mc._reset && mc._started) {
+							mc._play(true);
+						}
+						mc._hidden = false;
+					}
+					if(instance.get_alpha() <= 0) {
+						continue;
+					}
+					displayObject.alpha = instance.get_alpha();
+					var key1 = instance.get_id();
+					if((__map_reserved[key1] != null?animationObjectsDictionary.getReserved(key1):animationObjectsDictionary.h[key1]).get_mask() == null) {
+						if(instance.get_maskID() != null) {
+							this.renderDebug(mc,instance,true);
+							var key2 = instance.get_maskID();
+							var tmp = __map_reserved[key2];
+						} else {
+							this.renderDebug(mc,instance,this._masked);
+							instance.applyTransformMatrix(displayObject.get_transformationMatrix(),objectPivotMatrix,this._scale);
+							displayObject.invalidateOrientation();
+							displayObject.setFilterConfig(instance.get_filter(),this._scale);
+							this.addChild(js_Boot.__cast(displayObject , PIXI.DisplayObject));
+						}
+						if(mc != null && mc._started) {
+							mc._play(true);
+						}
+						if(com_github_haxePixiGAF_utils_DebugUtility.RENDERING_DEBUG && js_Boot.__instanceof(displayObject,com_github_haxePixiGAF_display_IGAFDebug)) {
+							(js_Boot.__cast(displayObject , com_github_haxePixiGAF_display_IGAFDebug)).set_debugColors(com_github_haxePixiGAF_utils_DebugUtility.getRenderingDifficultyColor(instance,this._alphaLessMax,this._masked,this._hasFilter));
+						}
+					} else {
+						var key3 = instance.get_id();
+						var _this1 = this._displayObjectsDictionary;
+						var maskObject = __map_reserved[key3] != null?_this1.getReserved(key3):_this1.h[key3];
+						if(maskObject != null) {
+							var maskInstance = frameConfig.getInstanceByID(instance.get_id());
+							if(maskInstance != null) {
+								com_github_haxePixiGAF_display_GAFMovieClip.getTransformMatrix(maskObject,com_github_haxePixiGAF_display_GAFMovieClip.HELPER_MATRIX);
+								maskInstance.applyTransformMatrix(maskObject.get_transformationMatrix(),com_github_haxePixiGAF_display_GAFMovieClip.HELPER_MATRIX,this._scale);
+								maskObject.invalidateOrientation();
+							} else {
+								throw new js__$Boot_HaxeError("Unable to find mask with ID " + instance.get_id());
+							}
+							mc = js_Boot.__cast(maskObject , com_github_haxePixiGAF_display_GAFMovieClip);
+							if(mc != null && mc._started) {
+								mc._play(true);
+							}
+						}
+					}
+				}
+			}
+		}
+		if(this._config.get_debugRegions() != null) {
+			this.addDebugRegions();
+		}
+		this.checkPlaybackEvents();
+	}
+	,renderDebug: function(mc,instance,masked) {
+	}
+	,addDebugRegions: function() {
+	}
+	,reset: function() {
+		this._gotoAndStop((this._reverse?this._finalFrame:this._startFrame) + 1);
+		this._reset = true;
+		this._currentTime = 0;
+		this._lastFrameTime = 0;
+		var i = this._mcVector.length;
+		while(i-- > 0) this._mcVector[i].reset();
+	}
+	,initialize: function(textureAtlas,gafAsset) {
+		this._displayObjectsDictionary = new haxe_ds_StringMap();
+		this._stencilMasksDictionary = new haxe_ds_StringMap();
+		this._displayObjectsVector = [];
+		this._imagesVector = [];
+		this._mcVector = [];
+		this._currentFrame = 0;
+		this._totalFrames = this._config.get_framesCount();
+		this.set_fps(this._config.get_stageConfig() != null?this._config.get_stageConfig().fps:60);
+		var animationObjectsDictionary = this._config.get_animationObjects().get_animationObjectsDictionary();
+		var displayObject = null;
+		var tmp = new haxe_ds__$StringMap_StringMapIterator(animationObjectsDictionary,animationObjectsDictionary.arrayKeys());
+		while(tmp.hasNext()) {
+			var animationObjectConfig = tmp.next();
+			switch(animationObjectConfig.get_type()) {
+			case "textField":
+				break;
+			case "texture":
+				var texture = textureAtlas.getTexture(animationObjectConfig.get_regionID());
+				if(!(js_Boot.__instanceof(texture,com_github_haxePixiGAF_display_GAFScale9Texture) && !animationObjectConfig.get_mask())) {
+					displayObject = new com_github_haxePixiGAF_display_GAFImage(texture);
+				}
+				break;
+			case "timeline":
+				displayObject = new com_github_haxePixiGAF_display_GAFMovieClip(gafAsset.getGAFTimelineByID(animationObjectConfig.get_regionID()),this.get_fps() | 0,false);
+				break;
+			}
+			if(animationObjectConfig.get_maxSize() != null && js_Boot.__instanceof(displayObject,com_github_haxePixiGAF_display_IMaxSize)) {
+				(js_Boot.__cast(displayObject , com_github_haxePixiGAF_display_IMaxSize)).set_maxSize(new PIXI.Point(animationObjectConfig.get_maxSize().x * this._scale,animationObjectConfig.get_maxSize().y * this._scale));
+			}
+			this.addDisplayObject(animationObjectConfig.get_instanceID(),displayObject);
+			if(animationObjectConfig.get_mask()) {
+				this.addDisplayObject(animationObjectConfig.get_instanceID(),displayObject,true);
+			}
+			if(this._config.get_namedParts() != null) {
+				var instanceName = this._config.get_namedParts().get(animationObjectConfig.get_instanceID());
+				if(instanceName != null && !Object.prototype.hasOwnProperty.call(this,instanceName)) {
+					this[this._config.get_namedParts().get(animationObjectConfig.get_instanceID())] = displayObject;
+					displayObject.name = instanceName;
+				}
+			}
+		}
+	}
+	,addDisplayObject: function(id,displayObject,asMask) {
+		if(asMask == null) {
+			asMask = false;
+		}
+		if(asMask != null) {
+			var _this = this._stencilMasksDictionary;
+			if(__map_reserved[id] != null) {
+				_this.setReserved(id,displayObject);
+			} else {
+				_this.h[id] = displayObject;
+			}
+		} else {
+			var v = js_Boot.__cast(displayObject , com_github_haxePixiGAF_display_IGAFDisplayObject);
+			var _this1 = this._displayObjectsDictionary;
+			if(__map_reserved[id] != null) {
+				_this1.setReserved(id,v);
+			} else {
+				_this1.h[id] = v;
+			}
+			this._displayObjectsVector[this._displayObjectsVector.length] = js_Boot.__cast(displayObject , com_github_haxePixiGAF_display_IGAFDisplayObject);
+			if(js_Boot.__instanceof(displayObject,com_github_haxePixiGAF_display_IGAFImage)) {
+				this._imagesVector[this._imagesVector.length] = js_Boot.__cast(displayObject , com_github_haxePixiGAF_display_IGAFImage);
+			} else if(js_Boot.__instanceof(displayObject,com_github_haxePixiGAF_display_GAFMovieClip)) {
+				this._mcVector[this._mcVector.length] = js_Boot.__cast(displayObject , com_github_haxePixiGAF_display_GAFMovieClip);
+			}
+		}
+	}
+	,updateBounds: function(bounds) {
+	}
+	,__debugHighlight: function() {
+		if(isNaN(this.__debugOriginalAlpha)) {
+			this.__debugOriginalAlpha = this.alpha;
+		}
+		this.alpha = 1;
+	}
+	,__debugLowlight: function() {
+		if(isNaN(this.__debugOriginalAlpha)) {
+			this.__debugOriginalAlpha = this.alpha;
+		}
+		this.alpha = .05;
+	}
+	,__debugResetLight: function() {
+		if(!isNaN(this.__debugOriginalAlpha)) {
+			this.alpha = this.__debugOriginalAlpha;
+			this.__debugOriginalAlpha = null;
+		}
+	}
+	,updateTransformMatrix: function() {
+	}
+	,removeChildAt: function(index) {
+		this.getChildAt(index).destroy();
+		return PIXI.Container.prototype.removeChildAt.call(this,index);
+	}
+	,getChildByName: function(name) {
+		var numChildren = this._displayObjectsVector.length;
+		var _g1 = 0;
+		while(_g1 < numChildren) {
+			var i = _g1++;
+			if(this._displayObjectsVector[i].name == name) {
+				return js_Boot.__cast(this._displayObjectsVector[i] , PIXI.DisplayObject);
+			}
+		}
+		return PIXI.Container.prototype.getChildByName.call(this,name);
+	}
+	,destroy: function() {
+		if(this._disposed != null) {
+			return;
+		}
+		this.stop();
+		var l = this._displayObjectsVector.length;
+		var _g1 = 0;
+		while(_g1 < l) this._displayObjectsVector[_g1++].destroy();
+		this._displayObjectsDictionary = null;
+		this._stencilMasksDictionary = null;
+		this._displayObjectsVector = null;
+		this._imagesVector = null;
+		this._gafTimeline = null;
+		this._mcVector = null;
+		this._config = null;
+		PIXI.Container.prototype.destroy.call(this);
+		this._disposed = true;
+	}
+	,render: function(painter) {
+	}
+	,changeCurrentFrame: function(isSkipping) {
+		this._nextFrame = this._currentFrame + (this._reverse?-1:1);
+		this._startFrame = (this._playingSequence != null?this._playingSequence.get_startFrameNo():1) - 1;
+		this._finalFrame = (this._playingSequence != null?this._playingSequence.get_endFrameNo():this._totalFrames) - 1;
+		if(this._nextFrame >= this._startFrame && this._nextFrame <= this._finalFrame) {
+			this._currentFrame = this._nextFrame;
+			this._lastFrameTime += this._frameDuration;
+		} else if(!this._loop) {
+			this.stop();
+		} else {
+			this._currentFrame = this._reverse?this._finalFrame:this._startFrame;
+			this._lastFrameTime += this._frameDuration;
+		}
+		this.runActions();
+		if(this._disposed) {
+			return;
+		} else if(this._config.get_disposed()) {
+			this.destroy();
+			return;
+		}
+		if(!isSkipping) {
+			this.draw();
+		} else {
+			this.checkPlaybackEvents();
+		}
+	}
+	,get_currentFrame: function() {
+		return this._currentFrame + 1;
+	}
+	,get_totalFrames: function() {
+		return this._totalFrames;
+	}
+	,get_inPlay: function() {
+		return this._inPlay;
+	}
+	,get_loop: function() {
+		return this._loop;
+	}
+	,set_loop: function(loop) {
+		return this._loop = loop;
+	}
+	,set_smoothing: function(value) {
+		return null;
+	}
+	,get_smoothing: function() {
+		return null;
+	}
+	,get_useClipping: function() {
+		return this._useClipping;
+	}
+	,get_maxSize: function() {
+		return this._maxSize;
+	}
+	,set_maxSize: function(value) {
+		return this._maxSize = value;
+	}
+	,set_useClipping: function(value) {
+		this._useClipping = value;
+		if(!(this._useClipping && this._config.get_stageConfig() != null)) {
+			this.mask = null;
+		}
+		return value;
+	}
+	,get_fps: function() {
+		if(this._frameDuration == Infinity) {
+			return 0;
+		}
+		return 1 / this._frameDuration;
+	}
+	,set_fps: function(value) {
+		if(value <= 0) {
+			this._frameDuration = Infinity;
+		} else {
+			this._frameDuration = 1 / value;
+		}
+		var i = this._mcVector.length;
+		while(i-- > 0) this._mcVector[i].set_fps(value);
+		return value;
+	}
+	,get_reverse: function() {
+		return this._reverse;
+	}
+	,set_reverse: function(value) {
+		this._reverse = value;
+		var i = this._mcVector.length;
+		while(i-- > 0) this._mcVector[i]._reverse = value;
+		return this._reverse;
+	}
+	,get_skipFrames: function() {
+		return this._skipFrames;
+	}
+	,set_skipFrames: function(value) {
+		this._skipFrames = value;
+		var i = this._mcVector.length;
+		while(i-- > 0) this._mcVector[i]._skipFrames = value;
+		return this._skipFrames;
+	}
+	,get_pivotMatrix: function() {
+		com_github_haxePixiGAF_display_GAFMovieClip.HELPER_MATRIX.identity();
+		return com_github_haxePixiGAF_display_GAFMovieClip.HELPER_MATRIX;
+	}
+	,get_transformationMatrix: function() {
+		return null;
+	}
+	,set_transformationMatrix: function(matrix) {
+		return null;
+	}
+	,__class__: com_github_haxePixiGAF_display_GAFMovieClip
+});
 var com_github_haxePixiGAF_display_IGAFTexture = function() { };
 com_github_haxePixiGAF_display_IGAFTexture.__name__ = ["com","github","haxePixiGAF","display","IGAFTexture"];
 com_github_haxePixiGAF_display_IGAFTexture.prototype = {
@@ -3671,7 +4457,10 @@ com_github_mathieuanthoine_gaf_Main.prototype = {
 	}
 	,onConverted: function(pEvent) {
 		console.log("YEAH");
-		(js_Boot.__cast(pEvent.target , com_github_haxePixiGAF_core_ZipToGAFAssetConverter)).get_gafBundle().getGAFTimeline("gun_swap","rootTimeline");
+		this.gafMovieClip = new com_github_haxePixiGAF_display_GAFMovieClip((js_Boot.__cast(pEvent.target , com_github_haxePixiGAF_core_ZipToGAFAssetConverter)).get_gafBundle().getGAFTimeline("gun_swap","rootTimeline"));
+		this.gafMovieClip.play(true);
+		this.stage.addChild(this.gafMovieClip);
+		this.renderer.render(this.stage);
 	}
 	,gameLoop: function(pIdentifier) {
 		window.requestAnimationFrame($bind(this,this.gameLoop));
@@ -4243,6 +5032,10 @@ if(ArrayBuffer.prototype.slice == null) {
 	ArrayBuffer.prototype.slice = js_html_compat_ArrayBuffer.sliceImpl;
 }
 var Uint8Array = $global.Uint8Array || js_html_compat_Uint8Array._new;
+com_github_haxePixiGAF_core_ZipToGAFAssetConverter.ACTION_DONT_LOAD_IN_GPU_MEMORY = "actionDontLoadInGPUMemory";
+com_github_haxePixiGAF_core_ZipToGAFAssetConverter.ACTION_LOAD_ALL_IN_GPU_MEMORY = "actionLoadAllInGPUMemory";
+com_github_haxePixiGAF_core_ZipToGAFAssetConverter.ACTION_LOAD_IN_GPU_MEMORY_ONLY_DEFAULT = "actionLoadInGPUMemoryOnlyDefault";
+com_github_haxePixiGAF_core_ZipToGAFAssetConverter.actionWithAtlases = "actionLoadInGPUMemoryOnlyDefault";
 com_github_haxePixiGAF_data_GAF.autoPlaySounds = true;
 com_github_haxePixiGAF_data_GAFAssetConfig.MAX_VERSION = 5;
 com_github_haxePixiGAF_data_GAFDebugInformation.TYPE_POINT = 0;
@@ -4309,6 +5102,10 @@ com_github_haxePixiGAF_data_tagfx_TAGFXBase.SOURCE_TYPE_ATF_BA = "sourceTypeATFB
 com_github_haxePixiGAF_data_tagfx_TAGFXBase.SOURCE_TYPE_PNG_URL = "sourceTypePNGURL";
 com_github_haxePixiGAF_data_tagfx_TAGFXBase.SOURCE_TYPE_ATF_URL = "sourceTypeATFURL";
 com_github_haxePixiGAF_data_textures_TextureAtlas.sNames = [];
+com_github_haxePixiGAF_display_GAFImage.HELPER_MATRIX = new PIXI.Matrix();
+com_github_haxePixiGAF_display_GAFMovieClip.EVENT_TYPE_SEQUENCE_START = "typeSequenceStart";
+com_github_haxePixiGAF_display_GAFMovieClip.EVENT_TYPE_SEQUENCE_END = "typeSequenceEnd";
+com_github_haxePixiGAF_display_GAFMovieClip.HELPER_MATRIX = new PIXI.Matrix();
 com_github_haxePixiGAF_display_GAFScale9Texture.DIMENSIONS_ERROR = "The width and height of the scale9Grid must be greater than zero.";
 com_github_haxePixiGAF_display_GAFScale9Texture.HELPER_RECTANGLE = new PIXI.Rectangle(0,0,0,0);
 com_github_haxePixiGAF_events_GAFEvent.COMPLETE = "complete";

@@ -4,18 +4,20 @@ import com.github.haxePixiGAF.core.GAFLoader;
 import com.github.haxePixiGAF.core.ZipToGAFAssetConverter;
 import com.github.haxePixiGAF.data.GAFBundle;
 import com.github.haxePixiGAF.data.GAFTimeline;
+import com.github.haxePixiGAF.display.GAFImage;
 import com.github.haxePixiGAF.display.GAFMovieClip;
+import com.github.haxePixiGAF.display.GAFTexture;
+import com.github.haxePixiGAF.display.IGAFTexture;
 import com.github.haxePixiGAF.events.GAFEvent;
-import haxe.io.Bytes;
-import haxe.io.BytesInput;
-import haxe.io.BytesOutput;
 import js.Browser;
 import pixi.core.display.Container;
+import pixi.core.math.Matrix;
 import pixi.core.renderers.Detector;
 import pixi.core.renderers.webgl.WebGLRenderer;
+import pixi.core.sprites.Sprite;
+import pixi.core.textures.Texture;
 import pixi.interaction.EventTarget;
 import pixi.loaders.LoaderOptions;
-import pixi.loaders.Resource;
 
 /**
  * ...
@@ -129,12 +131,16 @@ class Main
 		var gafBundle: GAFBundle = cast(pEvent.target,ZipToGAFAssetConverter).gafBundle;
 		//"gun_swap" - the name of the SWF which was converted to GAF
 		var gafTimeline: GAFTimeline = gafBundle.getGAFTimeline(FILE_NAME, "rootTimeline");
-
-		gafMovieClip = new GAFMovieClip(gafTimeline);
-		//gafMovieClip.play(true);
-		//addChild(gafMovieClip);
-
 		
+		gafMovieClip = new GAFMovieClip(gafTimeline);
+		gafMovieClip.play(true);
+		stage.addChild(gafMovieClip);
+
+		//var lGAFTexture:IGAFTexture = new GAFTexture("test", Texture.fromImage("gun_swap/gun_swap.png"), new Matrix());
+		//var lImage:GAFImage = new GAFImage(lGAFTexture);		
+		//stage.addChild(lImage);
+		
+		renderer.render(stage);
 		
 	}
 

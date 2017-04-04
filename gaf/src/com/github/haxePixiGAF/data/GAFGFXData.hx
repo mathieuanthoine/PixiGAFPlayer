@@ -3,6 +3,7 @@ import com.github.haxePixiGAF.data.tagfx.ITAGFX;
 import com.github.haxePixiGAF.data.tagfx.TAGFXBase;
 import com.github.haxePixiGAF.utils.DebugUtility;
 import eventemitter3.EventEmitter;
+import js.Lib;
 import pixi.core.textures.Texture;
 import pixi.interaction.EventTarget;
 
@@ -211,6 +212,7 @@ class GAFGFXData extends EventEmitter
 	 */
 	public function getTextures(scale:Float, csf:Float):Map<String,Texture>
 	{
+		
 		var lScale:String = Std.string(scale);
 		var lCsf:String = Std.string(csf);
 		if(_texturesDictionary!=null)
@@ -220,7 +222,7 @@ class GAFGFXData extends EventEmitter
 				return _texturesDictionary[lScale][lCsf];
 			}
 		}
-
+		
 		return null;
 	}
 

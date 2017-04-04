@@ -37,7 +37,7 @@ class CTextureAtlasCSF
 	public function new(csf:Float, scale:Float)
 	{
 		_csf=csf;
-		_scale=scale;
+		_scale = scale;
 
 		_sources=new Array<CTextureAtlasSource>();
 	}

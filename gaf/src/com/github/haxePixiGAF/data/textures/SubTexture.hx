@@ -39,15 +39,14 @@ class SubTexture extends Texture
 	 *  @param scaleModifier  The scale factor of the SubTexture will be calculated by
 	 *					multiplying the parent texture's scale factor with this value.
 	 */
-	public function new(parent:Texture, region:Rectangle=null,
-							   ownsParent:Bool=false, frame:Rectangle=null,
-							   rotated:Bool=false, scaleModifier:Float=1)
+	public function new(parent:Texture, region:Rectangle=null, ownsParent:Bool=false, pFrame:Rectangle=null, rotated:Bool=false, scaleModifier:Float=1)
 	{
 		//new(baseTexture:BaseTexture, ?frame:Rectangle, ?crop:Rectangle, ?trim:Rectangle, ?rotate:Bool);
-		super(null,null,null,null,null/*baseTexture,frame,crop,trim,rotate*/);
+		//TODO
+		super(parent.baseTexture, pFrame, pFrame, pFrame, rotated);
 		
 		//starling_internal::setTo(parent, region, ownsParent, frame, rotated, scaleModifier);
-		setTo(parent, region, ownsParent, frame, rotated, scaleModifier);
+		setTo(parent, region, ownsParent, pFrame, rotated, scaleModifier);
 	}
 
 	/** @private
@@ -57,9 +56,7 @@ class SubTexture extends Texture
 	 *  the texture is not accessible to the outside, this can be overruled in order to avoid
 	 *  allocations.</p>
 	 */
-	/*starling_private*/ function setTo(parent:Texture, region:Rectangle=null,
-									 ownsParent:Bool=false, frame:Rectangle=null,
-									 rotated:Bool=false, scaleModifier:Float=1):Void
+	/*starling_private*/ public function setTo(parent:Texture, region:Rectangle=null, ownsParent:Bool=false, pFrame:Rectangle=null, rotated:Bool=false, scaleModifier:Float=1):Void
 	{
 		if(_region==null) _region=new Rectangle(0,0,0,0);
 		if (region!=null) {
@@ -74,27 +71,17 @@ class SubTexture extends Texture
 			_region.height = parent.height;
 		}
 
-		//if(frame!=null)
-		//{
-			//if (frame) {
-				//frame.x=frame.x;
-				//frame.y=frame.x;
-				//frame.width=frame.width;
-				//frame.height=frame.height;
-			//}
-			//else frame=frame.clone();
-		//}
-		//else frame=null;
-		
-		//TODO: verifier que ca change rien en virant le getter/setter _frame
-		if (frame!=null) {
-			frame.x=frame.x;
-			frame.y=frame.x;
-			frame.width=frame.width;
-			frame.height=frame.height;
+		if(pFrame!=null)
+		{
+			if (frame!=null) {
+				frame.x=pFrame.x;
+				frame.y=pFrame.x;
+				frame.width=pFrame.width;
+				frame.height=pFrame.height;
+			}
+			else frame=pFrame.clone();
 		}
-		else frame=frame.clone();
-		
+		else frame=null;
 
 		_parent=parent;
 		_ownsParent=ownsParent;

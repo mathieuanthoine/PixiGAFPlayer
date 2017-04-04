@@ -1,7 +1,7 @@
 package com.github.haxePixiGAF.display;
 
 /**
- * TODO
+ * AS3 Conversion
  * @author Mathieu Anthoine
  * @private
  */

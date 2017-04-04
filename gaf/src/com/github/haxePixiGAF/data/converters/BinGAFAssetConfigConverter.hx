@@ -349,7 +349,7 @@ class BinGAFAssetConfigConverter extends EventEmitter
 
 				contentScaleFactor=getTextureAtlasCSF(scale, csf);
 				updateTextureAtlasSources(contentScaleFactor, Std.string(atlasID), source);
-				if(contentScaleFactor.elements!=null)
+				if(contentScaleFactor.elements==null)
 				{
 					contentScaleFactor.elements=elements;
 				}
