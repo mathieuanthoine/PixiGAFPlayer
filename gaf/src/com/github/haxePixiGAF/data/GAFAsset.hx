@@ -11,7 +11,7 @@ import pixi.core.math.Matrix;
 import pixi.core.textures.Texture;
 
 /**
- * AS3 Conversion
+ * TODO
  * @author Mathieu Anthoine
  * @private
  */
@@ -103,12 +103,12 @@ class GAFAsset
 	 * @param linkage linkage in a *.fla file library
 	 * @return<code>GAFTimeline</code>from gaf asset
 	 */
-	//public function getGAFTimelineByLinkage(linkage:String):GAFTimeline
-	//{
-		//var gafTimeline:GAFTimeline=_timelinesByLinkage[linkage];
-//
-		//return gafTimeline;
-	//}
+	public function getGAFTimelineByLinkage(linkage:String):GAFTimeline
+	{
+		var gafTimeline:GAFTimeline=_timelinesByLinkage[linkage];
+
+		return gafTimeline;
+	}
 
 	//--------------------------------------------------------------------------
 	//
@@ -121,7 +121,8 @@ class GAFAsset
 	 * @param id Internal timeline id
 	 * @return<code>GAFTimeline</code>from gaf asset
 	 */
-	/*gaf_private*/ function getGAFTimelineByID(id:String):GAFTimeline
+	//gaf_private function getGAFTimelineByID(id:String):GAFTimeline
+	public function getGAFTimelineByID(id:String):GAFTimeline
 	{
 		return _timelinesDictionary[id];
 	}
@@ -136,7 +137,8 @@ class GAFAsset
 		//return _timelinesByLinkage[linkage];
 	//}
 
-	/*gaf_private*/ function getCustomRegion(linkage:String, ?scale:Float, ?csf:Float):IGAFTexture
+	//gaf_private function getCustomRegion(linkage:String, ?scale:Float, ?csf:Float):IGAFTexture
+	public function getCustomRegion(linkage:String, ?scale:Float, ?csf:Float):IGAFTexture
 	{
 		if(scale==null)scale=_scale;
 		if(csf==null)csf=_csf;

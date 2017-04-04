@@ -2,7 +2,9 @@ package com.github.mathieuanthoine.gaf;
 
 import com.github.haxePixiGAF.core.GAFLoader;
 import com.github.haxePixiGAF.core.ZipToGAFAssetConverter;
+import com.github.haxePixiGAF.data.GAFBundle;
 import com.github.haxePixiGAF.data.GAFTimeline;
+import com.github.haxePixiGAF.display.GAFMovieClip;
 import com.github.haxePixiGAF.events.GAFEvent;
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
@@ -30,6 +32,10 @@ class Main
 
 	private var renderer:WebGLRenderer;
 	private var stage:Container;
+	
+	private var gafMovieClip: GAFMovieClip;
+	
+	private static inline var FILE_NAME:String = "gun_swap";
 
 	/**
 	 * initialisation générale
@@ -120,13 +126,11 @@ class Main
 	private function onConverted (pEvent:EventTarget):Void {
 		trace ("YEAH");
 		
-		//var gafBundle: GAFBundle = (event.target as ZipToGAFAssetConverter).gafBundle;
+		var gafBundle: GAFBundle = cast(pEvent.target,ZipToGAFAssetConverter).gafBundle;
 		//"gun_swap" - the name of the SWF which was converted to GAF
-		//var gafTimeline: GAFTimeline = gafBundle.getGAFTimeline(FILE_NAME, "rootTimeline");
+		var gafTimeline: GAFTimeline = gafBundle.getGAFTimeline(FILE_NAME, "rootTimeline");
 
-		//var gafTimeline: GAFTimeline = new GAFTimeline(
-		
-		//gafMovieClip = new GAFMovieClip(gafTimeline);
+		gafMovieClip = new GAFMovieClip(gafTimeline);
 		//gafMovieClip.play(true);
 		//addChild(gafMovieClip);
 

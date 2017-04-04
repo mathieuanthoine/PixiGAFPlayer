@@ -1,6 +1,7 @@
 package com.github.haxePixiGAF.core;
 import com.github.haxePixiGAF.data.GAFAsset;
 import com.github.haxePixiGAF.data.GAFAssetConfig;
+import com.github.haxePixiGAF.data.GAFBundle;
 import com.github.haxePixiGAF.data.GAFGFXData;
 import com.github.haxePixiGAF.data.GAFTimeline;
 import com.github.haxePixiGAF.data.GAFTimelineConfig;
@@ -50,7 +51,7 @@ class ZipToGAFAssetConverter extends EventEmitter
 	private var _gfxData:GAFGFXData;
 	private var _soundData:GAFSoundData;
 
-	//private var _gafBundle:GAFBundle;
+	private var _gafBundle:GAFBundle;
 
 	private var _defaultScale:Float;
 	private var _defaultContentScaleFactor:Float;
@@ -117,7 +118,7 @@ class ZipToGAFAssetConverter extends EventEmitter
 
 		if(_id!=null && _id.length>0)
 		{
-			//_gafBundle.name=_id;
+			_gafBundle.name=_id;
 		}
 		
 		if(Std.is(data, AssetsList)) parseVector(data);
@@ -147,8 +148,8 @@ class ZipToGAFAssetConverter extends EventEmitter
 
 		_gfxData=new GAFGFXData();
 		//_soundData=new GAFSoundData();
-		//_gafBundle=new GAFBundle();
-		//_gafBundle.soundData=_soundData;
+		_gafBundle=new GAFBundle();
+		_gafBundle.soundData=_soundData;
 
 		_gafAssetsIDs=[];
 		_gafAssetConfigs=new Map<String,GAFAssetConfig>();
@@ -314,7 +315,7 @@ class ZipToGAFAssetConverter extends EventEmitter
 
 		var gafTimelineConfigs:Array<GAFTimelineConfig>;
 		var gafAssetConfigID:String;
-		var gafAssetConfig:GAFAssetConfig;
+		var gafAssetConfig:GAFAssetConfig=null;
 		var gafAsset:GAFAsset=null;
 		var i:Int;
 
@@ -335,8 +336,8 @@ class ZipToGAFAssetConverter extends EventEmitter
 				gafAsset.addGAFTimeline(createTimeline(config, gafAsset));
 			}
 
-			//TODO
 			//_gafBundle./*gaf_internal::*/addGAFAsset(gafAsset);
+			_gafBundle.addGAFAsset(gafAsset);
 		}
 
 		if(gafAsset==null || gafAsset.timelines.length==null)
@@ -347,7 +348,7 @@ class ZipToGAFAssetConverter extends EventEmitter
 
 		if(_gafAssetsIDs.length==1)
 		{
-			//if (_gafBundle.name==null) _gafBundle.name =gafAssetConfig.id;
+			if (_gafBundle.name==null) _gafBundle.name =gafAssetConfig.id;
 		}
 
 		//if(_soundData.gaf_internal::hasSoundsToLoad && !_ignoreSounds)
@@ -365,7 +366,7 @@ class ZipToGAFAssetConverter extends EventEmitter
 		_taGFXs=null;
 		_sounds=null;
 
-		emit(GAFEvent.COMPLETE);
+		emit(GAFEvent.COMPLETE,{target:this});
 		
 		return;
 		
@@ -390,7 +391,8 @@ class ZipToGAFAssetConverter extends EventEmitter
 
 		if(_gfxData.isTexturesReady)
 		{
-			emit(GAFEvent.COMPLETE);
+			//TODO: isTextureready utile ?
+			emit(GAFEvent.COMPLETE,{target: this});
 		}
 		else
 		{
@@ -556,7 +558,8 @@ class ZipToGAFAssetConverter extends EventEmitter
 	{
 		_gfxData.off(GAFGFXData.EVENT_TYPE_TEXTURES_READY, onTexturesReady);
 
-		emit(GAFEvent.COMPLETE);
+		//TODO: onTextureReady utilisé ?
+		emit(GAFEvent.COMPLETE,{target:this});
 	}
 	
 	//--------------------------------------------------------------------------
@@ -565,7 +568,14 @@ class ZipToGAFAssetConverter extends EventEmitter
 	//
 	//--------------------------------------------------------------------------	
 	
-
+	/**
+	 * Return converted<code>GAFBundle</code>. If GAF asset file created as single animation - returns null.
+	 */
+	public var gafBundle(get_gafBundle, null):GAFBundle;
+ 	private function get_gafBundle():GAFBundle
+	{
+		return _gafBundle;
+	}
 	
 	
 }

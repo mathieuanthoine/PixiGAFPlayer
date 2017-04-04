@@ -85,7 +85,9 @@ com_github_haxePixiGAF_core_ZipToGAFAssetConverter.prototype = $extend(EventEmit
 		this.reset();
 		this._defaultScale = defaultScale;
 		this._defaultContentScaleFactor = defaultContentScaleFactor;
-		var tmp = this._id != null && this._id.length > 0;
+		if(this._id != null && this._id.length > 0) {
+			this._gafBundle.set_name(this._id);
+		}
 		if((data instanceof Array) && data.__enum__ == null) {
 			this.parseVector(data);
 		} else {
@@ -98,6 +100,8 @@ com_github_haxePixiGAF_core_ZipToGAFAssetConverter.prototype = $extend(EventEmit
 		this._sounds = [];
 		this._taGFXs = new haxe_ds_StringMap();
 		this._gfxData = new com_github_haxePixiGAF_data_GAFGFXData();
+		this._gafBundle = new com_github_haxePixiGAF_data_GAFBundle();
+		this._gafBundle.set_soundData(this._soundData);
 		this._gafAssetsIDs = [];
 		this._gafAssetConfigs = new haxe_ds_StringMap();
 		this._gafAssetConfigSources = new haxe_ds_StringMap();
@@ -244,7 +248,7 @@ com_github_haxePixiGAF_core_ZipToGAFAssetConverter.prototype = $extend(EventEmit
 		}
 		var gafTimelineConfigs;
 		var gafAssetConfigID;
-		var gafAssetConfig;
+		var gafAssetConfig = null;
 		var gafAsset = null;
 		var _g1 = 0;
 		var _g = this._gafAssetsIDs.length;
@@ -260,16 +264,22 @@ com_github_haxePixiGAF_core_ZipToGAFAssetConverter.prototype = $extend(EventEmit
 				++_g2;
 				gafAsset.addGAFTimeline(this.createTimeline(config,gafAsset));
 			}
+			this._gafBundle.addGAFAsset(gafAsset);
 		}
 		if(gafAsset == null || gafAsset.get_timelines().length == null) {
 			return;
+		}
+		if(this._gafAssetsIDs.length == 1) {
+			if(this._gafBundle.get_name() == null) {
+				this._gafBundle.set_name(gafAssetConfig.get_id());
+			}
 		}
 		this.finalizeParsing();
 	}
 	,finalizeParsing: function() {
 		this._taGFXs = null;
 		this._sounds = null;
-		this.emit("complete");
+		this.emit("complete",{ target : this});
 		return;
 	}
 	,createTimeline: function(config,asset) {
@@ -385,7 +395,10 @@ com_github_haxePixiGAF_core_ZipToGAFAssetConverter.prototype = $extend(EventEmit
 	}
 	,onTexturesReady: function(event) {
 		this._gfxData.off("texturesReady",$bind(this,this.onTexturesReady));
-		this.emit("complete");
+		this.emit("complete",{ target : this});
+	}
+	,get_gafBundle: function() {
+		return this._gafBundle;
 	}
 	,__class__: com_github_haxePixiGAF_core_ZipToGAFAssetConverter
 });
@@ -446,6 +459,10 @@ com_github_haxePixiGAF_data_GAFAsset.prototype = {
 		} else {
 			throw new js__$Boot_HaxeError("Bundle error. More then one timeline use id:'" + timeline.get_id() + "'");
 		}
+	}
+	,getGAFTimelineByLinkage: function(linkage) {
+		var _this = this._timelinesByLinkage;
+		return __map_reserved[linkage] != null?_this.getReserved(linkage):_this.h[linkage];
 	}
 	,getGAFTimelineByID: function(id) {
 		var _this = this._timelinesDictionary;
@@ -608,6 +625,89 @@ com_github_haxePixiGAF_data_GAFAssetConfig.prototype = {
 		return this._sounds;
 	}
 	,__class__: com_github_haxePixiGAF_data_GAFAssetConfig
+};
+var com_github_haxePixiGAF_data_GAFBundle = function() {
+	this._gafAssets = [];
+	this._gafAssetsDictionary = new haxe_ds_StringMap();
+};
+com_github_haxePixiGAF_data_GAFBundle.__name__ = ["com","github","haxePixiGAF","data","GAFBundle"];
+com_github_haxePixiGAF_data_GAFBundle.prototype = {
+	dispose: function() {
+		if(this._gafAssets != null) {
+			this._soundData = null;
+			var _g = 0;
+			var _g1 = this._gafAssets;
+			while(_g < _g1.length) {
+				var gafAsset = _g1[_g];
+				++_g;
+				gafAsset.dispose();
+			}
+			this._gafAssets = null;
+			this._gafAssetsDictionary = null;
+		}
+	}
+	,getGAFTimeline: function(swfName,linkage) {
+		if(linkage == null) {
+			linkage = "rootTimeline";
+		}
+		var gafTimeline = null;
+		var _this = this._gafAssetsDictionary;
+		var gafAsset = __map_reserved[swfName] != null?_this.getReserved(swfName):_this.h[swfName];
+		if(gafAsset != null) {
+			gafTimeline = gafAsset.getGAFTimelineByLinkage(linkage);
+		}
+		return gafTimeline;
+	}
+	,getCustomRegion: function(swfName,linkage,scale,csf) {
+		var gafTexture = null;
+		var _this = this._gafAssetsDictionary;
+		var gafAsset = __map_reserved[swfName] != null?_this.getReserved(swfName):_this.h[swfName];
+		if(gafAsset != null) {
+			gafTexture = gafAsset.getCustomRegion(linkage,scale,csf);
+		}
+		return gafTexture;
+	}
+	,getGAFTimelineBySWFNameAndID: function(swfName,id) {
+		var gafTimeline = null;
+		var _this = this._gafAssetsDictionary;
+		var gafAsset = __map_reserved[swfName] != null?_this.getReserved(swfName):_this.h[swfName];
+		if(gafAsset != null) {
+			gafTimeline = gafAsset.getGAFTimelineByID(id);
+		}
+		return gafTimeline;
+	}
+	,addGAFAsset: function(gafAsset) {
+		var key = gafAsset.get_id();
+		var _this = this._gafAssetsDictionary;
+		if((__map_reserved[key] != null?_this.getReserved(key):_this.h[key]) == null) {
+			var k = gafAsset.get_id();
+			var _this1 = this._gafAssetsDictionary;
+			if(__map_reserved[k] != null) {
+				_this1.setReserved(k,gafAsset);
+			} else {
+				_this1.h[k] = gafAsset;
+			}
+			this._gafAssets.push(gafAsset);
+		} else {
+			throw new js__$Boot_HaxeError("Bundle error. More then one gaf asset use id:'" + gafAsset.get_id() + "'");
+		}
+	}
+	,get_soundData: function() {
+		return this._soundData;
+	}
+	,set_soundData: function(soundData) {
+		return this._soundData = soundData;
+	}
+	,get_gafAssets: function() {
+		return this._gafAssets;
+	}
+	,get_name: function() {
+		return this._name;
+	}
+	,set_name: function(name) {
+		return this._name = name;
+	}
+	,__class__: com_github_haxePixiGAF_data_GAFBundle
 };
 var com_github_haxePixiGAF_data_GAFDebugInformation = function() { };
 com_github_haxePixiGAF_data_GAFDebugInformation.__name__ = ["com","github","haxePixiGAF","data","GAFDebugInformation"];
@@ -3571,6 +3671,7 @@ com_github_mathieuanthoine_gaf_Main.prototype = {
 	}
 	,onConverted: function(pEvent) {
 		console.log("YEAH");
+		(js_Boot.__cast(pEvent.target , com_github_haxePixiGAF_core_ZipToGAFAssetConverter)).get_gafBundle().getGAFTimeline("gun_swap","rootTimeline");
 	}
 	,gameLoop: function(pIdentifier) {
 		window.requestAnimationFrame($bind(this,this.gameLoop));
@@ -4223,6 +4324,7 @@ com_github_haxePixiGAF_utils_DebugUtility.cHB = [0,0,0,255,255,255,0];
 com_github_haxePixiGAF_utils_DebugUtility.aryRGB = [com_github_haxePixiGAF_utils_DebugUtility.cHR,com_github_haxePixiGAF_utils_DebugUtility.cHG,com_github_haxePixiGAF_utils_DebugUtility.cHB];
 com_github_haxePixiGAF_utils_MathUtility.epsilon = 0.00001;
 com_github_haxePixiGAF_utils_MathUtility.PI_Q = Math.PI / 4.0;
+com_github_mathieuanthoine_gaf_Main.FILE_NAME = "gun_swap";
 haxe_ds_ObjectMap.count = 0;
 js_Boot.__toStr = { }.toString;
 js_html_compat_Uint8Array.BYTES_PER_ELEMENT = 1;
