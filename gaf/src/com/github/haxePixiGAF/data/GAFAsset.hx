@@ -3,12 +3,12 @@ package com.github.haxePixiGAF.data;
 import com.github.haxePixiGAF.data.config.CTextureAtlasCSF;
 import com.github.haxePixiGAF.data.config.CTextureAtlasElement;
 import com.github.haxePixiGAF.data.config.CTextureAtlasScale;
+import com.github.haxePixiGAF.data.textures.SubTexture;
 import com.github.haxePixiGAF.display.GAFScale9Texture;
 import com.github.haxePixiGAF.display.GAFTexture;
 import com.github.haxePixiGAF.display.IGAFTexture;
 import com.github.haxePixiGAF.utils.MathUtility;
 import pixi.core.math.Matrix;
-import pixi.core.textures.Texture;
 
 /**
  * TODO
@@ -166,7 +166,7 @@ class GAFAsset
 						if(element!=null)
 						{
 							//var texture:Texture=atlasCSF.atlas.gaf_internal::getTextureByIDAndAtlasID(element.id, element.atlasID);
-							var texture:Texture=atlasCSF.atlas.getTextureByIDAndAtlasID(element.id, element.atlasID);
+							var texture:SubTexture=atlasCSF.atlas.getTextureByIDAndAtlasID(element.id, element.atlasID);
 							var pivotMatrix:Matrix=element.pivotMatrix;
 							if(element.scale9Grid !=null)
 							{

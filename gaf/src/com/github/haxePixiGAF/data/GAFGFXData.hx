@@ -1,6 +1,7 @@
 package com.github.haxePixiGAF.data;
 import com.github.haxePixiGAF.data.tagfx.ITAGFX;
 import com.github.haxePixiGAF.data.tagfx.TAGFXBase;
+import com.github.haxePixiGAF.data.textures.SubTexture;
 import com.github.haxePixiGAF.utils.DebugUtility;
 import eventemitter3.EventEmitter;
 import js.Lib;
@@ -19,7 +20,7 @@ import pixi.interaction.EventTarget;
  */
 
 /**
- * TODO
+ * TODO vu le système de chargement, les onReady et autre test de chargement ne servent a rien, a simplifier
  * @author Mathieu Anthoine
  * @private
  */ 
@@ -27,14 +28,6 @@ class GAFGFXData extends EventEmitter
 {
 	public static inline var EVENT_TYPE_TEXTURES_READY:String="texturesReady";
 
-	//[Deprecated(since="5.0")]
-	//public static inline var ATF:String="ATF";
-	//[Deprecated(replacement="Context3DTextureFormat.BGRA", since="5.0")]
-	//public static inline var BGRA:String=Context3DTextureFormat.BGRA;
-	//[Deprecated(replacement="Context3DTextureFormat.BGR_PACKED", since="5.0")]
-	//public static inline var BGR_PACKED:String=Context3DTextureFormat.BGR_PACKED;
-	//[Deprecated(replacement="Context3DTextureFormat.BGRA_PACKED", since="5.0")]
-	//public static inline var BGRA_PACKED:String=Context3DTextureFormat.BGRA_PACKED;
 	//--------------------------------------------------------------------------
 	//
 	//  PUBLIC VARIABLES
@@ -47,7 +40,7 @@ class GAFGFXData extends EventEmitter
 	//
 	//--------------------------------------------------------------------------
 
-	private var _texturesDictionary:Map<String,Map<String,Map<String,Texture>>>= new Map<String,Map<String,Map<String,Texture>>>();
+	private var _texturesDictionary:Map<String,Map<String,Map<String,SubTexture>>>= new Map<String,Map<String,Map<String,SubTexture>>>();
 	private var _taGFXDictionary:Map<String,Map<String,Map<String,ITAGFX>>> = new Map<String,Map<String,Map<String,ITAGFX>>>();
 
 	private var _textureLoadersSet:Map<ITAGFX,ITAGFX>=new Map<ITAGFX,ITAGFX>();
@@ -132,8 +125,8 @@ class GAFGFXData extends EventEmitter
 		{
 			var lScale:String = Std.string(scale);
 			var lCsf:String = Std.string(csf);
-			if (_texturesDictionary[lScale]==null) _texturesDictionary[lScale]=new Map<String,Map<String,Texture>>();
-			if (_texturesDictionary[lScale][lCsf]==null) _texturesDictionary[lScale][lCsf] =new Map<String,Texture>();
+			if (_texturesDictionary[lScale]==null) _texturesDictionary[lScale]=new Map<String,Map<String,SubTexture>>();
+			if (_texturesDictionary[lScale][lCsf]==null) _texturesDictionary[lScale][lCsf] =new Map<String,SubTexture>();
 
 			for(imageAtlasID in taGFXs.keys())
 			{
@@ -163,8 +156,8 @@ class GAFGFXData extends EventEmitter
 		{
 			var lScale:String = Std.string(scale);
 			var lCsf:String = Std.string(csf);
-			if (_texturesDictionary[lScale]==null) _texturesDictionary[lScale]=new Map<String,Map<String,Texture>>();
-			if (_texturesDictionary[lScale][lCsf]==null) _texturesDictionary[lScale][lCsf] =new Map<String,Texture>();
+			if (_texturesDictionary[lScale]==null) _texturesDictionary[lScale]=new Map<String,Map<String,SubTexture>>();
+			if (_texturesDictionary[lScale][lCsf]==null) _texturesDictionary[lScale][lCsf] =new Map<String,SubTexture>();
 
 			addTexture(_texturesDictionary[lScale][lCsf], taGFX, imageID);
 
@@ -177,7 +170,7 @@ class GAFGFXData extends EventEmitter
 	/**
 	 * Returns texture by unique key consist of scale + csf + imageID
 	 */
-	public function getTexture(scale:Float, csf:Float, imageID:String):Texture
+	public function getTexture(scale:Float, csf:Float, imageID:String):SubTexture
 	{
 		var lScale:String = Std.string(scale);
 		var lCsf:String = Std.string(csf);
@@ -210,7 +203,7 @@ class GAFGFXData extends EventEmitter
 	/**
 	 * Returns textures for specified scale and csf in Dynamic as combination key-value where key - is imageID and value - is Texture
 	 */
-	public function getTextures(scale:Float, csf:Float):Map<String,Texture>
+	public function getTextures(scale:Float, csf:Float):Map<String,SubTexture>
 	{
 		
 		var lScale:String = Std.string(scale);
@@ -231,6 +224,8 @@ class GAFGFXData extends EventEmitter
 	 */
 	public function disposeTextures(?scale:Float, ?csf:Float, imageID:String=null):Void
 	{
+		trace ("disposeTextures: TODO");
+		
 		//if(Math.isNaN(scale))
 		//{
 			//for(scaleToDispose in _texturesDictionary)
@@ -255,7 +250,7 @@ class GAFGFXData extends EventEmitter
 			//{
 				//if(imageID)
 				//{
-					//cast(_texturesDictionary[scale][csf][imageID],Texture).dispose();
+					//cast(_texturesDictionary[scale][csf][imageID],TempTexture).destroy();
 //
 					//_texturesDictionary[scale][csf].remove(imageID);
 				//}
@@ -280,8 +275,9 @@ class GAFGFXData extends EventEmitter
 	//
 	//--------------------------------------------------------------------------
 
-	private function addTexture(dictionary:Map<String,Dynamic>, tagfx:ITAGFX, imageID:String):Void
+	private function addTexture(dictionary:Map<String,SubTexture>, tagfx:ITAGFX, imageID:String):Void
 	{
+		
 		if(DebugUtility.RENDERING_DEBUG)
 		{
 			//var bitmapData:BitmapData;
@@ -296,25 +292,26 @@ class GAFGFXData extends EventEmitter
 			//}
 			//else
 			//{
-				//if(tagfx.texture)
-				//{
+				if(tagfx.texture!=null)
+				{
 					//dictionary[imageID]=Texture.fromTexture(tagfx.texture);
-				//}
-				//else
-				//{
-					//throw "GAFGFXData texture for rendering not found!";
-				//}
+				}
+				else
+				{
+					throw "GAFGFXData texture for rendering not found!";
+				}
 			//}
 		}
-		else if(dictionary[imageID]=null)
+		else if(dictionary[imageID]==null)
 		{
-			//if(!tagfx.ready)
-			//{
-				//_textureLoadersSet[tagfx] = tagfx;
-				//tagfx.on(TAGFXBase.EVENT_TYPE_TEXTURE_READY, onTextureReady);
-			//}
-//
-			//dictionary[imageID]=Texture.fromTexture(tagfx.texture);
+			if(tagfx.ready==null)
+			{
+				_textureLoadersSet[tagfx] = tagfx;
+				tagfx.on(TAGFXBase.EVENT_TYPE_TEXTURE_READY, onTextureReady);
+			}
+
+			dictionary[imageID] = SubTexture.fromTexture(tagfx.texture);
+			//dictionary[imageID] = cast Texture.fromImage(tagfx.texture.baseTexture.imageUrl);
 		}
 	}
 
@@ -370,6 +367,8 @@ class GAFGFXData extends EventEmitter
 			empty=false;
 			break;
 		}
+		
+		trace ("isTexturesReady",empty);
 
 		return empty;
 	}

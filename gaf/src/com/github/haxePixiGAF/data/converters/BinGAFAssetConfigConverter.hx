@@ -19,6 +19,7 @@ import com.github.haxePixiGAF.data.converters.ErrorConstants.ErrorConstants;
 import com.github.haxePixiGAF.events.GAFEvent;
 import com.github.haxePixiGAF.utils.GAFBytesInput;
 import com.github.haxePixiGAF.utils.MathUtility;
+import com.github.haxePixiGAF.utils.MatrixUtils;
 import eventemitter3.EventEmitter;
 import haxe.Json;
 import haxe.io.Bytes;
@@ -418,8 +419,7 @@ class BinGAFAssetConfigConverter extends EventEmitter
 			{
 				element=new CTextureAtlasElement(Std.string(elementAtlasID), Std.string(atlasID));
 				element.region=new Rectangle(Std.int(topLeft.x), Std.int(topLeft.y), elementWidth, elementHeight);
-				element.pivotMatrix = new Matrix();
-			element.pivotMatrix.fromArray([1 / elementScaleX, 0, 0, 1 / elementScaleY, -pivot.x / elementScaleX, -pivot.y / elementScaleY]);
+				element.pivotMatrix = MatrixUtils.create(1 / elementScaleX, 0, 0, 1 / elementScaleY, -pivot.x / elementScaleX, -pivot.y / elementScaleY);
 				element.scale9Grid=scale9Grid;
 				element.linkage=linkageName;
 				element.rotated=rotation;
@@ -691,8 +691,7 @@ class BinGAFAssetConfigConverter extends EventEmitter
 						{
 							alpha = 1;//TODO : *GAF.gaf_internal::maxAlpha;
 						}
-						matrix = new Matrix();
-						matrix.fromArray([_bytes.readFloat(), _bytes.readFloat(), _bytes.readFloat(),_bytes.readFloat(), _bytes.readFloat(), _bytes.readFloat()]);
+						matrix = MatrixUtils.create(_bytes.readFloat(), _bytes.readFloat(), _bytes.readFloat(),_bytes.readFloat(), _bytes.readFloat(), _bytes.readFloat());
 
 						filter=null;
 

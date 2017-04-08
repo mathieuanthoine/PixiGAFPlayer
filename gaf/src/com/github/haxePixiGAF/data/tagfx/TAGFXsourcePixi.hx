@@ -1,4 +1,5 @@
 package com.github.haxePixiGAF.data.tagfx;
+import com.github.haxePixiGAF.data.textures.SubTexture;
 import pixi.core.textures.Texture;
 
 /**
@@ -18,9 +19,9 @@ class TAGFXsourcePixi extends TAGFXBase
 		return "Texture_Pixi";
 	}
 
-	override private function get_texture(): Texture
+	override private function get_texture(): SubTexture
 	{
-		return Texture.fromImage(_source);
+		return cast Texture.fromImage(_source);
 	}
 	
 }

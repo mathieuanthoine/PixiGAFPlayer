@@ -76,6 +76,7 @@ class CAnimationFrameInstance
 		_matrix.tx *=scale;
 		_matrix.ty *=scale;
 		//result.concat(_matrix);
+		result.append(_matrix);
 		_matrix.tx=tx;
 		_matrix.ty=ty;
 
@@ -91,6 +92,7 @@ class CAnimationFrameInstance
 		_matrix.tx *=scale;
 		_matrix.ty *=scale;
 		//transformationMatrix.concat(_matrix);
+		transformationMatrix.append(_matrix);
 		_matrix.tx=tx;
 		_matrix.ty=ty;
 	}

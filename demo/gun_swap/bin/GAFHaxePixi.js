@@ -116,7 +116,7 @@ com_github_haxePixiGAF_core_ZipToGAFAssetConverter.prototype = $extend(EventEmit
 		if((data instanceof Array) && data.__enum__ == null) {
 			this.parseVector(data);
 		} else {
-			console.log("ERROR");
+			haxe_Log.trace("ERROR",{ fileName : "ZipToGAFAssetConverter.hx", lineNumber : 157, className : "com.github.haxePixiGAF.core.ZipToGAFAssetConverter", methodName : "convert"});
 		}
 	}
 	,reset: function() {
@@ -244,7 +244,7 @@ com_github_haxePixiGAF_core_ZipToGAFAssetConverter.prototype = $extend(EventEmit
 				}
 				break;
 			case ".png":
-				console.log("TODO PNG");
+				haxe_Log.trace("TODO PNG",{ fileName : "ZipToGAFAssetConverter.hx", lineNumber : 290, className : "com.github.haxePixiGAF.core.ZipToGAFAssetConverter", methodName : "parseVector"});
 				break;
 			}
 		}
@@ -906,15 +906,24 @@ com_github_haxePixiGAF_data_GAFGFXData.prototype = $extend(EventEmitter.prototyp
 		return null;
 	}
 	,disposeTextures: function(scale,csf,imageID) {
+		haxe_Log.trace("disposeTextures: TODO",{ fileName : "GAFGFXData.hx", lineNumber : 227, className : "com.github.haxePixiGAF.data.GAFGFXData", methodName : "disposeTextures"});
 	}
 	,addTexture: function(dictionary,tagfx,imageID) {
-		if(!com_github_haxePixiGAF_utils_DebugUtility.RENDERING_DEBUG) {
-			if(__map_reserved[imageID] != null) {
-				dictionary.setReserved(imageID,null);
-			} else {
-				dictionary.h[imageID] = null;
+		if(com_github_haxePixiGAF_utils_DebugUtility.RENDERING_DEBUG) {
+			if(tagfx.get_texture() == null) {
+				throw new js__$Boot_HaxeError("GAFGFXData texture for rendering not found!");
 			}
-			var tmp = null;
+		} else if((__map_reserved[imageID] != null?dictionary.getReserved(imageID):dictionary.h[imageID]) == null) {
+			if(tagfx.get_ready() == null) {
+				this._textureLoadersSet.set(tagfx,tagfx);
+				tagfx.on("textureReady",$bind(this,this.onTextureReady));
+			}
+			var v = com_github_haxePixiGAF_data_textures_SubTexture.fromTexture(tagfx.get_texture());
+			if(__map_reserved[imageID] != null) {
+				dictionary.setReserved(imageID,v);
+			} else {
+				dictionary.h[imageID] = v;
+			}
 		}
 	}
 	,onTextureReady: function(event) {
@@ -933,6 +942,7 @@ com_github_haxePixiGAF_data_GAFGFXData.prototype = $extend(EventEmitter.prototyp
 			empty = false;
 			break;
 		}
+		haxe_Log.trace("isTexturesReady",{ fileName : "GAFGFXData.hx", lineNumber : 371, className : "com.github.haxePixiGAF.data.GAFGFXData", methodName : "get_isTexturesReady", customParams : [empty]});
 		return empty;
 	}
 	,__class__: com_github_haxePixiGAF_data_GAFGFXData
@@ -983,7 +993,7 @@ com_github_haxePixiGAF_data_GAFTimeline.prototype = {
 					this._gafgfxData.createTextures(scaleConfig.get_scale(),csfConfig1.get_csf());
 					textures = this._gafgfxData.getTextures(scaleConfig.get_scale(),csfConfig1.get_csf());
 					if(csfConfig1.get_atlas() == null && textures != null) {
-						console.log("A");
+						haxe_Log.trace("A",{ fileName : "GAFTimeline.hx", lineNumber : 131, className : "com.github.haxePixiGAF.data.GAFTimeline", methodName : "loadInVideoMemory"});
 						csfConfig1.set_atlas(com_github_haxePixiGAF_data_config_CTextureAtlas.createFromTextures(textures,csfConfig1));
 					}
 				}
@@ -1004,7 +1014,7 @@ com_github_haxePixiGAF_data_GAFTimeline.prototype = {
 				return;
 			}
 			if(csfConfig.get_atlas() == null && this._gafgfxData.createTextures(pScale,csf) != null) {
-				console.log("C");
+				haxe_Log.trace("C",{ fileName : "GAFTimeline.hx", lineNumber : 163, className : "com.github.haxePixiGAF.data.GAFTimeline", methodName : "loadInVideoMemory"});
 				csfConfig.set_atlas(com_github_haxePixiGAF_data_config_CTextureAtlas.createFromTextures(this._gafgfxData.getTextures(pScale,csf),csfConfig));
 			}
 			return;
@@ -1187,7 +1197,7 @@ com_github_haxePixiGAF_data_GAFTimelineConfig.prototype = {
 			this._warnings = [];
 		}
 		if(this._warnings.indexOf(text) == -1) {
-			console.log(text);
+			haxe_Log.trace(text,{ fileName : "GAFTimelineConfig.hx", lineNumber : 138, className : "com.github.haxePixiGAF.data.GAFTimelineConfig", methodName : "addWarning"});
 			this._warnings.push(text);
 		}
 	}
@@ -1419,6 +1429,7 @@ com_github_haxePixiGAF_data_config_CAnimationFrameInstance.prototype = {
 		com_github_haxePixiGAF_data_config_CAnimationFrameInstance.ty = this._matrix.ty;
 		this._matrix.tx *= scale;
 		this._matrix.ty *= scale;
+		result.append(this._matrix);
 		this._matrix.tx = com_github_haxePixiGAF_data_config_CAnimationFrameInstance.tx;
 		this._matrix.ty = com_github_haxePixiGAF_data_config_CAnimationFrameInstance.ty;
 		return result;
@@ -1429,6 +1440,7 @@ com_github_haxePixiGAF_data_config_CAnimationFrameInstance.prototype = {
 		com_github_haxePixiGAF_data_config_CAnimationFrameInstance.ty = this._matrix.ty;
 		this._matrix.tx *= scale;
 		this._matrix.ty *= scale;
+		transformationMatrix.append(this._matrix);
 		this._matrix.tx = com_github_haxePixiGAF_data_config_CAnimationFrameInstance.tx;
 		this._matrix.ty = com_github_haxePixiGAF_data_config_CAnimationFrameInstance.ty;
 	}
@@ -1960,7 +1972,7 @@ com_github_haxePixiGAF_data_config_CTextFieldObjects.prototype = {
 	,__class__: com_github_haxePixiGAF_data_config_CTextFieldObjects
 };
 var com_github_haxePixiGAF_data_config_CTextureAtlas = function(textureAtlasesDictionary,textureAtlasConfig) {
-	console.log("CTEXTURE_ATLAS");
+	haxe_Log.trace("CTEXTURE_ATLAS",{ fileName : "CTextureAtlas.hx", lineNumber : 43, className : "com.github.haxePixiGAF.data.config.CTextureAtlas", methodName : "new"});
 	this._textureAtlasesDictionary = textureAtlasesDictionary;
 	this._textureAtlasConfig = textureAtlasConfig;
 };
@@ -2448,7 +2460,7 @@ com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.prototype = $e
 			this.readTextureAtlasConfig(tagID);
 			break;
 		default:
-			console.log("Unsupported tag found, check for playback library updates");
+			haxe_Log.trace("Unsupported tag found, check for playback library updates",{ fileName : "BinGAFAssetConfigConverter.hx", lineNumber : 248, className : "com.github.haxePixiGAF.data.converters.BinGAFAssetConfigConverter", methodName : "readNextTag"});
 			var _g1 = this._bytes;
 			_g1.set_position(_g1.pos + tagLength);
 		}
@@ -2553,12 +2565,7 @@ com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.prototype = $e
 			if(elements.getElement(elementAtlasID == null?"null":"" + elementAtlasID) == null) {
 				element = new com_github_haxePixiGAF_data_config_CTextureAtlasElement(elementAtlasID == null?"null":"" + elementAtlasID,atlasID == null?"null":"" + atlasID);
 				element.set_region(new PIXI.Rectangle(topLeft.x | 0,topLeft.y | 0,elementWidth,elementHeight));
-				element.set_pivotMatrix(new PIXI.Matrix());
-				var tmp = 1 / elementScaleX;
-				var tmp1 = 1 / elementScaleY;
-				var tmp2 = -pivot.x / elementScaleX;
-				var tmp3 = -pivot.y / elementScaleY;
-				element.get_pivotMatrix().fromArray([tmp,0,0,tmp1,tmp2,tmp3]);
+				element.set_pivotMatrix(com_github_haxePixiGAF_utils_MatrixUtils.create(1 / elementScaleX,0,0,1 / elementScaleY,-pivot.x / elementScaleX,-pivot.y / elementScaleY));
 				element.set_scale9Grid(scale9Grid);
 				element.set_linkage(linkageName);
 				element.set_rotated(rotation);
@@ -2707,8 +2714,7 @@ com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.prototype = $e
 						if(alpha == 1) {
 							alpha = 1;
 						}
-						matrix = new PIXI.Matrix();
-						matrix.fromArray([haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32())]);
+						matrix = com_github_haxePixiGAF_utils_MatrixUtils.create(haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()));
 						filter = null;
 						if(hasColorTransform) {
 							var params = [haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32())];
@@ -2760,7 +2766,7 @@ com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.prototype = $e
 									warning = com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.readColorMatrixFilter(this._bytes,filter);
 									break;
 								default:
-									console.log("Unsupported filter in animation");
+									haxe_Log.trace("Unsupported filter in animation",{ fileName : "BinGAFAssetConfigConverter.hx", lineNumber : 741, className : "com.github.haxePixiGAF.data.converters.BinGAFAssetConfigConverter", methodName : "readAnimationFrames"});
 								}
 								timelineConfig.addWarning(warning);
 							}
@@ -3061,65 +3067,145 @@ com_github_haxePixiGAF_data_tagfx_TAGFXsourcePixi.prototype = $extend(com_github
 	}
 	,__class__: com_github_haxePixiGAF_data_tagfx_TAGFXsourcePixi
 });
-var com_github_haxePixiGAF_data_textures_SubTexture = function(parent,region,ownsParent,pFrame,rotated,scaleModifier) {
+var com_github_haxePixiGAF_data_textures_SubTexture = function(pParent,pRegion,pOwnsParent,pFrame,pRotated,pScaleModifier) {
+	if(pScaleModifier == null) {
+		pScaleModifier = 1;
+	}
+	if(pRotated == null) {
+		pRotated = false;
+	}
+	if(pOwnsParent == null) {
+		pOwnsParent = false;
+	}
+	PIXI.Texture.call(this,pParent.baseTexture,pFrame,pRegion);
+	this.setTo(pParent,pRegion,pOwnsParent,pFrame,pRotated,pScaleModifier);
+};
+com_github_haxePixiGAF_data_textures_SubTexture.__name__ = ["com","github","haxePixiGAF","data","textures","SubTexture"];
+com_github_haxePixiGAF_data_textures_SubTexture.get_maxSize = function() {
+	return 0;
+};
+com_github_haxePixiGAF_data_textures_SubTexture.empty = function(width,height,premultipliedAlpha,mipMapping,optimizeForRenderToTexture,scale,format,forcePotTexture) {
+	if(forcePotTexture == null) {
+		forcePotTexture = false;
+	}
+	if(format == null) {
+		format = "bgra";
+	}
+	if(scale == null) {
+		scale = -1;
+	}
+	if(optimizeForRenderToTexture == null) {
+		optimizeForRenderToTexture = false;
+	}
+	if(mipMapping == null) {
+		mipMapping = false;
+	}
+	if(premultipliedAlpha == null) {
+		premultipliedAlpha = true;
+	}
+	if(height == null) {
+		height = 0;
+	}
+	if(width == null) {
+		width = 0;
+	}
+	return PIXI.Texture.EMPTY;
+};
+com_github_haxePixiGAF_data_textures_SubTexture.fromTexture = function(texture,region,frame,rotated,scaleModifier) {
 	if(scaleModifier == null) {
-		scaleModifier = 1;
+		scaleModifier = 1.0;
 	}
 	if(rotated == null) {
 		rotated = false;
 	}
-	if(ownsParent == null) {
-		ownsParent = false;
-	}
-	PIXI.Texture.call(this,parent.baseTexture,pFrame,pFrame,pFrame,rotated);
-	this.setTo(parent,region,ownsParent,pFrame,rotated,scaleModifier);
+	return new com_github_haxePixiGAF_data_textures_SubTexture(texture,region,false,frame,rotated,scaleModifier);
 };
-com_github_haxePixiGAF_data_textures_SubTexture.__name__ = ["com","github","haxePixiGAF","data","textures","SubTexture"];
 com_github_haxePixiGAF_data_textures_SubTexture.__super__ = PIXI.Texture;
 com_github_haxePixiGAF_data_textures_SubTexture.prototype = $extend(PIXI.Texture.prototype,{
-	setTo: function(parent,region,ownsParent,pFrame,rotated,scaleModifier) {
-		if(scaleModifier == null) {
-			scaleModifier = 1;
+	get_base: function() {
+		if(this._parent != null) {
+			return this._parent.baseTexture;
 		}
-		if(rotated == null) {
-			rotated = false;
+		return this.baseTexture;
+	}
+	,get_format: function() {
+		return "bgra";
+	}
+	,get_frameHeight: function() {
+		return this.frame.height;
+	}
+	,get_frameWidth: function() {
+		return this.frame.width;
+	}
+	,get_mipMapping: function() {
+		return null;
+	}
+	,get_nativeHeight: function() {
+		return this.height * this._scale;
+	}
+	,get_nativeWidth: function() {
+		return this.width * this._scale;
+	}
+	,get_premultipliedAlpha: function() {
+		if(this._parent != null) {
+			return this._parent.get_premultipliedAlpha();
 		}
-		if(ownsParent == null) {
-			ownsParent = false;
+		return false;
+	}
+	,get_root: function() {
+		return this.baseTexture;
+	}
+	,get_scale: function() {
+		return this._scale;
+	}
+	,get_transformationMatrix: function() {
+		return this._transformationMatrix;
+	}
+	,get_transformationMatrixToRoot: function() {
+		return this._transformationMatrixToRoot;
+	}
+	,setTo: function(pParent,pRegion,pOwnsParent,pFrame,pRotated,pScaleModifier) {
+		if(pScaleModifier == null) {
+			pScaleModifier = 1;
+		}
+		if(pRotated == null) {
+			pRotated = false;
+		}
+		if(pOwnsParent == null) {
+			pOwnsParent = false;
 		}
 		if(this._region == null) {
 			this._region = new PIXI.Rectangle(0,0,0,0);
 		}
-		if(region != null) {
-			this._region.x = region.x;
-			this._region.y = region.y;
-			this._region.width = region.width;
-			this._region.height = region.height;
+		if(pRegion != null) {
+			this._region.x = pRegion.x;
+			this._region.y = pRegion.y;
+			this._region.width = pRegion.width;
+			this._region.height = pRegion.height;
 		} else {
 			this._region.x = 0;
 			this._region.y = 0;
-			this._region.width = parent.width;
-			this._region.height = parent.height;
+			this._region.width = pParent.width;
+			this._region.height = pParent.height;
 		}
 		if(pFrame != null) {
 			if(this.frame != null) {
 				this.frame.x = pFrame.x;
-				this.frame.y = pFrame.x;
+				this.frame.y = pFrame.y;
 				this.frame.width = pFrame.width;
 				this.frame.height = pFrame.height;
 			} else {
 				this.frame = pFrame.clone();
 			}
-		} else {
-			this.frame = null;
 		}
-		this._parent = parent;
-		this._ownsParent = ownsParent;
-		this._rotated = rotated;
-		this.width = (rotated != null?this._region.height:this._region.width) / scaleModifier;
-		this.height = (rotated != null?this._region.width:this._region.height) / scaleModifier;
+		this._parent = pParent;
+		this._ownsParent = pOwnsParent;
+		this._rotated = pRotated;
+		this.width = (pRotated != null?this._region.height:this._region.width) / pScaleModifier;
+		this.height = (pRotated != null?this._region.width:this._region.height) / pScaleModifier;
+		this._scale = (this._parent != null?this._parent.get_scale():1) * pScaleModifier;
 		if(this.frame != null && (this.frame.x > 0 || this.frame.y > 0 || this.frame.x + this.frame.width < this.width || this.frame.y + this.frame.height < this.height)) {
-			console.log("[Starling] Warning:frames inside the texture's region are unsupported.");
+			haxe_Log.trace("[Starling] Warning:frames inside the texture's region are unsupported.",{ fileName : "SubTexture.hx", lineNumber : 184, className : "com.github.haxePixiGAF.data.textures.SubTexture", methodName : "setTo"});
 		}
 		this.updateMatrices();
 	}
@@ -3141,7 +3227,10 @@ com_github_haxePixiGAF_data_textures_SubTexture.prototype = $extend(PIXI.Texture
 		this._transformationMatrix.scale(this._region.width / this._parent.width,this._region.height / this._parent.height);
 		this._transformationMatrix.translate(this._region.x / this._parent.width,this._region.y / this._parent.height);
 		var texture = this;
-		while(texture != null) texture = js_Boot.__cast(texture.get_parent() , com_github_haxePixiGAF_data_textures_SubTexture);
+		while(texture != null) {
+			this._transformationMatrixToRoot.append(texture._transformationMatrix);
+			texture = js_Boot.__cast(texture.get_parent() , com_github_haxePixiGAF_data_textures_SubTexture);
+		}
 	}
 	,destroy: function(destroyBase) {
 		if(this._ownsParent) {
@@ -3160,36 +3249,6 @@ com_github_haxePixiGAF_data_textures_SubTexture.prototype = $extend(PIXI.Texture
 	}
 	,get_region: function() {
 		return this._region;
-	}
-	,get_transformationMatrix: function() {
-		return null;
-	}
-	,get_transformationMatrixToRoot: function() {
-		return null;
-	}
-	,get_base: function() {
-		return null;
-	}
-	,get_root: function() {
-		return null;
-	}
-	,get_format: function() {
-		return null;
-	}
-	,get_nativeWidth: function() {
-		return this.width * this._scale;
-	}
-	,get_nativeHeight: function() {
-		return this.height * this._scale;
-	}
-	,get_mipMapping: function() {
-		return null;
-	}
-	,get_premultipliedAlpha: function() {
-		return null;
-	}
-	,get_scale: function() {
-		return 1;
 	}
 	,__class__: com_github_haxePixiGAF_data_textures_SubTexture
 });
@@ -3335,6 +3394,7 @@ com_github_haxePixiGAF_display_IGAFImage.prototype = {
 	__class__: com_github_haxePixiGAF_display_IGAFImage
 };
 var com_github_haxePixiGAF_display_GAFImage = function(assetTexture) {
+	this.__debugOriginalAlpha = null;
 	this._assetTexture = assetTexture.clone();
 	PIXI.Sprite.call(this,this._assetTexture.get_texture());
 };
@@ -3342,16 +3402,86 @@ com_github_haxePixiGAF_display_GAFImage.__name__ = ["com","github","haxePixiGAF"
 com_github_haxePixiGAF_display_GAFImage.__interfaces__ = [com_github_haxePixiGAF_display_IGAFDebug,com_github_haxePixiGAF_display_IMaxSize,com_github_haxePixiGAF_display_IGAFImage];
 com_github_haxePixiGAF_display_GAFImage.__super__ = PIXI.Sprite;
 com_github_haxePixiGAF_display_GAFImage.prototype = $extend(PIXI.Sprite.prototype,{
-	invalidateOrientation: function() {
+	copy: function() {
+		return new com_github_haxePixiGAF_display_GAFImage(this._assetTexture);
+	}
+	,invalidateOrientation: function() {
 		this._orientationChanged = true;
 	}
 	,set_debugColors: function(value) {
 		return null;
 	}
+	,changeTexture: function(newTexture) {
+		this.texture = newTexture.get_texture();
+		this._assetTexture.copyFrom(newTexture);
+	}
 	,setFilterConfig: function(value,scale) {
 		if(scale == null) {
 			scale = 1;
 		}
+		haxe_Log.trace("setFilterConfig: TODO",{ fileName : "GAFImage.hx", lineNumber : 163, className : "com.github.haxePixiGAF.display.GAFImage", methodName : "setFilterConfig"});
+	}
+	,__debugHighlight: function() {
+		if(isNaN(this.__debugOriginalAlpha)) {
+			this.__debugOriginalAlpha = this.alpha;
+		}
+		this.alpha = 1;
+	}
+	,__debugLowlight: function() {
+		if(isNaN(this.__debugOriginalAlpha)) {
+			this.__debugOriginalAlpha = this.alpha;
+		}
+		this.alpha = .05;
+	}
+	,__debugResetLight: function() {
+		if(!isNaN(this.__debugOriginalAlpha)) {
+			this.alpha = this.__debugOriginalAlpha;
+			this.__debugOriginalAlpha = null;
+		}
+	}
+	,updateTransformMatrix: function() {
+		if(this._orientationChanged != null) {
+			this.set_transformationMatrix(this.get_transformationMatrix());
+			this._orientationChanged = false;
+		}
+	}
+	,destroy: function() {
+		this._assetTexture = null;
+		PIXI.Sprite.prototype.destroy.call(this);
+	}
+	,isEquivalent: function(a,b,epsilon) {
+		if(epsilon == null) {
+			epsilon = 0.0001;
+		}
+		if(a - epsilon < b) {
+			return a + epsilon > b;
+		} else {
+			return false;
+		}
+	}
+	,set_pivotX: function(value) {
+		this._pivotChanged = true;
+		return this.pivot.x = value;
+	}
+	,set_pivotY: function(value) {
+		this._pivotChanged = true;
+		return this.pivot.y = value;
+	}
+	,get_scaleX: function() {
+		this.updateTransformMatrix();
+		return this.scale.x;
+	}
+	,get_scaleY: function() {
+		this.updateTransformMatrix();
+		return this.scale.y;
+	}
+	,get_skewX: function() {
+		this.updateTransformMatrix();
+		return this.skew.x;
+	}
+	,get_skewY: function() {
+		this.updateTransformMatrix();
+		return this.skew.y;
 	}
 	,get_maxSize: function() {
 		return this._maxSize;
@@ -3433,7 +3563,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 			this.addChild(stencilMaskObject);
 			this.addChild(maskAsDisplayObject);
 		} else {
-			console.log("WARNING:mask object is missing. It might be disposed.");
+			haxe_Log.trace("WARNING:mask object is missing. It might be disposed.",{ fileName : "GAFMovieClip.hx", lineNumber : 199, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "showMaskByID"});
 		}
 	}
 	,hideMaskByID: function(id) {
@@ -3448,7 +3578,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 				this.removeChild(maskAsDisplayObject);
 			}
 		} else {
-			console.log("WARNING:mask object is missing. It might be disposed.");
+			haxe_Log.trace("WARNING:mask object is missing. It might be disposed.",{ fileName : "GAFMovieClip.hx", lineNumber : 225, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "hideMaskByID"});
 		}
 	}
 	,clearSequence: function() {
@@ -3509,7 +3639,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 	}
 	,advanceTime: function(passedTime) {
 		if(this._disposed) {
-			console.log("WARNING:GAFMovieClip is disposed but is not removed from the Juggler");
+			haxe_Log.trace("WARNING:GAFMovieClip is disposed but is not removed from the Juggler",{ fileName : "GAFMovieClip.hx", lineNumber : 378, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "advanceTime"});
 			return;
 		} else if(this._config.get_disposed()) {
 			this.destroy();
@@ -4382,6 +4512,35 @@ com_github_haxePixiGAF_utils_MathUtility.getItemIndex = function(source,target) 
 	}
 	return -1;
 };
+var com_github_haxePixiGAF_utils_MatrixUtils = function() { };
+com_github_haxePixiGAF_utils_MatrixUtils.__name__ = ["com","github","haxePixiGAF","utils","MatrixUtils"];
+com_github_haxePixiGAF_utils_MatrixUtils.create = function(pA,pB,pC,pD,pTx,pTy) {
+	if(pTy == null) {
+		pTy = 0;
+	}
+	if(pTx == null) {
+		pTx = 0;
+	}
+	if(pD == null) {
+		pD = 1;
+	}
+	if(pC == null) {
+		pC = 0;
+	}
+	if(pB == null) {
+		pB = 0;
+	}
+	if(pA == null) {
+		pA = 1;
+	}
+	var lMatrix = new PIXI.Matrix();
+	lMatrix.a = pA;
+	lMatrix.b = pB;
+	lMatrix.c = pC;
+	lMatrix.tx = pTx;
+	lMatrix.ty = pTy;
+	return lMatrix;
+};
 var com_github_haxePixiGAF_utils_VectorUtility = function() { };
 com_github_haxePixiGAF_utils_VectorUtility.__name__ = ["com","github","haxePixiGAF","utils","VectorUtility"];
 com_github_haxePixiGAF_utils_VectorUtility.fillMatrix = function(v,a00,a01,a02,a03,a04,a10,a11,a12,a13,a14,a20,a21,a22,a23,a24,a30,a31,a32,a33,a34) {
@@ -4418,10 +4577,10 @@ var com_github_mathieuanthoine_gaf_Main = function() {
 	this.assetsID = 0;
 	this.assetsList = [];
 	this.urlsList = [];
-	this.renderer = PIXI.autoDetectRenderer(960,640,{ backgroundColor : 0});
+	this.renderer = PIXI.autoDetectRenderer(960,640,{ backgroundColor : 13421772});
 	window.document.body.appendChild(this.renderer.view);
 	this.stage = new PIXI.Container();
-	this.urlsList.push("gun_swap/gun_swap.gaf");
+	this.urlsList.push("Test/Test.gaf");
 	this.load();
 };
 com_github_mathieuanthoine_gaf_Main.__name__ = ["com","github","mathieuanthoine","gaf","Main"];
@@ -4437,7 +4596,7 @@ com_github_mathieuanthoine_gaf_Main.getInstance = function() {
 com_github_mathieuanthoine_gaf_Main.prototype = {
 	load: function() {
 		if(this.assetsID >= this.urlsList.length) {
-			console.log("END OF LOADING");
+			haxe_Log.trace("END OF LOADING",{ fileName : "Main.hx", lineNumber : 106, className : "com.github.mathieuanthoine.gaf.Main", methodName : "load"});
 			var converter = new com_github_haxePixiGAF_core_ZipToGAFAssetConverter();
 			converter.on("complete",$bind(this,this.onConverted));
 			converter.convert(this.assetsList);
@@ -4450,15 +4609,16 @@ com_github_mathieuanthoine_gaf_Main.prototype = {
 		}
 	}
 	,onLoad: function(pLoader) {
-		console.log("onLoad");
+		haxe_Log.trace("onLoad",{ fileName : "Main.hx", lineNumber : 123, className : "com.github.mathieuanthoine.gaf.Main", methodName : "onLoad"});
 		this.assetsList.push(pLoader);
 		this.assetsID++;
 		this.load();
 	}
 	,onConverted: function(pEvent) {
-		console.log("YEAH");
-		this.gafMovieClip = new com_github_haxePixiGAF_display_GAFMovieClip((js_Boot.__cast(pEvent.target , com_github_haxePixiGAF_core_ZipToGAFAssetConverter)).get_gafBundle().getGAFTimeline("gun_swap","rootTimeline"));
-		this.gafMovieClip.play(true);
+		haxe_Log.trace("YEAH",{ fileName : "Main.hx", lineNumber : 132, className : "com.github.mathieuanthoine.gaf.Main", methodName : "onConverted"});
+		var gafTimeline = (js_Boot.__cast(pEvent.target , com_github_haxePixiGAF_core_ZipToGAFAssetConverter)).get_gafBundle().getGAFTimeline("Test","rootTimeline");
+		debugger;
+		this.gafMovieClip = new com_github_haxePixiGAF_display_GAFMovieClip(gafTimeline);
 		this.stage.addChild(this.gafMovieClip);
 		this.renderer.render(this.stage);
 	}
@@ -4475,6 +4635,11 @@ var haxe_IMap = function() { };
 haxe_IMap.__name__ = ["haxe","IMap"];
 haxe_IMap.prototype = {
 	__class__: haxe_IMap
+};
+var haxe_Log = function() { };
+haxe_Log.__name__ = ["haxe","Log"];
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
 };
 var haxe_ds_ObjectMap = function() {
 	this.h = { __keys__ : { }};
@@ -4720,6 +4885,35 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = ["js","Boot"];
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg = i != null?i.fileName + ":" + i.lineNumber + ": ":"";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	var tmp;
+	if(typeof(document) != "undefined") {
+		d = document.getElementById("haxe:trace");
+		tmp = d != null;
+	} else {
+		tmp = false;
+	}
+	if(tmp) {
+		d.innerHTML += js_Boot.__unhtml(msg) + "<br/>";
+	} else if(typeof console != "undefined" && console.log != null) {
+		console.log(msg);
+	}
+};
 js_Boot.getClass = function(o) {
 	if((o instanceof Array) && o.__enum__ == null) {
 		return Array;

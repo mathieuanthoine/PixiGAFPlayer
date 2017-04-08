@@ -1,5 +1,6 @@
 package com.github.haxePixiGAF.data.textures;
 
+import js.Lib;
 import pixi.core.math.shapes.Rectangle;
 import pixi.core.textures.Texture;
 
@@ -64,7 +65,7 @@ import pixi.core.textures.Texture;
  */
 class TextureAtlas
 {
-	private var _atlasTexture:Texture;
+	private var _atlasTexture:SubTexture;
 	private var _subTextures:Map<String,SubTexture>;
 	private var _subTextureNames:Array<String>;
 	
@@ -72,7 +73,7 @@ class TextureAtlas
 	private static var sNames:Array<String>=[];
 	
 	/** Create a texture atlas from a texture by parsing the regions from an XML file. */
-	public function new(texture:Texture)
+	public function new(texture:SubTexture)
 	{
 		_subTextures=new Map<String,SubTexture>();
 		_atlasTexture=texture;
@@ -86,16 +87,16 @@ class TextureAtlas
 	}
 	
 	/** Retrieves a SubTexture by name. Returns<code>null</code>if it is not found. */
-	public function getTexture(name:String):Texture
+	public function getTexture(name:String):SubTexture
 	{
 		return _subTextures[name];
 	}
 	
 	/** Returns all textures that start with a certain string, sorted alphabetically
 	 *(especially useful for "MovieClip"). */
-	public function getTextures(prefix:String="", ?out:Array<Texture>  ):Array<Texture>
+	public function getTextures(prefix:String="", ?out:Array<SubTexture>  ):Array<SubTexture>
 	{
-		if (out == null) out = new Array<Texture>();
+		if (out == null) out = new Array<SubTexture>();
 		for (name in getNames(prefix, sNames)) out[out.length] = getTexture(name);// avoid 'push'
 		
 		//sNames.length=0;
@@ -167,8 +168,8 @@ class TextureAtlas
 	}
 	
 	/** The base texture that makes up the atlas. */
-	public var texture(get_texture, null):Texture;
- 	private function get_texture():Texture { return _atlasTexture;}
+	public var texture(get_texture, null):SubTexture;
+ 	private function get_texture():SubTexture { return _atlasTexture;}
 	
 	// utility methods
 

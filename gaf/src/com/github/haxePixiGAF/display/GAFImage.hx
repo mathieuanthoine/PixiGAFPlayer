@@ -10,7 +10,7 @@ import pixi.core.textures.Texture;
 
 
 /**
- * TODO
+ * TODO : check doublons (scale, scaleX, pivot, pivotX) et supprimer ce qui est en trop
  * @author Mathieu Anthoine
  */
 /**
@@ -49,7 +49,7 @@ class GAFImage extends Sprite implements IGAFImage implements IMaxSize implement
 
 	/** @private */
 	//gaf_private var __debugOriginalAlpha:Float=NaN;
-	//public var __debugOriginalAlpha:Float=null;
+	public var __debugOriginalAlpha:Float=null;
 
 	private var _orientationChanged:Bool;
 
@@ -80,10 +80,10 @@ class GAFImage extends Sprite implements IGAFImage implements IMaxSize implement
 	/**
 	 * Creates a new instance of GAFImage.
 	 */
-	//public function copy():GAFImage
-	//{
-		//return new GAFImage(_assetTexture);
-	//}
+	public function copy():GAFImage
+	{
+		return new GAFImage(_assetTexture);
+	}
 
 	/** @private */
 	public function invalidateOrientation():Void
@@ -150,16 +150,18 @@ class GAFImage extends Sprite implements IGAFImage implements IMaxSize implement
 	 * Change the texture of the<code>GAFImage</code>to a new one.
 	 * @param newTexture the new<code>IGAFTexture</code>which will be used to replace existing one.
 	 */
-	//public function changeTexture(newTexture:IGAFTexture):Void
-	//{
-		//texture=newTexture.texture;
-		////readjustSize();
-		//_assetTexture.copyFrom(newTexture);
-	//}
+	public function changeTexture(newTexture:IGAFTexture):Void
+	{
+		texture=newTexture.texture;
+		//readjustSize();
+		_assetTexture.copyFrom(newTexture);
+	}
 
 	/** @private */
 	public function setFilterConfig(value:CFilter, scale:Float=1):Void
 	{
+		trace ("setFilterConfig: TODO");
+		
 		/*if(!Starling.current.contextValid)
 		{
 			return;
@@ -210,53 +212,53 @@ class GAFImage extends Sprite implements IGAFImage implements IMaxSize implement
 
 	/** @private */
 	//gaf_private function __debugHighlight():Void
-	//public function __debugHighlight():Void
-	//{
-		////use namespace gaf_internal;
-//
-		//if(Math.isNaN(__debugOriginalAlpha))
-		//{
-			//__debugOriginalAlpha=alpha;
-		//}
-		//alpha=1;
-	//}
+	public function __debugHighlight():Void
+	{
+		//use namespace gaf_internal;
+
+		if(Math.isNaN(__debugOriginalAlpha))
+		{
+			__debugOriginalAlpha=alpha;
+		}
+		alpha=1;
+	}
 
 	/** @private */
 	//gaf_private function __debugLowlight():Void
-	//public function __debugLowlight():Void
-	//{
-		////use namespace gaf_internal;
-//
-		//if(Math.isNaN(__debugOriginalAlpha))
-		//{
-			//__debugOriginalAlpha=alpha;
-		//}
-		//alpha=.05;
-	//}
+	public function __debugLowlight():Void
+	{
+		//use namespace gaf_internal;
+
+		if(Math.isNaN(__debugOriginalAlpha))
+		{
+			__debugOriginalAlpha=alpha;
+		}
+		alpha=.05;
+	}
 
 	/** @private */
 	//gaf_private function __debugResetLight():Void
-	//public function __debugResetLight():Void
-	//{
-		////use namespace gaf_internal;
-//
-		//if(!Math.isNaN(__debugOriginalAlpha))
-		//{
-			//alpha=__debugOriginalAlpha;
-			//__debugOriginalAlpha=null;
-		//}
-	//}
+	public function __debugResetLight():Void
+	{
+		//use namespace gaf_internal;
+
+		if(!Math.isNaN(__debugOriginalAlpha))
+		{
+			alpha=__debugOriginalAlpha;
+			__debugOriginalAlpha=null;
+		}
+	}
 
 	//[Inline]
 	//private final function updateTransformMatrix():Void
-	//private function updateTransformMatrix():Void
-	//{
-		////if(_orientationChanged!=null)
-		////{
-			////transformationMatrix=transformationMatrix;
-			////_orientationChanged=false;
-		////}
-	//}
+	private function updateTransformMatrix():Void
+	{
+		if(_orientationChanged!=null)
+		{
+			transformationMatrix=transformationMatrix;
+			_orientationChanged=false;
+		}
+	}
 
 	//--------------------------------------------------------------------------
 	//
@@ -267,19 +269,23 @@ class GAFImage extends Sprite implements IGAFImage implements IMaxSize implement
 	/**
 	 * Disposes all resources of the display object.
 	 */
-	//override public function destroy():Void
-	//{
-		////if(filter!=null)
-		////{
-			////filter.dispose();
-			////filter=null;
-		////}
-		//_assetTexture=null;
+	override public function destroy():Void
+	{
+		//if(filter!=null)
+		//{
+			//filter.dispose();
+			//filter=null;
+		//}
+		_assetTexture=null;
 		//_filterConfig=null;
-//
-		////super.dispose();
-	//}
 
+		//super.dispose();
+		super.destroy();
+	}
+
+	
+	//TODO: getGAFGetbounds
+	
 	//override public function getBounds(targetSpace:DisplayObject, resultRect:Rectangle=null):Rectangle
 	//{
 		//if(resultRect==null)resultRect=new Rectangle(0,0,0,0);
@@ -314,26 +320,26 @@ class GAFImage extends Sprite implements IGAFImage implements IMaxSize implement
 		//return resultRect;
 	//}
 
-	//private function isEquivalent(a:Float, b:Float, epsilon:Float=0.0001):Bool
-	//{
-		//return(a - epsilon<b)&&(a + epsilon>b);
-	//}
+	private function isEquivalent(a:Float, b:Float, epsilon:Float=0.0001):Bool
+	{
+		return(a - epsilon<b)&&(a + epsilon>b);
+	}
 
 	/** @private */
-	//override public var pivotX(null, set_pivotX):Float;
- 	//private function set_pivotX(value:Float):Void
-	//{
-		//_pivotChanged=true;
-		//super.pivotX=value;
-	//}
+	public var pivotX(null, set_pivotX):Float;
+ 	private function set_pivotX(value:Float):Float
+	{
+		_pivotChanged = true;
+		return pivot.x = value;
+	}
 
 	/** @private */
-	//override public var pivotY(null, set_pivotY):Float;
- 	//private function set_pivotY(value:Float):Void
-	//{
-		//_pivotChanged=true;
-		//super.pivotY=value;
-	//}
+	public var pivotY(null, set_pivotY):Float;
+ 	private function set_pivotY(value:Float):Float
+	{
+		_pivotChanged=true;
+		return pivot.y=value;
+	}
 
 	/** @private */
 	//override public function get x():Float
@@ -358,36 +364,36 @@ class GAFImage extends Sprite implements IGAFImage implements IMaxSize implement
 	//}
 
 	/** @private */
-	//override public var scaleX(get_scaleX, set_scaleX):Float;
- 	//private function get_scaleX():Float
-	//{
-		//updateTransformMatrix();
-		//return super.scaleX;
-	//}
+	public var scaleX(get_scaleX, null):Float;
+ 	private function get_scaleX():Float
+	{
+		updateTransformMatrix();
+		return scale.x;
+	}
 
 	/** @private */
-	//override public var scaleY(get_scaleY, set_scaleY):Float;
- 	//private function get_scaleY():Float
-	//{
-		//updateTransformMatrix();
-		//return super.scaleY;
-	//}
+	public var scaleY(get_scaleY, null):Float;
+ 	private function get_scaleY():Float
+	{
+		updateTransformMatrix();
+		return scale.y;
+	}
 
 	/** @private */
-	//override public var skewX(get_skewX, set_skewX):Float;
- 	//private function get_skewX():Float
-	//{
-		//updateTransformMatrix();
-		//return super.skewX;
-	//}
+	public var skewX(get_skewX, null):Float;
+ 	private function get_skewX():Float
+	{
+		updateTransformMatrix();
+		return skew.x;
+	}
 
 	/** @private */
-	//override public var skewY(get_skewY, set_skewY):Float;
- 	//private function get_skewY():Float
-	//{
-		//updateTransformMatrix();
-		//return super.skewY;
-	//}
+	public var skewY(get_skewY, null):Float;
+ 	private function get_skewY():Float
+	{
+		updateTransformMatrix();
+		return skew.y;
+	}
 
 	//--------------------------------------------------------------------------
 	//

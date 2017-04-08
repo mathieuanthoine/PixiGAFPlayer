@@ -1,6 +1,8 @@
 package com.github.haxePixiGAF.data;
 
 import com.github.haxePixiGAF.data.converters.ErrorConstants;
+import com.github.haxePixiGAF.data.textures.SubTexture;
+import js.Lib;
 import pixi.core.textures.Texture;
 
 import com.github.haxePixiGAF.data.config.CAnimationObject;
@@ -111,7 +113,7 @@ class GAFTimeline
 			return;
 		}
 
-		var textures:Map<String,Texture>;
+		var textures:Map<String,SubTexture>;
 		var csfConfig:CTextureAtlasCSF;
 
 		switch(content)
@@ -143,7 +145,7 @@ class GAFTimeline
 			
 				if(csfConfig.atlas==null && _gafgfxData.createTextures(scale, contentScaleFactor)!=null)
 				{
-					csfConfig.atlas=CTextureAtlas.createFromTextures(_gafgfxData.getTextures(scale, contentScaleFactor), csfConfig);
+					csfConfig.atlas = CTextureAtlas.createFromTextures(_gafgfxData.getTextures(scale, contentScaleFactor), csfConfig);
 				}
 
 				return;

@@ -1,5 +1,6 @@
 package com.github.haxePixiGAF.display;
 
+import com.github.haxePixiGAF.data.textures.SubTexture;
 import pixi.core.math.Matrix;
 import pixi.core.textures.Texture;
 
@@ -23,7 +24,7 @@ class GAFTexture implements IGAFTexture
 	//--------------------------------------------------------------------------
 
 	private var _id:String;
-	private var _texture:Texture;
+	private var _texture:SubTexture;
 	private var _pivotMatrix:Matrix;
 
 	//--------------------------------------------------------------------------
@@ -32,7 +33,7 @@ class GAFTexture implements IGAFTexture
 	//
 	//--------------------------------------------------------------------------
 
-	public function new(id:String, texture:Texture, pivotMatrix:Matrix)
+	public function new(id:String, texture:SubTexture, pivotMatrix:Matrix)
 	{
 		_id=id;
 		_texture=texture;
@@ -82,8 +83,8 @@ class GAFTexture implements IGAFTexture
 	//
 	//--------------------------------------------------------------------------
 
-	public var texture(get_texture, null):Texture;
- 	private function get_texture():Texture
+	public var texture(get_texture, null):SubTexture;
+ 	private function get_texture():SubTexture
 	{
 		return _texture;
 	}

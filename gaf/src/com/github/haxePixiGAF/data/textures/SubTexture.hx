@@ -6,6 +6,7 @@ import pixi.core.textures.BaseTexture;
 import pixi.core.textures.Texture;
 
 /**
+ * TODO: check
  * AS3 Conversion of Starling SubTexture class
  * @author Mathieu Anthoine
  */
@@ -17,7 +18,7 @@ import pixi.core.textures.Texture;
  */
 class SubTexture extends Texture
 {
-	private var _parent:Texture;
+	private var _parent:SubTexture;
 	private var _ownsParent:Bool;
 	private var _region:Rectangle;
 	private var _rotated:Bool;
@@ -39,16 +40,103 @@ class SubTexture extends Texture
 	 *  @param scaleModifier  The scale factor of the SubTexture will be calculated by
 	 *					multiplying the parent texture's scale factor with this value.
 	 */
-	public function new(parent:Texture, region:Rectangle=null, ownsParent:Bool=false, pFrame:Rectangle=null, rotated:Bool=false, scaleModifier:Float=1)
-	{
-		//new(baseTexture:BaseTexture, ?frame:Rectangle, ?crop:Rectangle, ?trim:Rectangle, ?rotate:Bool);
-		//TODO
-		super(parent.baseTexture, pFrame, pFrame, pFrame, rotated);
-		
+	public function new(pParent:SubTexture, pRegion:Rectangle=null, pOwnsParent:Bool=false, pFrame:Rectangle=null, pRotated:Bool=false, pScaleModifier:Float=1)
+	{	
 		//starling_internal::setTo(parent, region, ownsParent, frame, rotated, scaleModifier);
-		setTo(parent, region, ownsParent, pFrame, rotated, scaleModifier);
+		super(pParent.baseTexture,pFrame,pRegion);
+		setTo(pParent, pRegion, pOwnsParent, pFrame, pRotated, pScaleModifier);
+		
 	}
 
+	public var base (get_base, null):BaseTexture;
+	private function get_base ():BaseTexture {
+		if (_parent != null) return _parent.baseTexture;
+		return baseTexture;
+	}
+	
+	/// The Context3DTextureFormat of the underlying texture data.
+	public var format(get_format, null) :  String;
+	private function get_format(): String
+	{
+		//if (_parent != null) return _parent.format;
+		//TODO ?
+		return "bgra";
+	}
+	
+	public var frameHeight(get_frameHeight, null):Float;
+	private function get_frameHeight():Float 
+	{
+		return frame.height;
+	}
+	
+	public var frameWidth(get_frameWidth, null):Float;
+	private function get_frameWidth():Float 
+	{
+		return frame.width;
+	}
+	
+	public static var maxSize(get_maxSize, null) : Int;
+	private static function get_maxSize():Int 
+	{
+		//TODO ?
+		return 0;
+	}
+	
+	public var mipMapping(get_mipMapping, null): Bool;
+	private function get_mipMapping():Bool 
+	{
+		return null;
+		//TODO: return _parent.mipMapping;
+	}
+	
+	public var nativeHeight(get_nativeHeight, null):Float;
+	private function get_nativeHeight():Float 
+	{
+		return height * _scale;
+	}
+	
+	public var nativeWidth(get_nativeWidth, null):Float;
+	private function get_nativeWidth():Float 
+	{
+		return width * _scale;
+	}
+	
+	public var premultipliedAlpha(get_premultipliedAlpha, null):Bool;
+	private function get_premultipliedAlpha():Bool 
+	{
+		if (_parent != null) return _parent.premultipliedAlpha;
+		return false;
+	}
+	
+	public var root(get_root, null): BaseTexture;
+	private function get_root():BaseTexture 
+	{
+		//if (_parent != null) return _parent.baseTexture;
+		return baseTexture;
+	}
+	
+	public var scale(get_scale, null):Float;
+	private function get_scale():Float 
+	{
+		return _scale;
+	}
+	
+	public var transformationMatrix(get_transformationMatrix, null) :Matrix;
+	private function get_transformationMatrix():Matrix 
+	{
+		return _transformationMatrix;
+	}
+	
+	public var transformationMatrixToRoot(get_transformationMatrixToRoot, null) :Matrix;
+	private function get_transformationMatrixToRoot():Matrix 
+	{
+		return _transformationMatrixToRoot;
+	}
+	
+	public static function empty (width:Float=0, height:Float=0, premultipliedAlpha:Bool = true, mipMapping:Bool = false, optimizeForRenderToTexture:Bool = false, scale:Float =-1, format:String = "bgra", forcePotTexture:Bool = false) : Texture {
+		return Texture.EMPTY;
+	}
+	
 	/** @private
 	 *
 	 *<p>Textures are supposed to be immutable, and Starling uses this assumption for
@@ -56,40 +144,39 @@ class SubTexture extends Texture
 	 *  the texture is not accessible to the outside, this can be overruled in order to avoid
 	 *  allocations.</p>
 	 */
-	/*starling_private*/ public function setTo(parent:Texture, region:Rectangle=null, ownsParent:Bool=false, pFrame:Rectangle=null, rotated:Bool=false, scaleModifier:Float=1):Void
+	/*starling_private*/ public function setTo(pParent:SubTexture, pRegion:Rectangle=null, pOwnsParent:Bool=false, pFrame:Rectangle=null, pRotated:Bool=false, pScaleModifier:Float=1):Void
 	{
 		if(_region==null) _region=new Rectangle(0,0,0,0);
-		if (region!=null) {
-			_region.x = region.x;
-			_region.y = region.y;
-			_region.width = region.width;
-			_region.height = region.height;
+		if (pRegion!=null) {
+			_region.x = pRegion.x;
+			_region.y = pRegion.y;
+			_region.width = pRegion.width;
+			_region.height = pRegion.height;
 		} else {
 			_region.x = 0;
 			_region.y = 0;
-			_region.width = parent.width;
-			_region.height = parent.height;
+			_region.width = pParent.width;
+			_region.height = pParent.height;
 		}
 
 		if(pFrame!=null)
 		{
 			if (frame!=null) {
 				frame.x=pFrame.x;
-				frame.y=pFrame.x;
+				frame.y=pFrame.y;
 				frame.width=pFrame.width;
 				frame.height=pFrame.height;
 			}
 			else frame=pFrame.clone();
 		}
-		else frame=null;
+		//else frame=null;
 
-		_parent=parent;
-		_ownsParent=ownsParent;
-		_rotated=rotated;
-		width=(rotated!=null ? _region.height:_region.width)/ scaleModifier;
-		height=(rotated!=null ? _region.width:_region.height)/ scaleModifier;
-		//TODO: check la notion de scale et de _parent
-		//_scale = _parent.scale * scaleModifier;
+		_parent=pParent;
+		_ownsParent=pOwnsParent;
+		_rotated=pRotated;
+		width=(pRotated!=null ? _region.height:_region.width)/ pScaleModifier;
+		height=(pRotated!=null ? _region.width:_region.height)/ pScaleModifier;
+		_scale = (_parent!=null ? _parent.scale : 1) * pScaleModifier;
 
 		if(frame!=null &&(frame.x>0 || frame.y>0 ||
 			frame.x+frame.width<width || frame.y+frame.height<height))
@@ -123,6 +210,8 @@ class SubTexture extends Texture
 			//TODO: déterminer quelle est la formule équivalente pour la concatenation
 			// Recheck dans tout le code AS3 ou il y a concat et ce que j'ai fait.
 			//_transformationMatrixToRoot.concat(texture._transformationMatrix);
+			_transformationMatrixToRoot.append(texture._transformationMatrix);
+			
 			texture=cast(texture.parent,SubTexture);
 		}
 	}
@@ -132,16 +221,14 @@ class SubTexture extends Texture
 	public override function destroy(?destroyBase:Bool):Void
 	{
 		if (_ownsParent) {
-			//_parent.dispose();
 			_parent.destroy();
 		}
-		//super.dispose();
 		super.destroy(destroyBase);
 	}
 
 	/** The texture which the SubTexture is based on. */
-	public var parent(get_parent, null):Texture;
- 	private function get_parent():Texture { return _parent;}
+	public var parent(get_parent, null):SubTexture;
+ 	private function get_parent():SubTexture { return _parent;}
 	
 	/** Indicates if the parent texture is disposed when this object is disposed. */
 	public var ownsParent(get_ownsParent, null):Bool;
@@ -155,45 +242,26 @@ class SubTexture extends Texture
 	 *
 	 *<p>CAUTION:not a copy, but the actual object! Do not modify!</p>*/
 	public var region(get_region, null):Rectangle;
- 	private function get_region():Rectangle { return _region;}
-
-	/** @inheritDoc */
-	public var transformationMatrix (get_transformationMatrix, null):Matrix;
- 	private function get_transformationMatrix():Matrix { return null /*_transformationMatrix*/;}
-
-	/** @inheritDoc */
-	public var transformationMatrixToRoot (get_transformationMatrixToRoot, null):Matrix;
- 	private function get_transformationMatrixToRoot():Matrix { return null /*_transformationMatrixToRoot*/;}
+ 	private function get_region():Rectangle { return _region;}	
 	
-	/** @inheritDoc */
- 	public var base (get_base, null):BaseTexture;
-	private function get_base():BaseTexture { return null/*_parent.base*/;}
+	   /** Creates a texture that contains a region (in pixels) of another texture. The new
+	 *  texture will reference the base texture; no data is duplicated.
+	 *
+	 *  @param texture  The texture you want to create a SubTexture from.
+	 *  @param region   The region of the parent texture that the SubTexture will show
+	 *                  (in points).
+	 *  @param frame    If the texture was trimmed, the frame rectangle can be used to restore
+	 *                  the trimmed area.
+	 *  @param rotated  If true, the SubTexture will show the parent region rotated by
+	 *                  90 degrees (CCW).
+	 *  @param scaleModifier  The scale factor of the new texture will be calculated by
+	 *                  multiplying the parent texture's scale factor with this value.
+	 */
+	public static function fromTexture(texture:SubTexture, region:Rectangle=null,
+									   frame:Rectangle=null, rotated:Bool=false,
+									   scaleModifier:Float=1.0):SubTexture
+	{
+		return new SubTexture(texture, region, false, frame, rotated, scaleModifier);
+	}
 	
-	/** @inheritDoc */
- 	public var root (get_root, null):Dynamic;
-	private function get_root():Dynamic/*ConcreteTexture*/ { return null /*_parent.root*/;}
-	
-	/** @inheritDoc */
- 	public var format (get_format, null):String;
-	private function get_format():String { return null /*_parent.format*/;}
-	
-	/** @inheritDoc */
-	public var nativeWidth (get_nativeWidth, null):Float;
-	private function get_nativeWidth():Float { return width * _scale;}
-	
-	/** @inheritDoc */
- 	public var nativeHeight (get_nativeHeight, null):Float;
-	private function get_nativeHeight():Float { return height * _scale;}
-	
-	/** @inheritDoc */
-	public var mipMapping (get_mipMapping, null):Bool;
- 	private function get_mipMapping():Bool { return null /* _parent.mipMapping*/; }
-	
-	/** @inheritDoc */
-	public var premultipliedAlpha (get_premultipliedAlpha, null):Bool;
- 	private function get_premultipliedAlpha():Bool { return null /*_parent.premultipliedAlpha*/;}
-	
-	/** @inheritDoc */
-	public var scale (get_scale, null):Float;
- 	private function get_scale():Float { return 1 /*_scale*/;}
 }

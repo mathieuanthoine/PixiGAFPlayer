@@ -3,6 +3,7 @@ package com.github.mathieuanthoine.gaf;
 import com.github.haxePixiGAF.core.GAFLoader;
 import com.github.haxePixiGAF.core.ZipToGAFAssetConverter;
 import com.github.haxePixiGAF.data.GAFBundle;
+import com.github.haxePixiGAF.data.GAFGFXData;
 import com.github.haxePixiGAF.data.GAFTimeline;
 import com.github.haxePixiGAF.display.GAFImage;
 import com.github.haxePixiGAF.display.GAFMovieClip;
@@ -10,6 +11,7 @@ import com.github.haxePixiGAF.display.GAFTexture;
 import com.github.haxePixiGAF.display.IGAFTexture;
 import com.github.haxePixiGAF.events.GAFEvent;
 import js.Browser;
+import js.Lib;
 import pixi.core.display.Container;
 import pixi.core.math.Matrix;
 import pixi.core.renderers.Detector;
@@ -66,7 +68,7 @@ class Main
 	*/
 	private function new ()
 	{
-		renderer = Detector.autoDetectRenderer(960, 640, {backgroundColor : 0x000000});
+		renderer = Detector.autoDetectRenderer(960, 640, {backgroundColor : 0xCCCCCC});
 		Browser.document.body.appendChild(renderer.view);
 
 		stage = new Container();
@@ -84,7 +86,8 @@ class Main
 		//
 		//return;
 
-		urlsList.push("gun_swap/gun_swap.gaf");
+		urlsList.push("Test/Test.gaf");
+		//urlsList.push("gun_swap/gun_swap.gaf");
 		//urlsList.push("gun_swap/gun_swap.png");
 		//urlsList.push("gun_swap/gun_swap_2.png");
 		//urlsList.push("gun_swap/gun_swap_3.png");
@@ -130,10 +133,24 @@ class Main
 		
 		var gafBundle: GAFBundle = cast(pEvent.target,ZipToGAFAssetConverter).gafBundle;
 		//"gun_swap" - the name of the SWF which was converted to GAF
-		var gafTimeline: GAFTimeline = gafBundle.getGAFTimeline(FILE_NAME, "rootTimeline");
+		var gafTimeline: GAFTimeline = gafBundle.getGAFTimeline(/*FILE_NAME*/"Test", "rootTimeline");
 		
+		//var lTexture:IGAFTexture = new GAFTexture("a", gafTimeline.gafgfxData.getTexture(1, 1, "1"), new Matrix());
+//
+		//var lImage:GAFImage = new GAFImage(lTexture);
+		//stage.addChild(lImage);
+		//
+		//var lTexture:IGAFTexture = gafTimeline.getTextureByName("GUN");
+		//trace (lTexture);
+		//
+		//var lImage:GAFImage = new GAFImage(lTexture);
+		//stage.addChild(lImage);
+		//
+		//return;
+		
+		Lib.debug();
 		gafMovieClip = new GAFMovieClip(gafTimeline);
-		gafMovieClip.play(true);
+		//gafMovieClip.play(true);
 		stage.addChild(gafMovieClip);
 
 		//var lGAFTexture:IGAFTexture = new GAFTexture("test", Texture.fromImage("gun_swap/gun_swap.png"), new Matrix());
