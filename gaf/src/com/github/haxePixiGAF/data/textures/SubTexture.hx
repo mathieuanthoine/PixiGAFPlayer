@@ -21,7 +21,7 @@ class SubTexture extends TextureWrapper
 {
 	private var _parent:TextureWrapper;
 	private var _ownsParent:Bool;
-	//private var _region:Rectangle;
+	private var _region:Rectangle;
 	private var _rotated:Bool;
 	private var _scale:Float;	
 	private var _transformationMatrix:Matrix;
@@ -44,10 +44,10 @@ class SubTexture extends TextureWrapper
 	 */
 	public function new(pParent:TextureWrapper, pRegion:Rectangle=null, pOwnsParent:Bool=false, pFrame:Rectangle=null, pRotated:Bool=false, pScaleModifier:Float=1)
 	{	
-		if (!Std.is(pParent, TextureWrapper) && Std.is(pParent, Texture)) Lib.debug();
 		
 		//starling_internal::setTo(parent, region, ownsParent, frame, rotated, scaleModifier);
-		super(pParent.baseTexture, pFrame, pRegion);
+		super(pParent.baseTexture, pRegion);
+		//super(pParent.baseTexture, pFrame, pRegion);
 		setTo(pParent, pRegion, pOwnsParent, pFrame, pRotated, pScaleModifier);
 		
 	}
@@ -120,18 +120,18 @@ class SubTexture extends TextureWrapper
 	 */
 	/*starling_private*/ public function setTo(pParent:TextureWrapper, pRegion:Rectangle=null, pOwnsParent:Bool=false, pFrame:Rectangle=null, pRotated:Bool=false, pScaleModifier:Float=1):Void
 	{
-		//if(_region==null) _region=new Rectangle(0,0,0,0);
-		//if (pRegion!=null) {
-			//_region.x = pRegion.x;
-			//_region.y = pRegion.y;
-			//_region.width = pRegion.width;
-			//_region.height = pRegion.height;
-		//} else {
-			//_region.x = 0;
-			//_region.y = 0;
-			//_region.width = pParent.width;
-			//_region.height = pParent.height;
-		//}
+		if(_region==null) _region=new Rectangle(0,0,0,0);
+		if (pRegion!=null) {
+			_region.x = pRegion.x;
+			_region.y = pRegion.y;
+			_region.width = pRegion.width;
+			_region.height = pRegion.height;
+		} else {
+			_region.x = 0;
+			_region.y = 0;
+			_region.width = pParent.width;
+			_region.height = pParent.height;
+		}
 
 		//if(pFrame!=null)
 		//{
@@ -148,10 +148,8 @@ class SubTexture extends TextureWrapper
 		_parent=pParent;
 		_ownsParent=pOwnsParent;
 		_rotated=pRotated;
-		//width=(pRotated!=null ? _region.height:_region.width)/ pScaleModifier;
-		width=(pRotated!=null ? crop.height:crop.width)/ pScaleModifier;
-		//height=(pRotated!=null ? _region.width:_region.height)/ pScaleModifier;
-		height=(pRotated!=null ? crop.width:crop.height)/ pScaleModifier;
+		width=(pRotated ? _region.height:_region.width)/ pScaleModifier;
+		height=(pRotated ? _region.width:_region.height)/ pScaleModifier;
 		
 		_scale = (_parent!=null ? _parent.scale : 1) * pScaleModifier;
 
@@ -172,16 +170,14 @@ class SubTexture extends TextureWrapper
 		if(_transformationMatrixToRoot!=null) _transformationMatrixToRoot.identity();
 		else _transformationMatrixToRoot=new Matrix();
 
-		if(_rotated!=null)
+		if(_rotated)
 		{
 			_transformationMatrix.translate(0, -1);
 			_transformationMatrix.rotate(Math.PI / 2.0);
 		}
 
-		//_transformationMatrix.scale(_region.width  / _parent.width, _region.height / _parent.height);
-		_transformationMatrix.scale(crop.width  / _parent.width, crop.height / _parent.height);
-		//_transformationMatrix.translate(_region.x  / _parent.width, _region.y  / _parent.height);
-		_transformationMatrix.translate(crop.x  / _parent.width, crop.y  / _parent.height);
+		_transformationMatrix.scale(_region.width  / _parent.width, _region.height / _parent.height);
+		_transformationMatrix.translate(_region.x  / _parent.width, _region.y  / _parent.height);
 
 		var texture:SubTexture=this;
 		while(texture!=null)
@@ -223,8 +219,7 @@ class SubTexture extends TextureWrapper
 	 *<p>CAUTION:not a copy, but the actual object! Do not modify!</p>*/
 	public var region(get_region, null):Rectangle;
  	private function get_region():Rectangle { 
-		return crop;
-		//return _region;
+		return _region;
 	}	
 	
 }

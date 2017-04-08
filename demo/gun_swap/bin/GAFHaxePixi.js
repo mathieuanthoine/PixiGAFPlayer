@@ -3141,10 +3141,7 @@ var com_github_haxePixiGAF_data_textures_SubTexture = function(pParent,pRegion,p
 	if(pOwnsParent == null) {
 		pOwnsParent = false;
 	}
-	if(!js_Boot.__instanceof(pParent,com_github_haxePixiGAF_data_textures_TextureWrapper) && js_Boot.__instanceof(pParent,PIXI.Texture)) {
-		debugger;
-	}
-	com_github_haxePixiGAF_data_textures_TextureWrapper.call(this,pParent.baseTexture,pFrame,pRegion);
+	com_github_haxePixiGAF_data_textures_TextureWrapper.call(this,pParent.baseTexture,pRegion);
 	this.setTo(pParent,pRegion,pOwnsParent,pFrame,pRotated,pScaleModifier);
 };
 com_github_haxePixiGAF_data_textures_SubTexture.__name__ = ["com","github","haxePixiGAF","data","textures","SubTexture"];
@@ -3196,11 +3193,25 @@ com_github_haxePixiGAF_data_textures_SubTexture.prototype = $extend(com_github_h
 		if(pOwnsParent == null) {
 			pOwnsParent = false;
 		}
+		if(this._region == null) {
+			this._region = new PIXI.Rectangle(0,0,0,0);
+		}
+		if(pRegion != null) {
+			this._region.x = pRegion.x;
+			this._region.y = pRegion.y;
+			this._region.width = pRegion.width;
+			this._region.height = pRegion.height;
+		} else {
+			this._region.x = 0;
+			this._region.y = 0;
+			this._region.width = pParent.width;
+			this._region.height = pParent.height;
+		}
 		this._parent = pParent;
 		this._ownsParent = pOwnsParent;
 		this._rotated = pRotated;
-		this.width = (pRotated != null?this.crop.height:this.crop.width) / pScaleModifier;
-		this.height = (pRotated != null?this.crop.width:this.crop.height) / pScaleModifier;
+		this.width = (pRotated?this._region.height:this._region.width) / pScaleModifier;
+		this.height = (pRotated?this._region.width:this._region.height) / pScaleModifier;
 		this._scale = (this._parent != null?this._parent.get_scale():1) * pScaleModifier;
 		this.updateMatrices();
 	}
@@ -3215,12 +3226,12 @@ com_github_haxePixiGAF_data_textures_SubTexture.prototype = $extend(com_github_h
 		} else {
 			this._transformationMatrixToRoot = new PIXI.Matrix();
 		}
-		if(this._rotated != null) {
+		if(this._rotated) {
 			this._transformationMatrix.translate(0,-1);
 			this._transformationMatrix.rotate(Math.PI / 2.0);
 		}
-		this._transformationMatrix.scale(this.crop.width / this._parent.width,this.crop.height / this._parent.height);
-		this._transformationMatrix.translate(this.crop.x / this._parent.width,this.crop.y / this._parent.height);
+		this._transformationMatrix.scale(this._region.width / this._parent.width,this._region.height / this._parent.height);
+		this._transformationMatrix.translate(this._region.x / this._parent.width,this._region.y / this._parent.height);
 		var texture = this;
 		while(texture != null) {
 			this._transformationMatrixToRoot.append(texture._transformationMatrix);
@@ -3247,7 +3258,7 @@ com_github_haxePixiGAF_data_textures_SubTexture.prototype = $extend(com_github_h
 		return this._rotated;
 	}
 	,get_region: function() {
-		return this.crop;
+		return this._region;
 	}
 	,__class__: com_github_haxePixiGAF_data_textures_SubTexture
 });
@@ -3496,10 +3507,10 @@ com_github_haxePixiGAF_display_GAFImage.prototype = $extend(PIXI.Sprite.prototyp
 		return com_github_haxePixiGAF_display_GAFImage.HELPER_MATRIX;
 	}
 	,get_transformationMatrix: function() {
-		return null;
+		return this.worldTransform;
 	}
 	,set_transformationMatrix: function(matrix) {
-		return null;
+		return this.worldTransform = matrix;
 	}
 	,__class__: com_github_haxePixiGAF_display_GAFImage
 });
@@ -3562,7 +3573,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 			this.addChild(stencilMaskObject);
 			this.addChild(maskAsDisplayObject);
 		} else {
-			haxe_Log.trace("WARNING:mask object is missing. It might be disposed.",{ fileName : "GAFMovieClip.hx", lineNumber : 199, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "showMaskByID"});
+			haxe_Log.trace("WARNING:mask object is missing. It might be disposed.",{ fileName : "GAFMovieClip.hx", lineNumber : 200, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "showMaskByID"});
 		}
 	}
 	,hideMaskByID: function(id) {
@@ -3577,7 +3588,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 				this.removeChild(maskAsDisplayObject);
 			}
 		} else {
-			haxe_Log.trace("WARNING:mask object is missing. It might be disposed.",{ fileName : "GAFMovieClip.hx", lineNumber : 225, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "hideMaskByID"});
+			haxe_Log.trace("WARNING:mask object is missing. It might be disposed.",{ fileName : "GAFMovieClip.hx", lineNumber : 226, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "hideMaskByID"});
 		}
 	}
 	,clearSequence: function() {
@@ -3638,7 +3649,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 	}
 	,advanceTime: function(passedTime) {
 		if(this._disposed) {
-			haxe_Log.trace("WARNING:GAFMovieClip is disposed but is not removed from the Juggler",{ fileName : "GAFMovieClip.hx", lineNumber : 378, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "advanceTime"});
+			haxe_Log.trace("WARNING:GAFMovieClip is disposed but is not removed from the Juggler",{ fileName : "GAFMovieClip.hx", lineNumber : 379, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "advanceTime"});
 			return;
 		} else if(this._config.get_disposed()) {
 			this.destroy();
@@ -3861,7 +3872,11 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 				}
 				if(displayObject != null) {
 					objectPivotMatrix = com_github_haxePixiGAF_display_GAFMovieClip.getTransformMatrix(displayObject,com_github_haxePixiGAF_display_GAFMovieClip.HELPER_MATRIX);
-					mc = js_Boot.__cast(displayObject , com_github_haxePixiGAF_display_GAFMovieClip);
+					if(js_Boot.__instanceof(displayObject,com_github_haxePixiGAF_display_GAFMovieClip)) {
+						mc = js_Boot.__cast(displayObject , com_github_haxePixiGAF_display_GAFMovieClip);
+					} else {
+						mc = null;
+					}
 					if(mc != null) {
 						if(instance.get_alpha() < 0) {
 							mc.reset();
@@ -3875,8 +3890,8 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 					}
 					displayObject.alpha = instance.get_alpha();
 					var key1 = instance.get_id();
-					if((__map_reserved[key1] != null?animationObjectsDictionary.getReserved(key1):animationObjectsDictionary.h[key1]).get_mask() == null) {
-						if(instance.get_maskID() != null) {
+					if(!(__map_reserved[key1] != null?animationObjectsDictionary.getReserved(key1):animationObjectsDictionary.h[key1]).get_mask()) {
+						if(instance.get_maskID() != "") {
 							this.renderDebug(mc,instance,true);
 							var key2 = instance.get_maskID();
 							var tmp = __map_reserved[key2];
@@ -3906,7 +3921,11 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 							} else {
 								throw new js__$Boot_HaxeError("Unable to find mask with ID " + instance.get_id());
 							}
-							mc = js_Boot.__cast(maskObject , com_github_haxePixiGAF_display_GAFMovieClip);
+							if(js_Boot.__instanceof(maskObject,com_github_haxePixiGAF_display_GAFMovieClip)) {
+								mc = js_Boot.__cast(maskObject , com_github_haxePixiGAF_display_GAFMovieClip);
+							} else {
+								mc = null;
+							}
 							if(mc != null && mc._started) {
 								mc._play(true);
 							}
@@ -3979,7 +3998,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 		if(asMask == null) {
 			asMask = false;
 		}
-		if(asMask != null) {
+		if(asMask) {
 			var _this = this._stencilMasksDictionary;
 			if(__map_reserved[id] != null) {
 				_this.setReserved(id,displayObject);
@@ -4619,10 +4638,11 @@ com_github_mathieuanthoine_gaf_Main.prototype = {
 		debugger;
 		this.gafMovieClip = new com_github_haxePixiGAF_display_GAFMovieClip(gafTimeline);
 		this.stage.addChild(this.gafMovieClip);
-		this.renderer.render(this.stage);
+		window.requestAnimationFrame($bind(this,this.gameLoop));
 	}
 	,gameLoop: function(pIdentifier) {
 		window.requestAnimationFrame($bind(this,this.gameLoop));
+		this.gafMovieClip.gotoAndStop((this.gafMovieClip.get_currentFrame() + 1) % this.gafMovieClip.get_totalFrames());
 		this.renderer.render(this.stage);
 	}
 	,destroy: function() {

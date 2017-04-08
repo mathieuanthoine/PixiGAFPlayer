@@ -157,7 +157,7 @@ class Main
 		//var lImage:GAFImage = new GAFImage(lGAFTexture);		
 		//stage.addChild(lImage);
 		
-		renderer.render(stage);
+		Browser.window.requestAnimationFrame(gameLoop);
 		
 	}
 
@@ -167,6 +167,7 @@ class Main
 	private function gameLoop(pIdentifier:Float)
 	{
 		Browser.window.requestAnimationFrame(gameLoop);
+		gafMovieClip.gotoAndStop((gafMovieClip.currentFrame+1)%gafMovieClip.totalFrames);
 		renderer.render(stage);
 	}
 

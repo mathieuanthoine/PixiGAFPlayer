@@ -457,7 +457,12 @@ class GAFImage extends Sprite implements IGAFImage implements IMaxSize implement
 	/////////////////////////////////////////////
 	
 	public var transformationMatrix(get_transformationMatrix,set_transformationMatrix):Matrix;
-	private function get_transformationMatrix():Matrix { return null; }
-	private function set_transformationMatrix(matrix:Matrix):Matrix { return null; }
+	private function get_transformationMatrix():Matrix {
+		return worldTransform;
+		
+	}
+	private function set_transformationMatrix(matrix:Matrix):Matrix {
+		return worldTransform=matrix;
+	}
 	
 }

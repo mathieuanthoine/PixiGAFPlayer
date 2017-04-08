@@ -47,6 +47,7 @@ class TextureWrapper extends Texture
 	private function get_mipMapping():Bool 
 	{
 		return false;
+		//return base.mipmap;
 	}
 	
 	public var nativeHeight(get_nativeHeight, null):Float;

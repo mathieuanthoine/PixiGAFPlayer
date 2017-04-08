@@ -12,6 +12,7 @@ import com.github.haxePixiGAF.data.config.CFilter;
 import com.github.haxePixiGAF.data.config.CFrameAction;
 import com.github.haxePixiGAF.data.config.CTextureAtlas;
 import com.github.haxePixiGAF.utils.DebugUtility;
+import com.github.mathieuanthoine.gaf.Main;
 import pixi.core.display.Container;
 import pixi.core.display.DisplayObject;
 import pixi.core.math.Matrix;
@@ -781,7 +782,10 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 				if(displayObject!=null)
 				{
 					objectPivotMatrix=getTransformMatrix(displayObject, HELPER_MATRIX);
-					mc=cast(displayObject, GAFMovieClip);
+					
+					if (Std.is(displayObject, GAFMovieClip)) mc = cast(displayObject, GAFMovieClip);
+					else mc = null;
+					
 					if(mc!=null)
 					{
 						if(instance.alpha<0)
@@ -803,10 +807,10 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 					displayObject.alpha=instance.alpha;
 
 					//if display object is not a mask
-					if(animationObjectsDictionary[instance.id].mask==null)
+					if(!animationObjectsDictionary[instance.id].mask)
 					{
 						//if display object is under mask
-						if(instance.maskID!=null)
+						if(instance.maskID!="")
 						{
 							renderDebug(mc, instance, true);
 
@@ -868,7 +872,9 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 								throw "Unable to find mask with ID " + instance.id;
 							}
 
-							mc=cast(maskObject, GAFMovieClip);
+							if (Std.is(maskObject, GAFMovieClip)) mc = cast(maskObject, GAFMovieClip);
+							else mc = null;
+							
 							if(mc!=null && mc._started)
 							{
 								mc._play(true);
@@ -988,7 +994,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 					}
 					else
 					{
-						displayObject=new GAFImage(texture);
+						displayObject = new GAFImage(texture);
 						//cast(displayObject,GAFImage).textureSmoothing=_smoothing;
 					}
 				case CAnimationObject.TYPE_TEXTFIELD:
@@ -1035,7 +1041,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 
 	private function addDisplayObject(id:String, displayObject:DisplayObject, asMask:Bool=false):Void
 	{
-		if(asMask!=null)
+		if(asMask)
 		{
 			_stencilMasksDictionary[id]=displayObject;
 		}
