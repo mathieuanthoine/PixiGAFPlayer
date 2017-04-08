@@ -906,7 +906,7 @@ com_github_haxePixiGAF_data_GAFGFXData.prototype = $extend(EventEmitter.prototyp
 		return null;
 	}
 	,disposeTextures: function(scale,csf,imageID) {
-		haxe_Log.trace("disposeTextures: TODO",{ fileName : "GAFGFXData.hx", lineNumber : 227, className : "com.github.haxePixiGAF.data.GAFGFXData", methodName : "disposeTextures"});
+		haxe_Log.trace("disposeTextures: TODO",{ fileName : "GAFGFXData.hx", lineNumber : 225, className : "com.github.haxePixiGAF.data.GAFGFXData", methodName : "disposeTextures"});
 	}
 	,addTexture: function(dictionary,tagfx,imageID) {
 		if(com_github_haxePixiGAF_utils_DebugUtility.RENDERING_DEBUG) {
@@ -918,7 +918,7 @@ com_github_haxePixiGAF_data_GAFGFXData.prototype = $extend(EventEmitter.prototyp
 				this._textureLoadersSet.set(tagfx,tagfx);
 				tagfx.on("textureReady",$bind(this,this.onTextureReady));
 			}
-			var v = com_github_haxePixiGAF_data_textures_SubTexture.fromTexture(tagfx.get_texture());
+			var v = com_github_haxePixiGAF_data_textures_TextureWrapper.fromTexture(tagfx.get_texture());
 			if(__map_reserved[imageID] != null) {
 				dictionary.setReserved(imageID,v);
 			} else {
@@ -942,7 +942,7 @@ com_github_haxePixiGAF_data_GAFGFXData.prototype = $extend(EventEmitter.prototyp
 			empty = false;
 			break;
 		}
-		haxe_Log.trace("isTexturesReady",{ fileName : "GAFGFXData.hx", lineNumber : 371, className : "com.github.haxePixiGAF.data.GAFGFXData", methodName : "get_isTexturesReady", customParams : [empty]});
+		haxe_Log.trace("isTexturesReady",{ fileName : "GAFGFXData.hx", lineNumber : 369, className : "com.github.haxePixiGAF.data.GAFGFXData", methodName : "get_isTexturesReady", customParams : [empty]});
 		return empty;
 	}
 	,__class__: com_github_haxePixiGAF_data_GAFGFXData
@@ -993,7 +993,7 @@ com_github_haxePixiGAF_data_GAFTimeline.prototype = {
 					this._gafgfxData.createTextures(scaleConfig.get_scale(),csfConfig1.get_csf());
 					textures = this._gafgfxData.getTextures(scaleConfig.get_scale(),csfConfig1.get_csf());
 					if(csfConfig1.get_atlas() == null && textures != null) {
-						haxe_Log.trace("A",{ fileName : "GAFTimeline.hx", lineNumber : 131, className : "com.github.haxePixiGAF.data.GAFTimeline", methodName : "loadInVideoMemory"});
+						haxe_Log.trace("A",{ fileName : "GAFTimeline.hx", lineNumber : 129, className : "com.github.haxePixiGAF.data.GAFTimeline", methodName : "loadInVideoMemory"});
 						csfConfig1.set_atlas(com_github_haxePixiGAF_data_config_CTextureAtlas.createFromTextures(textures,csfConfig1));
 					}
 				}
@@ -1014,7 +1014,7 @@ com_github_haxePixiGAF_data_GAFTimeline.prototype = {
 				return;
 			}
 			if(csfConfig.get_atlas() == null && this._gafgfxData.createTextures(pScale,csf) != null) {
-				haxe_Log.trace("C",{ fileName : "GAFTimeline.hx", lineNumber : 163, className : "com.github.haxePixiGAF.data.GAFTimeline", methodName : "loadInVideoMemory"});
+				haxe_Log.trace("C",{ fileName : "GAFTimeline.hx", lineNumber : 161, className : "com.github.haxePixiGAF.data.GAFTimeline", methodName : "loadInVideoMemory"});
 				csfConfig.set_atlas(com_github_haxePixiGAF_data_config_CTextureAtlas.createFromTextures(this._gafgfxData.getTextures(pScale,csf),csfConfig));
 			}
 			return;
@@ -1972,7 +1972,7 @@ com_github_haxePixiGAF_data_config_CTextFieldObjects.prototype = {
 	,__class__: com_github_haxePixiGAF_data_config_CTextFieldObjects
 };
 var com_github_haxePixiGAF_data_config_CTextureAtlas = function(textureAtlasesDictionary,textureAtlasConfig) {
-	haxe_Log.trace("CTEXTURE_ATLAS",{ fileName : "CTextureAtlas.hx", lineNumber : 43, className : "com.github.haxePixiGAF.data.config.CTextureAtlas", methodName : "new"});
+	haxe_Log.trace("CTEXTURE_ATLAS",{ fileName : "CTextureAtlas.hx", lineNumber : 41, className : "com.github.haxePixiGAF.data.config.CTextureAtlas", methodName : "new"});
 	this._textureAtlasesDictionary = textureAtlasesDictionary;
 	this._textureAtlasConfig = textureAtlasConfig;
 };
@@ -3063,9 +3063,73 @@ com_github_haxePixiGAF_data_tagfx_TAGFXsourcePixi.prototype = $extend(com_github
 		return "Texture_Pixi";
 	}
 	,get_texture: function() {
-		return PIXI.Texture.fromImage(this._source);
+		return new com_github_haxePixiGAF_data_textures_TextureWrapper(PIXI.BaseTexture.fromImage(this._source));
 	}
 	,__class__: com_github_haxePixiGAF_data_tagfx_TAGFXsourcePixi
+});
+var com_github_haxePixiGAF_data_textures_TextureWrapper = function(pBaseTexture,pFrame,pCrop,pTrim,pRotate) {
+	PIXI.Texture.call(this,pBaseTexture,pFrame,pCrop,pTrim,pRotate);
+};
+com_github_haxePixiGAF_data_textures_TextureWrapper.__name__ = ["com","github","haxePixiGAF","data","textures","TextureWrapper"];
+com_github_haxePixiGAF_data_textures_TextureWrapper.fromTexture = function(texture,region,frame,rotated,scaleModifier) {
+	if(scaleModifier == null) {
+		scaleModifier = 1.0;
+	}
+	if(rotated == null) {
+		rotated = false;
+	}
+	return new com_github_haxePixiGAF_data_textures_SubTexture(texture,region,false,frame,rotated,scaleModifier);
+};
+com_github_haxePixiGAF_data_textures_TextureWrapper.get_maxSize = function() {
+	return 4096;
+};
+com_github_haxePixiGAF_data_textures_TextureWrapper.__super__ = PIXI.Texture;
+com_github_haxePixiGAF_data_textures_TextureWrapper.prototype = $extend(PIXI.Texture.prototype,{
+	get_base: function() {
+		return null;
+	}
+	,get_format: function() {
+		return "bgra";
+	}
+	,get_frameHeight: function() {
+		if(this.frame != null) {
+			return this.frame.height;
+		} else {
+			return this.height;
+		}
+	}
+	,get_frameWidth: function() {
+		if(this.frame != null) {
+			return this.frame.width;
+		} else {
+			return this.width;
+		}
+	}
+	,get_mipMapping: function() {
+		return false;
+	}
+	,get_nativeHeight: function() {
+		return 0;
+	}
+	,get_nativeWidth: function() {
+		return 0;
+	}
+	,get_premultipliedAlpha: function() {
+		return false;
+	}
+	,get_root: function() {
+		return null;
+	}
+	,get_scale: function() {
+		return 1;
+	}
+	,get_transformationMatrix: function() {
+		return null;
+	}
+	,get_transformationMatrixToRoot: function() {
+		return null;
+	}
+	,__class__: com_github_haxePixiGAF_data_textures_TextureWrapper
 });
 var com_github_haxePixiGAF_data_textures_SubTexture = function(pParent,pRegion,pOwnsParent,pFrame,pRotated,pScaleModifier) {
 	if(pScaleModifier == null) {
@@ -3077,59 +3141,17 @@ var com_github_haxePixiGAF_data_textures_SubTexture = function(pParent,pRegion,p
 	if(pOwnsParent == null) {
 		pOwnsParent = false;
 	}
-	PIXI.Texture.call(this,pParent.baseTexture,pFrame,pRegion);
+	if(!js_Boot.__instanceof(pParent,com_github_haxePixiGAF_data_textures_TextureWrapper) && js_Boot.__instanceof(pParent,PIXI.Texture)) {
+		debugger;
+	}
+	com_github_haxePixiGAF_data_textures_TextureWrapper.call(this,pParent.baseTexture,pFrame,pRegion);
 	this.setTo(pParent,pRegion,pOwnsParent,pFrame,pRotated,pScaleModifier);
 };
 com_github_haxePixiGAF_data_textures_SubTexture.__name__ = ["com","github","haxePixiGAF","data","textures","SubTexture"];
-com_github_haxePixiGAF_data_textures_SubTexture.get_maxSize = function() {
-	return 0;
-};
-com_github_haxePixiGAF_data_textures_SubTexture.empty = function(width,height,premultipliedAlpha,mipMapping,optimizeForRenderToTexture,scale,format,forcePotTexture) {
-	if(forcePotTexture == null) {
-		forcePotTexture = false;
-	}
-	if(format == null) {
-		format = "bgra";
-	}
-	if(scale == null) {
-		scale = -1;
-	}
-	if(optimizeForRenderToTexture == null) {
-		optimizeForRenderToTexture = false;
-	}
-	if(mipMapping == null) {
-		mipMapping = false;
-	}
-	if(premultipliedAlpha == null) {
-		premultipliedAlpha = true;
-	}
-	if(height == null) {
-		height = 0;
-	}
-	if(width == null) {
-		width = 0;
-	}
-	return PIXI.Texture.EMPTY;
-};
-com_github_haxePixiGAF_data_textures_SubTexture.fromTexture = function(texture,region,frame,rotated,scaleModifier) {
-	if(scaleModifier == null) {
-		scaleModifier = 1.0;
-	}
-	if(rotated == null) {
-		rotated = false;
-	}
-	return new com_github_haxePixiGAF_data_textures_SubTexture(texture,region,false,frame,rotated,scaleModifier);
-};
-com_github_haxePixiGAF_data_textures_SubTexture.__super__ = PIXI.Texture;
-com_github_haxePixiGAF_data_textures_SubTexture.prototype = $extend(PIXI.Texture.prototype,{
+com_github_haxePixiGAF_data_textures_SubTexture.__super__ = com_github_haxePixiGAF_data_textures_TextureWrapper;
+com_github_haxePixiGAF_data_textures_SubTexture.prototype = $extend(com_github_haxePixiGAF_data_textures_TextureWrapper.prototype,{
 	get_base: function() {
-		if(this._parent != null) {
-			return this._parent.baseTexture;
-		}
-		return this.baseTexture;
-	}
-	,get_format: function() {
-		return "bgra";
+		return this._parent.baseTexture;
 	}
 	,get_frameHeight: function() {
 		return this.frame.height;
@@ -3138,7 +3160,7 @@ com_github_haxePixiGAF_data_textures_SubTexture.prototype = $extend(PIXI.Texture
 		return this.frame.width;
 	}
 	,get_mipMapping: function() {
-		return null;
+		return this._parent.get_mipMapping();
 	}
 	,get_nativeHeight: function() {
 		return this.height * this._scale;
@@ -3146,14 +3168,14 @@ com_github_haxePixiGAF_data_textures_SubTexture.prototype = $extend(PIXI.Texture
 	,get_nativeWidth: function() {
 		return this.width * this._scale;
 	}
+	,get_format: function() {
+		return this._parent.get_format();
+	}
 	,get_premultipliedAlpha: function() {
-		if(this._parent != null) {
-			return this._parent.get_premultipliedAlpha();
-		}
-		return false;
+		return this._parent.get_premultipliedAlpha();
 	}
 	,get_root: function() {
-		return this.baseTexture;
+		return this._parent.get_root();
 	}
 	,get_scale: function() {
 		return this._scale;
@@ -3174,39 +3196,12 @@ com_github_haxePixiGAF_data_textures_SubTexture.prototype = $extend(PIXI.Texture
 		if(pOwnsParent == null) {
 			pOwnsParent = false;
 		}
-		if(this._region == null) {
-			this._region = new PIXI.Rectangle(0,0,0,0);
-		}
-		if(pRegion != null) {
-			this._region.x = pRegion.x;
-			this._region.y = pRegion.y;
-			this._region.width = pRegion.width;
-			this._region.height = pRegion.height;
-		} else {
-			this._region.x = 0;
-			this._region.y = 0;
-			this._region.width = pParent.width;
-			this._region.height = pParent.height;
-		}
-		if(pFrame != null) {
-			if(this.frame != null) {
-				this.frame.x = pFrame.x;
-				this.frame.y = pFrame.y;
-				this.frame.width = pFrame.width;
-				this.frame.height = pFrame.height;
-			} else {
-				this.frame = pFrame.clone();
-			}
-		}
 		this._parent = pParent;
 		this._ownsParent = pOwnsParent;
 		this._rotated = pRotated;
-		this.width = (pRotated != null?this._region.height:this._region.width) / pScaleModifier;
-		this.height = (pRotated != null?this._region.width:this._region.height) / pScaleModifier;
+		this.width = (pRotated != null?this.crop.height:this.crop.width) / pScaleModifier;
+		this.height = (pRotated != null?this.crop.width:this.crop.height) / pScaleModifier;
 		this._scale = (this._parent != null?this._parent.get_scale():1) * pScaleModifier;
-		if(this.frame != null && (this.frame.x > 0 || this.frame.y > 0 || this.frame.x + this.frame.width < this.width || this.frame.y + this.frame.height < this.height)) {
-			haxe_Log.trace("[Starling] Warning:frames inside the texture's region are unsupported.",{ fileName : "SubTexture.hx", lineNumber : 184, className : "com.github.haxePixiGAF.data.textures.SubTexture", methodName : "setTo"});
-		}
 		this.updateMatrices();
 	}
 	,updateMatrices: function() {
@@ -3224,19 +3219,23 @@ com_github_haxePixiGAF_data_textures_SubTexture.prototype = $extend(PIXI.Texture
 			this._transformationMatrix.translate(0,-1);
 			this._transformationMatrix.rotate(Math.PI / 2.0);
 		}
-		this._transformationMatrix.scale(this._region.width / this._parent.width,this._region.height / this._parent.height);
-		this._transformationMatrix.translate(this._region.x / this._parent.width,this._region.y / this._parent.height);
+		this._transformationMatrix.scale(this.crop.width / this._parent.width,this.crop.height / this._parent.height);
+		this._transformationMatrix.translate(this.crop.x / this._parent.width,this.crop.y / this._parent.height);
 		var texture = this;
 		while(texture != null) {
 			this._transformationMatrixToRoot.append(texture._transformationMatrix);
-			texture = js_Boot.__cast(texture.get_parent() , com_github_haxePixiGAF_data_textures_SubTexture);
+			if(js_Boot.__instanceof(texture.get_parent(),com_github_haxePixiGAF_data_textures_SubTexture)) {
+				texture = js_Boot.__cast(texture.get_parent() , com_github_haxePixiGAF_data_textures_SubTexture);
+			} else {
+				texture = null;
+			}
 		}
 	}
 	,destroy: function(destroyBase) {
 		if(this._ownsParent) {
 			this._parent.destroy();
 		}
-		PIXI.Texture.prototype.destroy.call(this,destroyBase);
+		com_github_haxePixiGAF_data_textures_TextureWrapper.prototype.destroy.call(this,destroyBase);
 	}
 	,get_parent: function() {
 		return this._parent;
@@ -3248,7 +3247,7 @@ com_github_haxePixiGAF_data_textures_SubTexture.prototype = $extend(PIXI.Texture
 		return this._rotated;
 	}
 	,get_region: function() {
-		return this._region;
+		return this.crop;
 	}
 	,__class__: com_github_haxePixiGAF_data_textures_SubTexture
 });

@@ -65,17 +65,17 @@ import pixi.core.textures.Texture;
  */
 class TextureAtlas
 {
-	private var _atlasTexture:SubTexture;
-	private var _subTextures:Map<String,SubTexture>;
+	private var _atlasTexture:TextureWrapper;
+	private var _subTextures:Map<String,TextureWrapper>;
 	private var _subTextureNames:Array<String>;
 	
 	/** helper objects */
 	private static var sNames:Array<String>=[];
 	
 	/** Create a texture atlas from a texture by parsing the regions from an XML file. */
-	public function new(texture:SubTexture)
+	public function new(texture:TextureWrapper)
 	{
-		_subTextures=new Map<String,SubTexture>();
+		_subTextures=new Map<String,TextureWrapper>();
 		_atlasTexture=texture;
 	}
 	
@@ -87,16 +87,16 @@ class TextureAtlas
 	}
 	
 	/** Retrieves a SubTexture by name. Returns<code>null</code>if it is not found. */
-	public function getTexture(name:String):SubTexture
+	public function getTexture(name:String):TextureWrapper
 	{
 		return _subTextures[name];
 	}
 	
 	/** Returns all textures that start with a certain string, sorted alphabetically
 	 *(especially useful for "MovieClip"). */
-	public function getTextures(prefix:String="", ?out:Array<SubTexture>  ):Array<SubTexture>
+	public function getTextures(prefix:String="", ?out:Array<TextureWrapper>  ):Array<TextureWrapper>
 	{
-		if (out == null) out = new Array<SubTexture>();
+		if (out == null) out = new Array<TextureWrapper>();
 		for (name in getNames(prefix, sNames)) out[out.length] = getTexture(name);// avoid 'push'
 		
 		//sNames.length=0;
@@ -129,7 +129,7 @@ class TextureAtlas
 	 *  if no region with that name has been registered. */
 	public function getRegion(name:String):Rectangle
 	{
-		var subTexture:SubTexture=_subTextures[name];
+		var subTexture:SubTexture=cast _subTextures[name];
 		return subTexture!=null ? subTexture.region:null;
 	}
 	
@@ -137,7 +137,7 @@ class TextureAtlas
 	 *  has no frame. */
 	public function getFrame(name:String):Rectangle
 	{
-		var subTexture:SubTexture=_subTextures[name];
+		var subTexture:SubTexture=cast _subTextures[name];
 		return subTexture!=null ? subTexture.frame:null;
 	}
 	
@@ -145,7 +145,7 @@ class TextureAtlas
 	 *  SubTexture is thus rotated counter-clockwise to cancel out that transformation. */
 	public function getRotation(name:String):Bool
 	{
-		var subTexture:SubTexture=_subTextures[name];
+		var subTexture:SubTexture=cast _subTextures[name];
 		return subTexture!=null ? subTexture.rotated:false;
 	}
 
@@ -160,7 +160,7 @@ class TextureAtlas
 	/** Removes a region with a certain name. */
 	public function removeRegion(name:String):Void
 	{
-		var subTexture:SubTexture=_subTextures[name];
+		var subTexture:SubTexture=cast _subTextures[name];
 		//if(subTexture) subTexture.dispose();
 		if(subTexture!=null) subTexture.destroy();
 		_subTextures.remove(name);
@@ -168,8 +168,8 @@ class TextureAtlas
 	}
 	
 	/** The base texture that makes up the atlas. */
-	public var texture(get_texture, null):SubTexture;
- 	private function get_texture():SubTexture { return _atlasTexture;}
+	public var texture(get_texture, null):TextureWrapper;
+ 	private function get_texture():TextureWrapper { return _atlasTexture;}
 	
 	// utility methods
 

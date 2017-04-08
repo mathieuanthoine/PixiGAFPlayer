@@ -1,11 +1,9 @@
 package com.github.haxePixiGAF.data;
 import com.github.haxePixiGAF.data.tagfx.ITAGFX;
 import com.github.haxePixiGAF.data.tagfx.TAGFXBase;
-import com.github.haxePixiGAF.data.textures.SubTexture;
+import com.github.haxePixiGAF.data.textures.TextureWrapper;
 import com.github.haxePixiGAF.utils.DebugUtility;
 import eventemitter3.EventEmitter;
-import js.Lib;
-import pixi.core.textures.Texture;
 import pixi.interaction.EventTarget;
 
 /**
@@ -40,7 +38,7 @@ class GAFGFXData extends EventEmitter
 	//
 	//--------------------------------------------------------------------------
 
-	private var _texturesDictionary:Map<String,Map<String,Map<String,SubTexture>>>= new Map<String,Map<String,Map<String,SubTexture>>>();
+	private var _texturesDictionary:Map<String,Map<String,Map<String,TextureWrapper>>>= new Map<String,Map<String,Map<String,TextureWrapper>>>();
 	private var _taGFXDictionary:Map<String,Map<String,Map<String,ITAGFX>>> = new Map<String,Map<String,Map<String,ITAGFX>>>();
 
 	private var _textureLoadersSet:Map<ITAGFX,ITAGFX>=new Map<ITAGFX,ITAGFX>();
@@ -125,8 +123,8 @@ class GAFGFXData extends EventEmitter
 		{
 			var lScale:String = Std.string(scale);
 			var lCsf:String = Std.string(csf);
-			if (_texturesDictionary[lScale]==null) _texturesDictionary[lScale]=new Map<String,Map<String,SubTexture>>();
-			if (_texturesDictionary[lScale][lCsf]==null) _texturesDictionary[lScale][lCsf] =new Map<String,SubTexture>();
+			if (_texturesDictionary[lScale]==null) _texturesDictionary[lScale]=new Map<String,Map<String,TextureWrapper>>();
+			if (_texturesDictionary[lScale][lCsf]==null) _texturesDictionary[lScale][lCsf] =new Map<String,TextureWrapper>();
 
 			for(imageAtlasID in taGFXs.keys())
 			{
@@ -156,8 +154,8 @@ class GAFGFXData extends EventEmitter
 		{
 			var lScale:String = Std.string(scale);
 			var lCsf:String = Std.string(csf);
-			if (_texturesDictionary[lScale]==null) _texturesDictionary[lScale]=new Map<String,Map<String,SubTexture>>();
-			if (_texturesDictionary[lScale][lCsf]==null) _texturesDictionary[lScale][lCsf] =new Map<String,SubTexture>();
+			if (_texturesDictionary[lScale]==null) _texturesDictionary[lScale]=new Map<String,Map<String,TextureWrapper>>();
+			if (_texturesDictionary[lScale][lCsf]==null) _texturesDictionary[lScale][lCsf] =new Map<String,TextureWrapper>();
 
 			addTexture(_texturesDictionary[lScale][lCsf], taGFX, imageID);
 
@@ -170,7 +168,7 @@ class GAFGFXData extends EventEmitter
 	/**
 	 * Returns texture by unique key consist of scale + csf + imageID
 	 */
-	public function getTexture(scale:Float, csf:Float, imageID:String):SubTexture
+	public function getTexture(scale:Float, csf:Float, imageID:String):TextureWrapper
 	{
 		var lScale:String = Std.string(scale);
 		var lCsf:String = Std.string(csf);
@@ -203,7 +201,7 @@ class GAFGFXData extends EventEmitter
 	/**
 	 * Returns textures for specified scale and csf in Dynamic as combination key-value where key - is imageID and value - is Texture
 	 */
-	public function getTextures(scale:Float, csf:Float):Map<String,SubTexture>
+	public function getTextures(scale:Float, csf:Float):Map<String,TextureWrapper>
 	{
 		
 		var lScale:String = Std.string(scale);
@@ -275,7 +273,7 @@ class GAFGFXData extends EventEmitter
 	//
 	//--------------------------------------------------------------------------
 
-	private function addTexture(dictionary:Map<String,SubTexture>, tagfx:ITAGFX, imageID:String):Void
+	private function addTexture(dictionary:Map<String,TextureWrapper>, tagfx:ITAGFX, imageID:String):Void
 	{
 		
 		if(DebugUtility.RENDERING_DEBUG)
@@ -310,7 +308,7 @@ class GAFGFXData extends EventEmitter
 				tagfx.on(TAGFXBase.EVENT_TYPE_TEXTURE_READY, onTextureReady);
 			}
 
-			dictionary[imageID] = SubTexture.fromTexture(tagfx.texture);
+			dictionary[imageID] = TextureWrapper.fromTexture(tagfx.texture);
 			//dictionary[imageID] = cast Texture.fromImage(tagfx.texture.baseTexture.imageUrl);
 		}
 	}

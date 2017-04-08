@@ -1,10 +1,8 @@
 package com.github.haxePixiGAF.data.tagfx;
 
-import com.github.haxePixiGAF.data.textures.SubTexture;
+import com.github.haxePixiGAF.data.textures.TextureWrapper;
 import com.github.haxePixiGAF.events.IEventEmitter;
-import eventemitter3.EventEmitter;
 import pixi.core.math.Point;
-import pixi.core.textures.Texture;
 
 /**
  * AS3 Conversion
@@ -13,8 +11,8 @@ import pixi.core.textures.Texture;
  */
 interface ITAGFX extends IEventEmitter
 {
-	public var texture(get_texture, null):SubTexture;
- 	private function get_texture():SubTexture;
+	public var texture(get_texture, null):TextureWrapper;
+ 	private function get_texture():TextureWrapper;
 	
 	public var textureSize(get_textureSize, null):Point;
  	private function get_textureSize():Point;

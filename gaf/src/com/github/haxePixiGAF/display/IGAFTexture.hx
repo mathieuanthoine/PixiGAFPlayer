@@ -1,8 +1,7 @@
 package com.github.haxePixiGAF.display;
 
-import com.github.haxePixiGAF.data.textures.SubTexture;
+import com.github.haxePixiGAF.data.textures.TextureWrapper;
 import pixi.core.math.Matrix;
-import pixi.core.textures.Texture;
 
 /**
  * TODO: passer de Starling à Pixi
@@ -15,8 +14,8 @@ interface IGAFTexture
 	 * Returns Starling Texture object.
 	 * @return a Starling Texture object
 	 */
-	public var texture(get_texture, null):SubTexture;
- 	private function get_texture():SubTexture;
+	public var texture(get_texture, null):TextureWrapper;
+ 	private function get_texture():TextureWrapper;
 
 	/**
 	 * Returns pivot matrix of the static GAF display object.

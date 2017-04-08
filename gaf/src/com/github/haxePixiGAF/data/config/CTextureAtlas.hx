@@ -1,13 +1,11 @@
 package com.github.haxePixiGAF.data.config;
 
-import com.github.haxePixiGAF.data.textures.SubTexture;
 import com.github.haxePixiGAF.data.textures.TextureAtlas;
+import com.github.haxePixiGAF.data.textures.TextureWrapper;
 import com.github.haxePixiGAF.display.GAFScale9Texture;
 import com.github.haxePixiGAF.display.GAFTexture;
 import com.github.haxePixiGAF.display.IGAFTexture;
-import js.Lib;
 import pixi.core.math.Matrix;
-import pixi.core.textures.Texture;
 
 /**
  * TODO
@@ -52,7 +50,7 @@ class CTextureAtlas
 	//
 	//--------------------------------------------------------------------------
 
-	public static function createFromTextures(texturesDictionary:Map<String,SubTexture>,textureAtlasConfig:CTextureAtlasCSF):CTextureAtlas
+	public static function createFromTextures(texturesDictionary:Map<String,TextureWrapper>,textureAtlasConfig:CTextureAtlasCSF):CTextureAtlas
 	{
 		var atlasesDictionary:Map<String,TextureAtlas>=new Map<String,TextureAtlas>();
 
@@ -88,7 +86,7 @@ class CTextureAtlas
 		if(textureAtlasElement!=null)
 		{
 			//var texture:Texture=gaf_internal::getTextureByIDAndAtlasID(id, textureAtlasElement.atlasID);
-			var texture:SubTexture=getTextureByIDAndAtlasID(id, textureAtlasElement.atlasID);
+			var texture:TextureWrapper=getTextureByIDAndAtlasID(id, textureAtlasElement.atlasID);
 
 			var pivotMatrix:Matrix;
 
@@ -121,7 +119,7 @@ class CTextureAtlas
 	//--------------------------------------------------------------------------
 
 	//TODO: 
-	/*gaf _private*/ public function getTextureByIDAndAtlasID(id:String, atlasID:String):SubTexture
+	/*gaf _private*/ public function getTextureByIDAndAtlasID(id:String, atlasID:String):TextureWrapper
 	{
 		var textureAtlas:TextureAtlas=_textureAtlasesDictionary[atlasID];
 

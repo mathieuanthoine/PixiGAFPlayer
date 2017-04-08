@@ -1,16 +1,14 @@
 package com.github.haxePixiGAF.data;
 
-import com.github.haxePixiGAF.data.converters.ErrorConstants;
-import com.github.haxePixiGAF.data.textures.SubTexture;
-import js.Lib;
-import pixi.core.textures.Texture;
-
 import com.github.haxePixiGAF.data.config.CAnimationObject;
 import com.github.haxePixiGAF.data.config.CTextureAtlas;
 import com.github.haxePixiGAF.data.config.CTextureAtlasCSF;
 import com.github.haxePixiGAF.data.config.CTextureAtlasScale;
+import com.github.haxePixiGAF.data.converters.ErrorConstants;
+import com.github.haxePixiGAF.data.textures.TextureWrapper;
 import com.github.haxePixiGAF.display.IGAFTexture;
 import com.github.haxePixiGAF.sound.GAFSoundData;
+
 
 /**
  *<p>GAFTimeline represents converted GAF file. It is like a library symbol in Flash IDE that contains all information about GAF animation.
@@ -113,7 +111,7 @@ class GAFTimeline
 			return;
 		}
 
-		var textures:Map<String,SubTexture>;
+		var textures:Map<String,TextureWrapper>;
 		var csfConfig:CTextureAtlasCSF;
 
 		switch(content)

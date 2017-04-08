@@ -1,6 +1,6 @@
 package com.github.haxePixiGAF.data.tagfx;
 
-import com.github.haxePixiGAF.data.textures.SubTexture;
+import com.github.haxePixiGAF.data.textures.TextureWrapper;
 import eventemitter3.EventEmitter;
 import pixi.core.math.Point;
 import pixi.core.textures.Texture;
@@ -38,7 +38,7 @@ class TAGFXBase extends EventEmitter implements ITAGFX
 	//
 	//--------------------------------------------------------------------------
 
-	private var _texture:SubTexture;
+	private var _texture:TextureWrapper;
 	private var _textureSize:Point;
 	private var _textureScale:Float=-1;
 	private var _textureFormat:String;
@@ -86,7 +86,7 @@ class TAGFXBase extends EventEmitter implements ITAGFX
 	//
 	//--------------------------------------------------------------------------
 
-	private function onTextureReady(texture:SubTexture):Void
+	private function onTextureReady(texture:TextureWrapper):Void
 	{
 		_isReady=true;
 		//dispatchEvent(new Event(EVENT_TYPE_TEXTURE_READY));
@@ -99,8 +99,8 @@ class TAGFXBase extends EventEmitter implements ITAGFX
 	//
 	//--------------------------------------------------------------------------
 
-	public var texture(get_texture, null):SubTexture;
- 	private function get_texture():SubTexture
+	public var texture(get_texture, null):TextureWrapper;
+ 	private function get_texture():TextureWrapper
 	{
 		return _texture;
 	}
