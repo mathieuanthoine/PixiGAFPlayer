@@ -1,12 +1,14 @@
 package com.github.haxePixiGAF.display;
 
 import com.github.haxePixiGAF.data.config.CFilter;
+import com.github.haxePixiGAF.utils.MatrixUtils;
 import pixi.core.display.DisplayObject;
 import pixi.core.math.Matrix;
 import pixi.core.math.Point;
 import pixi.core.math.shapes.Rectangle;
 import pixi.core.sprites.Sprite;
 import pixi.core.textures.Texture;
+import haxe.extern.EitherType;
 
 
 /**
@@ -45,13 +47,13 @@ class GAFImage extends Sprite implements IGAFImage implements IMaxSize implement
 
 	private var _maxSize:Point;
 
-	private var _pivotChanged:Bool;
+	private var _pivotChanged:Bool=false;
 
 	/** @private */
 	//gaf_private var __debugOriginalAlpha:Float=NaN;
 	public var __debugOriginalAlpha:Float=null;
 
-	private var _orientationChanged:Bool;
+	private var _orientationChanged:Bool=false;
 
 	//--------------------------------------------------------------------------
 	//
@@ -88,7 +90,7 @@ class GAFImage extends Sprite implements IGAFImage implements IMaxSize implement
 	/** @private */
 	public function invalidateOrientation():Void
 	{
-		_orientationChanged=true;
+		_orientationChanged = true;
 	}
 
 	/** @private */
@@ -160,7 +162,7 @@ class GAFImage extends Sprite implements IGAFImage implements IMaxSize implement
 	/** @private */
 	public function setFilterConfig(value:CFilter, scale:Float=1):Void
 	{
-		trace ("setFilterConfig: TODO");
+		//trace ("setFilterConfig: TODO");
 		
 		/*if(!Starling.current.contextValid)
 		{
@@ -253,7 +255,7 @@ class GAFImage extends Sprite implements IGAFImage implements IMaxSize implement
 	//private final function updateTransformMatrix():Void
 	private function updateTransformMatrix():Void
 	{
-		if(_orientationChanged!=null)
+		if(_orientationChanged)
 		{
 			transformationMatrix=transformationMatrix;
 			_orientationChanged=false;
@@ -269,7 +271,7 @@ class GAFImage extends Sprite implements IGAFImage implements IMaxSize implement
 	/**
 	 * Disposes all resources of the display object.
 	 */
-	override public function destroy():Void
+	override public function destroy(?options:EitherType<Bool, DestroyOptions>):Void
 	{
 		//if(filter!=null)
 		//{
@@ -280,7 +282,7 @@ class GAFImage extends Sprite implements IGAFImage implements IMaxSize implement
 		//_filterConfig=null;
 
 		//super.dispose();
-		super.destroy();
+		super.destroy(options);
 	}
 
 	
@@ -288,7 +290,7 @@ class GAFImage extends Sprite implements IGAFImage implements IMaxSize implement
 	
 	//override public function getBounds(targetSpace:DisplayObject, resultRect:Rectangle=null):Rectangle
 	//{
-		//if(resultRect==null)resultRect=new Rectangle(0,0,0,0);
+		//if(!resultRect)resultRect=new Rectangle(0,0,0,0);
 //
 		//if(targetSpace==this)// optimization
 		//{
@@ -439,30 +441,80 @@ class GAFImage extends Sprite implements IGAFImage implements IMaxSize implement
 
 		if(_pivotChanged)
 		{
-			//HELPER_MATRIX.tx=pivotX;
-			//HELPER_MATRIX.ty=pivotY;
+			HELPER_MATRIX.tx=pivotX;
+			HELPER_MATRIX.ty=pivotY;
 		}
-
+		
 		return HELPER_MATRIX;
 	}
 	
-	
-	
-	
-	
-	/////////////////////////////////////////////
-	
-	///// MATCH WITH PIXI JS ////////////////////
-	
-	/////////////////////////////////////////////
-	
 	public var transformationMatrix(get_transformationMatrix,set_transformationMatrix):Matrix;
 	private function get_transformationMatrix():Matrix {
-		return worldTransform;
+		
+		//if(_orientationChanged)
+		//{
+			//_orientationChanged=false;
+			//
+			//if(skew.x==0.0 && skew.y==0.0)
+			//{
+				//// optimization:no skewing / rotation simplifies the matrix math
+				//
+				//if(rotation==0.0)
+				//{
+					//worldTransform.a = scale.x;
+					//worldTransform.b = 0;
+					//worldTransform.c = 0;
+					//worldTransform.d = scale.y;
+					//worldTransform.tx = x - pivot.x * scale.x;
+					//worldTransform.ty = y - pivot.y * scale.y;
+					////.setTo(scale.x, 0.0, 0.0, scale.y,x - pivot.x * scale.x, y - pivot.y * scale.y);
+				//}
+				//else
+				//{
+					//var cos:Float=Math.cos(rotation);
+					//var sin:Float=Math.sin(rotation);
+					//var a:Float=scale.x *  cos;
+					//var b:Float=scale.x *  sin;
+					//var c:Float=scale.y * -sin;
+					//var d:Float=scale.y *  cos;
+					//var tx:Float=x - pivot.x * a - pivot.y * c;
+					//var ty:Float=y - pivot.x * b - pivot.y * d;
+					//
+					////worldTransform.setTo(a, b, c, d, tx, ty);
+					//
+					//worldTransform.a = a;
+					//worldTransform.b = b;
+					//worldTransform.c = c;
+					//worldTransform.d = d;
+					//worldTransform.tx = tx;
+					//worldTransform.ty = ty;
+//
+				//}
+			//}
+			//else
+			//{
+				//worldTransform.identity();
+				//worldTransform.scale(scale.x, scale.y);
+				////TODO : MatrixUtil.skew(worldTransform, skew.x, skew.y);
+				//worldTransform.rotate(rotation);
+				//worldTransform.translate(x, y);
+				//
+				//if(pivot.x !=0.0 || pivot.y !=0.0)
+				//{
+					//// prepend pivot transformation
+					//worldTransform.tx=x - worldTransform.a * pivot.x
+												  //- worldTransform.c * pivot.y;
+					//worldTransform.ty=y - worldTransform.b * pivot.x
+												  //- worldTransform.d * pivot.y;
+				//}
+			//}
+		//}
+		
+		return localTransform;
 		
 	}
 	private function set_transformationMatrix(matrix:Matrix):Matrix {
-		return worldTransform=matrix;
+		return localTransform=matrix;
 	}
 	
 }

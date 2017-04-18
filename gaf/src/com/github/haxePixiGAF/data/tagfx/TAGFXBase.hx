@@ -1,9 +1,9 @@
 package com.github.haxePixiGAF.data.tagfx;
 
 import com.github.haxePixiGAF.data.textures.TextureWrapper;
-import eventemitter3.EventEmitter;
 import pixi.core.math.Point;
 import pixi.core.textures.Texture;
+import pixi.interaction.EventEmitter;
 
 /**
  * Dispatched when he texture is decoded. It can only be used when the callback has been executed.
@@ -43,8 +43,8 @@ class TAGFXBase extends EventEmitter implements ITAGFX
 	private var _textureScale:Float=-1;
 	private var _textureFormat:String;
 	private var _source:Dynamic;
-	private var _clearSourceAfterTextureCreated:Bool;
-	private var _isReady:Bool;
+	private var _clearSourceAfterTextureCreated:Bool=false;
+	private var _isReady:Bool=false;
 
 	//--------------------------------------------------------------------------
 	//

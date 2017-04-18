@@ -141,7 +141,7 @@ class GAFTimeline
 					return;
 				}
 			
-				if(csfConfig.atlas==null && _gafgfxData.createTextures(scale, contentScaleFactor)!=null)
+				if(csfConfig.atlas==null && _gafgfxData.createTextures(scale, contentScaleFactor))
 				{
 					csfConfig.atlas = CTextureAtlas.createFromTextures(_gafgfxData.getTextures(scale, contentScaleFactor), csfConfig);
 				}
@@ -156,7 +156,7 @@ class GAFTimeline
 					return;
 				}
 
-				if(csfConfig.atlas==null && _gafgfxData.createTextures(pScale, csf)!=null)
+				if(csfConfig.atlas==null && _gafgfxData.createTextures(pScale, csf))
 				{
 					trace ("C");
 					csfConfig.atlas=CTextureAtlas.createFromTextures(_gafgfxData.getTextures(pScale, csf), csfConfig);

@@ -13,9 +13,7 @@ import com.github.haxePixiGAF.events.GAFEvent;
 import com.github.haxePixiGAF.sound.GAFSoundData;
 import com.github.haxePixiGAF.utils.GAFBytesInput;
 import com.github.haxePixiGAF.utils.MathUtility;
-import eventemitter3.EventEmitter;
-import js.Lib;
-import pixi.interaction.EventTarget;
+import pixi.interaction.EventEmitter;
 import pixi.loaders.Loader;
 
 /**
@@ -86,8 +84,8 @@ class ZipToGAFAssetConverter extends EventEmitter
 	private var _defaultScale:Float;
 	private var _defaultContentScaleFactor:Float;
 
-	private var _parseConfigAsync:Bool;
-	private var _ignoreSounds:Bool;
+	private var _parseConfigAsync:Bool=false;
+	private var _ignoreSounds:Bool=false;
 
 	///////////////////////////////////
 
@@ -327,7 +325,7 @@ class ZipToGAFAssetConverter extends EventEmitter
 		}
 	}
 	
-	private function createGAFTimelines(event:EventTarget=null):Void
+	private function createGAFTimelines(event:Dynamic=null):Void
 	{
 		
 		if (event != null) {
@@ -370,7 +368,7 @@ class ZipToGAFAssetConverter extends EventEmitter
 			_gafBundle.addGAFAsset(gafAsset);
 		}
 
-		if(gafAsset==null || gafAsset.timelines.length==null)
+		if(gafAsset==null || gafAsset.timelines.length==0)
 		{
 			//zipProcessError(ErrorConstants.TIMELINES_NOT_FOUND);
 			return;
@@ -517,7 +515,7 @@ class ZipToGAFAssetConverter extends EventEmitter
 	//
 	//--------------------------------------------------------------------------
 
-	private function onConvertError(event:EventTarget):Void
+	private function onConvertError(event:Dynamic):Void
 	{
 		throw "ZipToGAFAssetConverter: " + event.type;
 		
@@ -531,7 +529,7 @@ class ZipToGAFAssetConverter extends EventEmitter
 		//}
 	}
 
-	private function onConverted(event:EventTarget):Void
+	private function onConverted(event:Dynamic):Void
 	{
 		//*use namespace gaf_internal;*/
 
@@ -546,7 +544,7 @@ class ZipToGAFAssetConverter extends EventEmitter
 		_gafAssetConfigs[configID]=converter.config;
 		
 		var sounds:Array<CSound>=converter.config.sounds;
-		if(sounds!=null && _ignoreSounds==null)
+		if(sounds!=null && !_ignoreSounds)
 		{
 			for(i in 0...sounds.length)
 			{
@@ -582,7 +580,7 @@ class ZipToGAFAssetConverter extends EventEmitter
 		}
 	}
 	
-	private function onTexturesReady(event:EventTarget):Void
+	private function onTexturesReady(event:Dynamic):Void
 	{
 		_gfxData.off(GAFGFXData.EVENT_TYPE_TEXTURES_READY, onTexturesReady);
 

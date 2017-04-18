@@ -20,9 +20,9 @@ import pixi.core.textures.Texture;
 class SubTexture extends TextureWrapper
 {
 	private var _parent:TextureWrapper;
-	private var _ownsParent:Bool;
+	private var _ownsParent:Bool=false;
 	private var _region:Rectangle;
-	private var _rotated:Bool;
+	private var _rotated:Bool=false;
 	private var _scale:Float;	
 	private var _transformationMatrix:Matrix;
 	private var _transformationMatrixToRoot:Matrix;
@@ -46,7 +46,7 @@ class SubTexture extends TextureWrapper
 	{	
 		
 		//starling_internal::setTo(parent, region, ownsParent, frame, rotated, scaleModifier);
-		super(pParent.baseTexture, pRegion);
+		super(pParent.baseTexture, pRegion,null,null,pRotated);
 		//super(pParent.baseTexture, pFrame, pRegion);
 		setTo(pParent, pRegion, pOwnsParent, pFrame, pRotated, pScaleModifier);
 		
@@ -148,8 +148,13 @@ class SubTexture extends TextureWrapper
 		_parent=pParent;
 		_ownsParent=pOwnsParent;
 		_rotated=pRotated;
-		width=(pRotated ? _region.height:_region.width)/ pScaleModifier;
-		height=(pRotated ? _region.width:_region.height)/ pScaleModifier;
+		
+		//width=(pRotated ? _region.height:_region.width)/ pScaleModifier;
+		//height=(pRotated ? _region.width:_region.height)/ pScaleModifier;
+		if (frame!=null) {
+			frame.width=(pRotated ? _region.height:_region.width)/ pScaleModifier;
+			frame.height=(pRotated ? _region.width:_region.height)/ pScaleModifier;
+		}
 		
 		_scale = (_parent!=null ? _parent.scale : 1) * pScaleModifier;
 

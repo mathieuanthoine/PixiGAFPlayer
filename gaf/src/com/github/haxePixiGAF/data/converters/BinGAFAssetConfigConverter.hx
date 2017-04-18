@@ -20,7 +20,6 @@ import com.github.haxePixiGAF.events.GAFEvent;
 import com.github.haxePixiGAF.utils.GAFBytesInput;
 import com.github.haxePixiGAF.utils.MathUtility;
 import com.github.haxePixiGAF.utils.MatrixUtils;
-import eventemitter3.EventEmitter;
 import haxe.Json;
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
@@ -28,6 +27,7 @@ import js.Lib;
 import pixi.core.math.Matrix;
 import pixi.core.math.Point;
 import pixi.core.math.shapes.Rectangle;
+import pixi.interaction.EventEmitter;
 
 /**
  * TODO
@@ -74,10 +74,10 @@ class BinGAFAssetConfigConverter extends EventEmitter
 
 
 	private var _time:Int;
-	private var _isTimeline:Bool;
+	private var _isTimeline:Bool=false;
 	private var _currentTimeline:GAFTimelineConfig;
-	private var _async:Bool;
-	private var _ignoreSounds:Bool;
+	private var _async:Bool=false;
+	private var _ignoreSounds:Bool=false;
 	
 	// --------------------------------------------------------------------------
 	//
@@ -362,7 +362,7 @@ class BinGAFAssetConfigConverter extends EventEmitter
 		var elementsLength:Int = _bytes.readUnsignedInt();
 		
 		var element:CTextureAtlasElement;
-		var hasScale9Grid:Bool;
+		var hasScale9Grid:Bool=false;
 		var scale9Grid:Rectangle=null;
 		var pivot:Point;
 		var topLeft:Point;
@@ -425,7 +425,7 @@ class BinGAFAssetConfigConverter extends EventEmitter
 				element.rotated=rotation;
 				elements.addElement(element);
 
-				if(element.rotated!=null)
+				if(element.rotated)
 				{
 					sHelperRectangle.x = 0;
 					sHelperRectangle.y = 0;
@@ -611,11 +611,11 @@ class BinGAFAssetConfigConverter extends EventEmitter
 		var alpha:Float;
 		var matrix:Matrix;
 		var maskID:String;
-		var hasMask:Bool;
-		var hasEffect:Bool;
-		var hasActions:Bool;
-		var hasColorTransform:Bool;
-		var hasChangesInDisplayList:Bool;
+		var hasMask:Bool=false;
+		var hasEffect:Bool=false;
+		var hasActions:Bool=false;
+		var hasColorTransform:Bool=false;
+		var hasChangesInDisplayList:Bool=false;
 
 		var timelineConfig:GAFTimelineConfig=_config.timelines[_config.timelines.length - 1];
 		var instance:CAnimationFrameInstance;

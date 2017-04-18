@@ -1,4 +1,5 @@
 package com.github.haxePixiGAF.data.config;
+import js.Lib;
 import pixi.core.math.Matrix;
 
 /**
@@ -75,7 +76,6 @@ class CAnimationFrameInstance
 		ty=_matrix.ty;
 		_matrix.tx *=scale;
 		_matrix.ty *=scale;
-		//result.concat(_matrix);
 		result.append(_matrix);
 		_matrix.tx=tx;
 		_matrix.ty=ty;
@@ -85,13 +85,11 @@ class CAnimationFrameInstance
 
 	public function applyTransformMatrix(transformationMatrix:Matrix, pivotMatrix:Matrix, scale:Float):Void
 	{
-		// TODO : a verifier
-		pivotMatrix.copy(transformationMatrix); //transformationMatrix.copyFrom(pivotMatrix);
+		pivotMatrix.copy(transformationMatrix);
 		tx=_matrix.tx;
 		ty=_matrix.ty;
 		_matrix.tx *=scale;
 		_matrix.ty *=scale;
-		//transformationMatrix.concat(_matrix);
 		transformationMatrix.append(_matrix);
 		_matrix.tx=tx;
 		_matrix.ty=ty;

@@ -10,6 +10,7 @@ import com.github.haxePixiGAF.display.GAFMovieClip;
 import com.github.haxePixiGAF.display.GAFTexture;
 import com.github.haxePixiGAF.display.IGAFTexture;
 import com.github.haxePixiGAF.events.GAFEvent;
+import haxe.Timer;
 import js.Browser;
 import js.Lib;
 import pixi.core.display.Container;
@@ -18,7 +19,6 @@ import pixi.core.renderers.Detector;
 import pixi.core.renderers.webgl.WebGLRenderer;
 import pixi.core.sprites.Sprite;
 import pixi.core.textures.Texture;
-import pixi.interaction.EventTarget;
 import pixi.loaders.LoaderOptions;
 
 /**
@@ -86,8 +86,8 @@ class Main
 		//
 		//return;
 
-		urlsList.push("Test/Test.gaf");
-		//urlsList.push("gun_swap/gun_swap.gaf");
+		//urlsList.push("Test/Test.gaf");
+		urlsList.push("gun_swap/gun_swap.gaf");
 		//urlsList.push("gun_swap/gun_swap.png");
 		//urlsList.push("gun_swap/gun_swap_2.png");
 		//urlsList.push("gun_swap/gun_swap_3.png");
@@ -128,12 +128,12 @@ class Main
 		load();
 	}
 	
-	private function onConverted (pEvent:EventTarget):Void {
+	private function onConverted (pEvent:Dynamic):Void {
 		trace ("YEAH");
 		
 		var gafBundle: GAFBundle = cast(pEvent.target,ZipToGAFAssetConverter).gafBundle;
 		//"gun_swap" - the name of the SWF which was converted to GAF
-		var gafTimeline: GAFTimeline = gafBundle.getGAFTimeline(/*FILE_NAME*/"Test", "rootTimeline");
+		var gafTimeline: GAFTimeline = gafBundle.getGAFTimeline(FILE_NAME, "rootTimeline");
 		
 		//var lTexture:IGAFTexture = new GAFTexture("a", gafTimeline.gafgfxData.getTexture(1, 1, "1"), new Matrix());
 //
@@ -148,11 +148,14 @@ class Main
 		//
 		//return;
 		
-		Lib.debug();
+		//Lib.debug();
 		gafMovieClip = new GAFMovieClip(gafTimeline);
-		//gafMovieClip.play(true);
 		stage.addChild(gafMovieClip);
 
+		gafMovieClip.play(true);
+		//gafMovieClip.gotoAndStop(2);
+		//renderer.render(stage);
+		
 		//var lGAFTexture:IGAFTexture = new GAFTexture("test", Texture.fromImage("gun_swap/gun_swap.png"), new Matrix());
 		//var lImage:GAFImage = new GAFImage(lGAFTexture);		
 		//stage.addChild(lImage);
@@ -160,14 +163,19 @@ class Main
 		Browser.window.requestAnimationFrame(gameLoop);
 		
 	}
-
+	
 	/**
 	 * game loop
 	 */
 	private function gameLoop(pIdentifier:Float)
 	{
 		Browser.window.requestAnimationFrame(gameLoop);
-		gafMovieClip.gotoAndStop((gafMovieClip.currentFrame+1)%gafMovieClip.totalFrames);
+		gafMovieClip.advanceTime(0.02);
+		//gafMovieClip.gotoAndStop((gafMovieClip.currentFrame+1)%gafMovieClip.totalFrames);
+		render();
+	}
+	
+	public function render ():Void {
 		renderer.render(stage);
 	}
 

@@ -30,7 +30,6 @@
   <!-- haxelib libraries -->
   <haxelib>
     <library name="pixijs" />
-    <library name="eventemitter3" />
   </haxelib>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>

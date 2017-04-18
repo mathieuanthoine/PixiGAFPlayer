@@ -18,6 +18,6 @@ class CSound
 	public var rate:Int;
 	public var sampleSize:Int;
 	public var sampleCount:Int;
-	public var stereo:Bool;
+	public var stereo:Bool=false;
 	//public var sound:Sound;
 }

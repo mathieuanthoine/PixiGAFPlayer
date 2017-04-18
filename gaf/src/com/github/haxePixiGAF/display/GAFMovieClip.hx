@@ -13,6 +13,7 @@ import com.github.haxePixiGAF.data.config.CFrameAction;
 import com.github.haxePixiGAF.data.config.CTextureAtlas;
 import com.github.haxePixiGAF.utils.DebugUtility;
 import com.github.mathieuanthoine.gaf.Main;
+import js.Lib;
 import pixi.core.display.Container;
 import pixi.core.display.DisplayObject;
 import pixi.core.math.Matrix;
@@ -20,6 +21,7 @@ import pixi.core.math.Point;
 import pixi.core.math.shapes.Rectangle;
 import pixi.core.sprites.Sprite;
 import pixi.extras.MovieClip;
+import haxe.extern.EitherType;
 
 /** Dispatched when playhead reached first frame of sequence */
 //[Event(name="typeSequenceStart", type="starling.events.Event")]
@@ -74,17 +76,17 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 
 	private var _loop:Bool=true;
 	private var _skipFrames:Bool=true;
-	private var _reset:Bool;
-	private var _masked:Bool;
-	private var _inPlay:Bool;
-	private var _hidden:Bool;
-	private var _reverse:Bool;
-	private var _started:Bool;
-	private var _disposed:Bool;
-	private var _hasFilter:Bool;
-	private var _useClipping:Bool;
-	private var _alphaLessMax:Bool;
-	private var _addToJuggler:Bool;
+	private var _reset:Bool=false;
+	private var _masked:Bool=false;
+	private var _inPlay:Bool=false;
+	private var _hidden:Bool=false;
+	private var _reverse:Bool=false;
+	private var _started:Bool=false;
+	private var _disposed:Bool=false;
+	private var _hasFilter:Bool=false;
+	private var _useClipping:Bool=false;
+	private var _alphaLessMax:Bool=false;
+	private var _addToJuggler:Bool=false;
 
 	private var _scale:Float;
 	private var _contentScaleFactor:Float;
@@ -103,13 +105,13 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	private var _filterConfig:CFilter;
 	private var _filterScale:Float;
 
-	private var _pivotChanged:Bool;
+	private var _pivotChanged:Bool=false;
 
 	/** @private */
 	//gaf_private var __debugOriginalAlpha:Float=NaN;
 	private var __debugOriginalAlpha:Float=null;
 
-	private var _orientationChanged:Bool;
+	private var _orientationChanged:Bool=false;
 
 	//private var _stencilMaskStyle:GAFStencilMaskStyle;
 
@@ -130,6 +132,8 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	public function new(gafTimeline:GAFTimeline, pFps:Int=-1, addToJuggler:Bool=true)
 	{
 		super();
+		
+		trace ("_inPlay", _inPlay);
 		
 		_gafTimeline=gafTimeline;
 		_config=gafTimeline.config;
@@ -288,7 +292,6 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	 */
 	public function play(applyToAllChildren:Bool=false):Void
 	{
-		var applyToAllChildren:Bool = false;
 		
 		_started=true;
 
@@ -374,6 +377,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	 */
 	public function advanceTime(passedTime:Float):Void
 	{
+
 		if(_disposed)
 		{
 			trace("WARNING:GAFMovieClip is disposed but is not removed from the Juggler");
@@ -430,13 +434,13 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	{
 		if(_config.bounds!=null)
 		{
-			//if(_boundsAndPivot==null)
+			//if(!_boundsAndPivot)
 			//{
 				//_boundsAndPivot=new MeshBatch();
 				//updateBounds(_config.bounds);
 			//}
 //
-			//if(value!=null)
+			//if(value)
 			//{
 				//addChild(_boundsAndPivot);
 			//}
@@ -531,8 +535,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 			_inPlay=true;
 		}
 
-		if(applyToAllChildren
-				&& _config.animationConfigFrames.frames.length>0)
+		if(applyToAllChildren && _config.animationConfigFrames.frames.length>0)
 		{
 			var frameConfig:CAnimationFrame=_config.animationConfigFrames.frames[_currentFrame];
 			if(frameConfig.actions!=null)
@@ -561,7 +564,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 				if(Std.is(child, GAFMovieClip))
 				{
 					childMC=cast(child, GAFMovieClip);
-					if(calledByUser!=null)
+					if(calledByUser)
 					{
 						childMC.play(true);
 					}
@@ -593,7 +596,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 				if(Std.is(child, GAFMovieClip))
 				{
 					childMC=cast(child, GAFMovieClip);
-					if(calledByUser!=null)
+					if(calledByUser)
 					{
 						childMC.stop(true);
 					}
@@ -642,7 +645,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 		}
 
 		var i:Int, l:Int;
-		var actions:Array<CFrameAction>=_config.animationConfigFrames.frames[_currentFrame].actions;
+		var actions:Array<CFrameAction> = _config.animationConfigFrames.frames[_currentFrame].actions;
 		if(actions!=null)
 		{
 			var action:CFrameAction;
@@ -735,6 +738,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 
 	private function draw():Void
 	{
+		
 		var i:Int;
 		var l:Int;
 
@@ -835,12 +839,12 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 						else //if display object is not masked
 						{
 							renderDebug(mc, instance, _masked);
-
+							
 							instance.applyTransformMatrix(displayObject.transformationMatrix, objectPivotMatrix, _scale);
-							displayObject.invalidateOrientation();
+							displayObject.invalidateOrientation();														
 							displayObject.setFilterConfig(instance.filter, _scale);
-
-							addChild(cast(displayObject,DisplayObject));
+							addChild(cast(displayObject,DisplayObject));						
+							
 						}
 
 						if(mc!=null && mc._started)
@@ -901,7 +905,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 			////var alphaLessMax:Bool=instance.alpha<GAF.gaf_internal::maxAlpha || _alphaLessMax;
 			//var alphaLessMax:Bool=instance.alpha<GAF.maxAlpha || _alphaLessMax;
 //
-			//var changed:Bool;
+			//var changed:Bool=false;
 			//if(mc._alphaLessMax !=alphaLessMax)
 			//{
 				//mc._alphaLessMax=alphaLessMax;
@@ -1131,11 +1135,13 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	//private final function updateTransformMatrix():Void
 	private function updateTransformMatrix():Void
 	{
-		//if(_orientationChanged!=null)
-		//{
-			//transformationMatrix=transformationMatrix;
-			//_orientationChanged=false;
-		//}
+		trace ("TODO2 UPDATE");
+		
+		if(_orientationChanged)
+		{
+			transformationMatrix=transformationMatrix;
+			_orientationChanged=false;
+		}
 	}
 
 	//--------------------------------------------------------------------------
@@ -1234,10 +1240,10 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	 * from what<code>GAFMovieClip</code>was instantiated.
 	 * Call this method every time before delete no longer required instance! Otherwise GPU memory leak may occur!
 	 */
-	//override public function dispose():Void
-	override public function destroy():Void
+	//override public function dispose():Void	
+	override public function destroy(?options:EitherType<Bool, DestroyOptions>):Void
 	{
-		if(_disposed!=null)
+		if(_disposed)
 		{
 			return;
 		}
@@ -1259,7 +1265,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 			//_stencilMasksDictionary[key].dispose();
 		//}
 //
-		//if(_boundsAndPivot!=null)
+		//if(_boundsAndPivot)
 		//{
 			//_boundsAndPivot.dispose();
 			//_boundsAndPivot=null;
@@ -1277,7 +1283,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 		{
 			//removeFromParent();
 		}
-		super.destroy();
+		super.destroy(options);
 
 		_disposed=true;
 	}
@@ -1438,7 +1444,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 			checkPlaybackEvents();
 		}
 
-		//if(resetInvisibleChildren!=null)
+		//if(resetInvisibleChildren)
 		//{
 			////reset timelines that aren't visible
 			//var i:Int=_mcVector.length;
@@ -1504,7 +1510,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	 */
 	private function set_smoothing(value:String):String
 	{
-		//if(TextureSmoothing.isValid(value)!=null)
+		//if(TextureSmoothing.isValid(value))
 		//{
 			//_smoothing=value;
 //
@@ -1658,6 +1664,15 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 		return HELPER_MATRIX;
 	}
 
+	public var transformationMatrix(get_transformationMatrix,set_transformationMatrix):Matrix;
+	private function get_transformationMatrix():Matrix {
+		return localTransform;
+		
+	}
+	private function set_transformationMatrix(matrix:Matrix):Matrix {
+		return localTransform=matrix;
+	}	
+	
 	//--------------------------------------------------------------------------
 	//
 	//  STATIC METHODS
@@ -1671,16 +1686,6 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 		displayObject.pivotMatrix.copy(matrix);
 		return matrix;
 	}
-	
-	
-	/////////////////////////////////////////////
-	
-	///// MATCH WITH PIXI JS ////////////////////
-	
-	/////////////////////////////////////////////
-	
-	public var transformationMatrix(get_transformationMatrix,set_transformationMatrix):Matrix;
-	private function get_transformationMatrix():Matrix { return null; }
-	private function set_transformationMatrix(matrix:Matrix):Matrix { return null; }
+
 	
 }

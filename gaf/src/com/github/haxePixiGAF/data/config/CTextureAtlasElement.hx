@@ -27,7 +27,7 @@ class CTextureAtlasElement
 	private var _region:Rectangle;
 	private var _pivotMatrix:Matrix;
 	private var _scale9Grid:Rectangle;
-	private var _rotated:Bool;
+	private var _rotated:Bool=false;
 
 	//--------------------------------------------------------------------------
 	//

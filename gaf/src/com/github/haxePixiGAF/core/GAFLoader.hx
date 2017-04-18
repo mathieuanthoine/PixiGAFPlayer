@@ -24,7 +24,7 @@ class GAFLoader extends Loader
 		
 	}
 	
-	override public function load (?cb:Void->Void):ResourceLoader {
+	override public function load (?cb:Dynamic):ResourceLoader {
 		after(parseData);
 		return super.load();
 	}

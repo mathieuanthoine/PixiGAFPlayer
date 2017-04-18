@@ -14,7 +14,7 @@ class GAF
 	 * When use99alpha=false the number of draw call may be much more
 	 *(the number of draw calls depends on objects order in display list)
 	 */
-	public static var use99alpha:Bool;
+	public static var use99alpha:Bool=false;
 
 	/**
 	 * Play sounds, triggered by the event "gafPlaySound" in a frame of the GAFMovieClip.
@@ -24,10 +24,10 @@ class GAF
 	/**
 	 * Indicates if mipMaps will be created for PNG textures(or enabled for ATF textures).
 	 */
-	public static var useMipMaps:Bool;
+	public static var useMipMaps:Bool=false;
 
 	/** @private */
-	/*gaf_internal*/ public static var useDeviceFonts:Bool;
+	/*gaf_internal*/ public static var useDeviceFonts:Bool=false;
 
 	/** @private */
 	/*gaf_internal*/ public static var maxAlpha(get_maxAlpha, null):Float;

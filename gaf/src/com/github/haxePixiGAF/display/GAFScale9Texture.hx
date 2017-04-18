@@ -105,7 +105,7 @@ class GAFScale9Texture implements IGAFTexture
 	private function initialize():Void
 	{
 		//var textureFrame:Rectangle=_texture.frame;
-		//if(textureFrame==null)
+		//if(!textureFrame)
 		//{
 			//textureFrame=HELPER_RECTANGLE;
 			//textureFrame.setTo(0, 0, _texture.width, _texture.height);

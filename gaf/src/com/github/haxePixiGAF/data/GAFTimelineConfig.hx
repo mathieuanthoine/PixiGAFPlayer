@@ -51,7 +51,7 @@ class GAFTimelineConfig
 	private var _bounds:Rectangle;
 	private var _pivot:Point;
 	//private var _sounds:Dictionary;
-	private var _disposed:Bool;
+	private var _disposed:Bool=false;
 
 	//--------------------------------------------------------------------------
 	//

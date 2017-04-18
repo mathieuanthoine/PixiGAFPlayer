@@ -37,9 +37,6 @@ class CTextureAtlas
 
 	public function new(textureAtlasesDictionary:Map<String,TextureAtlas>, textureAtlasConfig:CTextureAtlasCSF)
 	{
-		
-		trace ("CTEXTURE_ATLAS");
-		
 		_textureAtlasesDictionary=textureAtlasesDictionary;
 		_textureAtlasConfig=textureAtlasConfig;
 	}

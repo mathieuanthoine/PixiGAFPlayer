@@ -3,8 +3,7 @@ import com.github.haxePixiGAF.data.tagfx.ITAGFX;
 import com.github.haxePixiGAF.data.tagfx.TAGFXBase;
 import com.github.haxePixiGAF.data.textures.TextureWrapper;
 import com.github.haxePixiGAF.utils.DebugUtility;
-import eventemitter3.EventEmitter;
-import pixi.interaction.EventTarget;
+import pixi.interaction.EventEmitter;
 
 /**
  * Dispatched when he texture is decoded. It can only be used when the callback has been executed.
@@ -302,7 +301,7 @@ class GAFGFXData extends EventEmitter
 		}
 		else if(dictionary[imageID]==null)
 		{
-			if(tagfx.ready==null)
+			if(!tagfx.ready)
 			{
 				_textureLoadersSet[tagfx] = tagfx;
 				tagfx.on(TAGFXBase.EVENT_TYPE_TEXTURE_READY, onTextureReady);
@@ -338,7 +337,7 @@ class GAFGFXData extends EventEmitter
 	//  EVENT HANDLERS
 	//
 	//--------------------------------------------------------------------------
-	private function onTextureReady(event:EventTarget):Void
+	private function onTextureReady(event:Dynamic):Void
 	{
 		var tagfx:ITAGFX=cast (event.target,ITAGFX);
 		tagfx.off(TAGFXBase.EVENT_TYPE_TEXTURE_READY, onTextureReady);
