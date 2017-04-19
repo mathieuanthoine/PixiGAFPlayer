@@ -1432,7 +1432,7 @@ com_github_haxePixiGAF_data_config_CAnimationFrameInstance.prototype = {
 		com_github_haxePixiGAF_data_config_CAnimationFrameInstance.ty = this._matrix.ty;
 		this._matrix.tx *= scale;
 		this._matrix.ty *= scale;
-		result.append(this._matrix);
+		com_github_haxePixiGAF_utils_MatrixUtils.concat(result,this._matrix).copy(result);
 		this._matrix.tx = com_github_haxePixiGAF_data_config_CAnimationFrameInstance.tx;
 		this._matrix.ty = com_github_haxePixiGAF_data_config_CAnimationFrameInstance.ty;
 		return result;
@@ -1443,7 +1443,7 @@ com_github_haxePixiGAF_data_config_CAnimationFrameInstance.prototype = {
 		com_github_haxePixiGAF_data_config_CAnimationFrameInstance.ty = this._matrix.ty;
 		this._matrix.tx *= scale;
 		this._matrix.ty *= scale;
-		transformationMatrix.append(this._matrix);
+		com_github_haxePixiGAF_utils_MatrixUtils.concat(transformationMatrix,this._matrix).copy(transformationMatrix);
 		this._matrix.tx = com_github_haxePixiGAF_data_config_CAnimationFrameInstance.tx;
 		this._matrix.ty = com_github_haxePixiGAF_data_config_CAnimationFrameInstance.ty;
 	}
@@ -2582,7 +2582,7 @@ com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.prototype = $e
 			if(elements.getElement(elementAtlasID == null?"null":"" + elementAtlasID) == null) {
 				element = new com_github_haxePixiGAF_data_config_CTextureAtlasElement(elementAtlasID == null?"null":"" + elementAtlasID,atlasID == null?"null":"" + atlasID);
 				element.set_region(new PIXI.Rectangle(topLeft.x | 0,topLeft.y | 0,elementWidth,elementHeight));
-				element.set_pivotMatrix(com_github_haxePixiGAF_utils_MatrixUtils.create(1 / elementScaleX,0,0,1 / elementScaleY,-pivot.x / elementScaleX,-pivot.y / elementScaleY));
+				element.set_pivotMatrix(new PIXI.Matrix(1 / elementScaleX,0,0,1 / elementScaleY,-pivot.x / elementScaleX,-pivot.y / elementScaleY));
 				element.set_scale9Grid(scale9Grid);
 				element.set_linkage(linkageName);
 				element.set_rotated(rotation);
@@ -2731,7 +2731,7 @@ com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.prototype = $e
 						if(alpha == 1) {
 							alpha = 1;
 						}
-						matrix = com_github_haxePixiGAF_utils_MatrixUtils.create(haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()));
+						matrix = new PIXI.Matrix(haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()));
 						filter = null;
 						if(hasColorTransform) {
 							var params = [haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32()),haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32())];
@@ -3257,7 +3257,7 @@ com_github_haxePixiGAF_data_textures_SubTexture.prototype = $extend(com_github_h
 		this._transformationMatrix.translate(this._region.x / this._parent.width,this._region.y / this._parent.height);
 		var texture = this;
 		while(texture != null) {
-			this._transformationMatrixToRoot.append(texture._transformationMatrix);
+			com_github_haxePixiGAF_utils_MatrixUtils.concat(this._transformationMatrixToRoot,texture._transformationMatrix).copy(this._transformationMatrixToRoot);
 			if(js_Boot.__instanceof(texture.get_parent(),com_github_haxePixiGAF_data_textures_SubTexture)) {
 				texture = js_Boot.__cast(texture.get_parent() , com_github_haxePixiGAF_data_textures_SubTexture);
 			} else {
@@ -3573,7 +3573,6 @@ var com_github_haxePixiGAF_display_GAFMovieClip = function(gafTimeline,pFps,addT
 	this._skipFrames = true;
 	this._loop = true;
 	PIXI.Container.call(this);
-	haxe_Log.trace("_inPlay",{ fileName : "GAFMovieClip.hx", lineNumber : 136, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "new", customParams : [this._inPlay]});
 	this._gafTimeline = gafTimeline;
 	this._config = gafTimeline.get_config();
 	this._scale = gafTimeline.get_scale();
@@ -3615,7 +3614,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 			this.addChild(stencilMaskObject);
 			this.addChild(maskAsDisplayObject);
 		} else {
-			haxe_Log.trace("WARNING:mask object is missing. It might be disposed.",{ fileName : "GAFMovieClip.hx", lineNumber : 204, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "showMaskByID"});
+			haxe_Log.trace("WARNING:mask object is missing. It might be disposed.",{ fileName : "GAFMovieClip.hx", lineNumber : 201, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "showMaskByID"});
 		}
 	}
 	,hideMaskByID: function(id) {
@@ -3630,7 +3629,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 				this.removeChild(maskAsDisplayObject);
 			}
 		} else {
-			haxe_Log.trace("WARNING:mask object is missing. It might be disposed.",{ fileName : "GAFMovieClip.hx", lineNumber : 230, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "hideMaskByID"});
+			haxe_Log.trace("WARNING:mask object is missing. It might be disposed.",{ fileName : "GAFMovieClip.hx", lineNumber : 227, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "hideMaskByID"});
 		}
 	}
 	,clearSequence: function() {
@@ -3695,7 +3694,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 	}
 	,advanceTime: function(passedTime) {
 		if(this._disposed) {
-			haxe_Log.trace("WARNING:GAFMovieClip is disposed but is not removed from the Juggler",{ fileName : "GAFMovieClip.hx", lineNumber : 383, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "advanceTime"});
+			haxe_Log.trace("WARNING:GAFMovieClip is disposed but is not removed from the Juggler",{ fileName : "GAFMovieClip.hx", lineNumber : 380, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "advanceTime"});
 			return;
 		} else if(this._config.get_disposed()) {
 			this.destroy();
@@ -4005,6 +4004,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 		this._mcVector = [];
 		this._currentFrame = 0;
 		this._totalFrames = this._config.get_framesCount();
+		haxe_Log.trace("TODO: Fps",{ fileName : "GAFMovieClip.hx", lineNumber : 974, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "initialize"});
 		this.set_fps(this._config.get_stageConfig() != null?this._config.get_stageConfig().fps:60);
 		var animationObjectsDictionary = this._config.get_animationObjects().get_animationObjectsDictionary();
 		var displayObject = null;
@@ -4088,7 +4088,6 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 		}
 	}
 	,updateTransformMatrix: function() {
-		haxe_Log.trace("TODO2 UPDATE",{ fileName : "GAFMovieClip.hx", lineNumber : 1138, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "updateTransformMatrix"});
 		if(this._orientationChanged) {
 			this.set_transformationMatrix(this.get_transformationMatrix());
 			this._orientationChanged = false;
@@ -4583,31 +4582,14 @@ com_github_haxePixiGAF_utils_MathUtility.getItemIndex = function(source,target) 
 };
 var com_github_haxePixiGAF_utils_MatrixUtils = function() { };
 com_github_haxePixiGAF_utils_MatrixUtils.__name__ = ["com","github","haxePixiGAF","utils","MatrixUtils"];
-com_github_haxePixiGAF_utils_MatrixUtils.create = function(pA,pB,pC,pD,pTx,pTy) {
-	if(pTy == null) {
-		pTy = 0;
-	}
-	if(pTx == null) {
-		pTx = 0;
-	}
-	if(pD == null) {
-		pD = 1;
-	}
-	if(pC == null) {
-		pC = 0;
-	}
-	if(pB == null) {
-		pB = 0;
-	}
-	if(pA == null) {
-		pA = 1;
-	}
+com_github_haxePixiGAF_utils_MatrixUtils.concat = function(pA,pB) {
 	var lMatrix = new PIXI.Matrix();
-	lMatrix.a = pA;
-	lMatrix.b = pB;
-	lMatrix.c = pC;
-	lMatrix.tx = pTx;
-	lMatrix.ty = pTy;
+	lMatrix.a = pB.a * pA.a + pB.c * pA.b;
+	lMatrix.b = -(pB.a * pA.c + pB.c * pA.d);
+	lMatrix.tx = pB.a * pA.tx + pB.c * pA.ty + pB.tx;
+	lMatrix.c = -(pB.b * pA.a + pB.d * pA.b);
+	lMatrix.d = pB.b * pA.c + pB.d * pA.d;
+	lMatrix.ty = pB.b * pA.tx + pB.d * pA.ty + pB.ty;
 	return lMatrix;
 };
 var com_github_haxePixiGAF_utils_VectorUtility = function() { };
@@ -4649,7 +4631,7 @@ var com_github_mathieuanthoine_gaf_Main = function() {
 	this.renderer = PIXI.autoDetectRenderer(960,640,{ backgroundColor : 13421772});
 	window.document.body.appendChild(this.renderer.view);
 	this.stage = new PIXI.Container();
-	this.urlsList.push("gun_swap/gun_swap.gaf");
+	this.urlsList.push("gun_swap" + "/" + "gun_swap" + ".gaf");
 	this.load();
 };
 com_github_mathieuanthoine_gaf_Main.__name__ = ["com","github","mathieuanthoine","gaf","Main"];
@@ -4665,7 +4647,7 @@ com_github_mathieuanthoine_gaf_Main.getInstance = function() {
 com_github_mathieuanthoine_gaf_Main.prototype = {
 	load: function() {
 		if(this.assetsID >= this.urlsList.length) {
-			haxe_Log.trace("END OF LOADING",{ fileName : "Main.hx", lineNumber : 106, className : "com.github.mathieuanthoine.gaf.Main", methodName : "load"});
+			haxe_Log.trace("END OF LOADING",{ fileName : "Main.hx", lineNumber : 90, className : "com.github.mathieuanthoine.gaf.Main", methodName : "load"});
 			var converter = new com_github_haxePixiGAF_core_ZipToGAFAssetConverter();
 			converter.on("complete",$bind(this,this.onConverted));
 			converter.convert(this.assetsList);
@@ -4678,13 +4660,13 @@ com_github_mathieuanthoine_gaf_Main.prototype = {
 		}
 	}
 	,onLoad: function(pLoader) {
-		haxe_Log.trace("onLoad",{ fileName : "Main.hx", lineNumber : 123, className : "com.github.mathieuanthoine.gaf.Main", methodName : "onLoad"});
+		haxe_Log.trace("onLoad",{ fileName : "Main.hx", lineNumber : 107, className : "com.github.mathieuanthoine.gaf.Main", methodName : "onLoad"});
 		this.assetsList.push(pLoader);
 		this.assetsID++;
 		this.load();
 	}
 	,onConverted: function(pEvent) {
-		haxe_Log.trace("YEAH",{ fileName : "Main.hx", lineNumber : 132, className : "com.github.mathieuanthoine.gaf.Main", methodName : "onConverted"});
+		haxe_Log.trace("YEAH",{ fileName : "Main.hx", lineNumber : 116, className : "com.github.mathieuanthoine.gaf.Main", methodName : "onConverted"});
 		this.gafMovieClip = new com_github_haxePixiGAF_display_GAFMovieClip((js_Boot.__cast(pEvent.target , com_github_haxePixiGAF_core_ZipToGAFAssetConverter)).get_gafBundle().getGAFTimeline("gun_swap","rootTimeline"));
 		this.stage.addChild(this.gafMovieClip);
 		this.gafMovieClip.play(true);

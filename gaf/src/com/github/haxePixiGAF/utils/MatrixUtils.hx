@@ -7,14 +7,17 @@ import pixi.core.math.Matrix;
  */
 class MatrixUtils
 {
-
-	public static function create (pA:Float = 1, pB:Float = 0, pC:Float = 0, pD:Float = 1, pTx:Float = 0, pTy:Float = 0):Matrix {
+	
+	public static function concat (pA:Matrix,pB:Matrix):Matrix {
 		var lMatrix:Matrix = new Matrix();
-		lMatrix.a = pA;
-		lMatrix.b = pB;
-		lMatrix.c = pC;
-		lMatrix.tx = pTx;
-		lMatrix.ty = pTy;
+		
+		lMatrix.a = pB.a*pA.a+pB.c*pA.b;
+		lMatrix.b = -(pB.a*pA.c+pB.c*pA.d);
+		lMatrix.tx = pB.a*pA.tx+pB.c*pA.ty+pB.tx;
+		lMatrix.c = -(pB.b*pA.a+pB.d*pA.b);
+		lMatrix.d = pB.b * pA.c + pB.d * pA.d;
+		lMatrix.ty = pB.b*pA.tx+pB.d*pA.ty+pB.ty;
+
 		return lMatrix;
 	}
 	

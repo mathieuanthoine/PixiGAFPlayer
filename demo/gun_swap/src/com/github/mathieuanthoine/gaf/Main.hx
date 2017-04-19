@@ -73,24 +73,8 @@ class Main
 
 		stage = new Container();
 
-		//
-		//var lBob:BytesOutput = new BytesOutput();
-		//lBob.bigEndian = false;
-		//lBob.writeFloat(1000002);
-		////lBob.position = 0;
-		//var lBill:BytesInput = new BytesInput(lBob.getBytes());
-		//trace (lBill.readInt32());
-		//
-		//// 1232348192
-		//// 1232348192
-		//
-		//return;
-
-		//urlsList.push("Test/Test.gaf");
-		urlsList.push("gun_swap/gun_swap.gaf");
-		//urlsList.push("gun_swap/gun_swap.png");
-		//urlsList.push("gun_swap/gun_swap_2.png");
-		//urlsList.push("gun_swap/gun_swap_3.png");
+		urlsList.push(FILE_NAME+"/"+FILE_NAME+".gaf");
+		
 
 		load();
 
@@ -161,7 +145,6 @@ class Main
 		//stage.addChild(lImage);
 		
 		Browser.window.requestAnimationFrame(gameLoop);
-		
 	}
 	
 	/**
@@ -170,7 +153,7 @@ class Main
 	private function gameLoop(pIdentifier:Float)
 	{
 		Browser.window.requestAnimationFrame(gameLoop);
-		gafMovieClip.advanceTime(0.02);
+		gafMovieClip.advanceTime(0.02/*0.002*/);
 		//gafMovieClip.gotoAndStop((gafMovieClip.currentFrame+1)%gafMovieClip.totalFrames);
 		render();
 	}

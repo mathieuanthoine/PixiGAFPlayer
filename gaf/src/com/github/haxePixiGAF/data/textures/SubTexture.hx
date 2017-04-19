@@ -1,5 +1,6 @@
 package com.github.haxePixiGAF.data.textures;
 
+import com.github.haxePixiGAF.utils.MatrixUtils;
 import js.Lib;
 import pixi.core.math.Matrix;
 import pixi.core.math.shapes.Rectangle;
@@ -187,10 +188,7 @@ class SubTexture extends TextureWrapper
 		var texture:SubTexture=this;
 		while(texture!=null)
 		{
-			//TODO: déterminer quelle est la formule équivalente pour la concatenation
-			// Recheck dans tout le code AS3 ou il y a concat et ce que j'ai fait.
-			//_transformationMatrixToRoot.concat(texture._transformationMatrix);
-			_transformationMatrixToRoot.append(texture._transformationMatrix);
+			MatrixUtils.concat(_transformationMatrixToRoot, texture._transformationMatrix).copy(_transformationMatrixToRoot);
 			
 			if (Std.is(texture.parent,SubTexture)) texture=cast(texture.parent,SubTexture);
 			else texture = null;

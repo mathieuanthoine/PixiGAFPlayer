@@ -20,7 +20,6 @@ import pixi.core.math.Matrix;
 import pixi.core.math.Point;
 import pixi.core.math.shapes.Rectangle;
 import pixi.core.sprites.Sprite;
-import pixi.extras.MovieClip;
 import haxe.extern.EitherType;
 
 /** Dispatched when playhead reached first frame of sequence */
@@ -132,8 +131,6 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	public function new(gafTimeline:GAFTimeline, pFps:Int=-1, addToJuggler:Bool=true)
 	{
 		super();
-		
-		trace ("_inPlay", _inPlay);
 		
 		_gafTimeline=gafTimeline;
 		_config=gafTimeline.config;
@@ -786,7 +783,6 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 				if(displayObject!=null)
 				{
 					objectPivotMatrix=getTransformMatrix(displayObject, HELPER_MATRIX);
-					
 					if (Std.is(displayObject, GAFMovieClip)) mc = cast(displayObject, GAFMovieClip);
 					else mc = null;
 					
@@ -839,7 +835,6 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 						else //if display object is not masked
 						{
 							renderDebug(mc, instance, _masked);
-							
 							instance.applyTransformMatrix(displayObject.transformationMatrix, objectPivotMatrix, _scale);
 							displayObject.invalidateOrientation();														
 							displayObject.setFilterConfig(instance.filter, _scale);
@@ -854,8 +849,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 
 						if(DebugUtility.RENDERING_DEBUG && Std.is(displayObject,IGAFDebug))
 						{
-							var colors:Array<Int>=DebugUtility.getRenderingDifficultyColor(
-									instance, _alphaLessMax, _masked, _hasFilter);
+							var colors:Array<Int>=DebugUtility.getRenderingDifficultyColor(instance, _alphaLessMax, _masked, _hasFilter);
 							cast(displayObject,IGAFDebug).debugColors=colors;
 						}
 					}
@@ -976,9 +970,9 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 		_mcVector=[];
 
 		_currentFrame=0;
-		_totalFrames=_config.framesCount;
+		_totalFrames = _config.framesCount;
+		trace ("TODO: Fps");
 		//fps=_config.stageConfig ? _config.stageConfig.fps:Starling.current.nativeStage.frameRate;
-		//TODO
 		fps=_config.stageConfig!=null ? _config.stageConfig.fps: 60;
 
 		var animationObjectsDictionary:Map<String,CAnimationObject>=_config.animationObjects.animationObjectsDictionary;
@@ -1134,9 +1128,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	//[Inline]
 	//private final function updateTransformMatrix():Void
 	private function updateTransformMatrix():Void
-	{
-		trace ("TODO2 UPDATE");
-		
+	{		
 		if(_orientationChanged)
 		{
 			transformationMatrix=transformationMatrix;

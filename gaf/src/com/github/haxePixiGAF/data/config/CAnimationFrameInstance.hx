@@ -1,4 +1,5 @@
 package com.github.haxePixiGAF.data.config;
+import com.github.haxePixiGAF.utils.MatrixUtils;
 import js.Lib;
 import pixi.core.math.Matrix;
 
@@ -76,7 +77,7 @@ class CAnimationFrameInstance
 		ty=_matrix.ty;
 		_matrix.tx *=scale;
 		_matrix.ty *=scale;
-		result.append(_matrix);
+		MatrixUtils.concat(result,_matrix).copy(result);
 		_matrix.tx=tx;
 		_matrix.ty=ty;
 
@@ -89,8 +90,8 @@ class CAnimationFrameInstance
 		tx=_matrix.tx;
 		ty=_matrix.ty;
 		_matrix.tx *=scale;
-		_matrix.ty *=scale;
-		transformationMatrix.append(_matrix);
+		_matrix.ty *= scale;
+		MatrixUtils.concat(transformationMatrix, _matrix).copy(transformationMatrix);
 		_matrix.tx=tx;
 		_matrix.ty=ty;
 	}
