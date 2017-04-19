@@ -5,7 +5,7 @@ package com.github.haxePixiGAF.events;
  */
 interface IEventEmitter 
 {
-	function listeners(event:String,exists:Bool):Array<Dynamic>;
+	function listeners(event:String):Array<Dynamic>;
 	function emit(event:String, ?a1:Dynamic, ?a2:Dynamic, ?a3:Dynamic, ?a4:Dynamic, ?a5:Dynamic):Bool;
 	function on(event:String, fn:Dynamic -> Void, ?context:Dynamic):Void;
 	function once(event:String, fn:Dynamic -> Void, ?context:Dynamic):Void;

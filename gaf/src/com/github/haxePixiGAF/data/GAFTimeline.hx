@@ -1,13 +1,14 @@
 package com.github.haxePixiGAF.data;
 
-import com.github.haxePixiGAF.data.converters.ErrorConstants;
-
 import com.github.haxePixiGAF.data.config.CAnimationObject;
 import com.github.haxePixiGAF.data.config.CTextureAtlas;
 import com.github.haxePixiGAF.data.config.CTextureAtlasCSF;
 import com.github.haxePixiGAF.data.config.CTextureAtlasScale;
+import com.github.haxePixiGAF.data.converters.ErrorConstants;
+import com.github.haxePixiGAF.data.textures.TextureWrapper;
 import com.github.haxePixiGAF.display.IGAFTexture;
 import com.github.haxePixiGAF.sound.GAFSoundData;
+
 
 /**
  *<p>GAFTimeline represents converted GAF file. It is like a library symbol in Flash IDE that contains all information about GAF animation.
@@ -102,14 +103,15 @@ class GAFTimeline
 	 * @param scale in case when specified content is<code>CONTENT_SPECIFY</code>scale and csf should be set in required values
 	 * @param csf in case when specified content is<code>CONTENT_SPECIFY</code>scale and csf should be set in required values
 	 */
-	public function loadInVideoMemory(content:String="contentDefault", ?scale:Float, ?csf:Float):Void
+	public function loadInVideoMemory(content:String="contentDefault", ?pScale:Float, ?csf:Float):Void
 	{
+
 		if(_config.textureAtlas==null || _config.textureAtlas.contentScaleFactor.elements==null)
 		{
 			return;
 		}
 
-		var textures:Dynamic;
+		var textures:Map<String,TextureWrapper>;
 		var csfConfig:CTextureAtlasCSF;
 
 		switch(content)
@@ -124,6 +126,7 @@ class GAFTimeline
 						textures=_gafgfxData.getTextures(scaleConfig.scale, csfConfig.csf);
 						if(csfConfig.atlas==null && textures!=null)
 						{
+							trace ("A");
 							csfConfig.atlas=CTextureAtlas.createFromTextures(textures, csfConfig);
 						}
 					}
@@ -137,25 +140,26 @@ class GAFTimeline
 				{
 					return;
 				}
-
-				if(csfConfig.atlas==null && _gafgfxData.createTextures(scale, contentScaleFactor)!=null)
+			
+				if(csfConfig.atlas==null && _gafgfxData.createTextures(scale, contentScaleFactor))
 				{
-					csfConfig.atlas=CTextureAtlas.createFromTextures(_gafgfxData.getTextures(scale, contentScaleFactor), csfConfig);
+					csfConfig.atlas = CTextureAtlas.createFromTextures(_gafgfxData.getTextures(scale, contentScaleFactor), csfConfig);
 				}
 
 				return;
 
 			case CONTENT_SPECIFY:
-				csfConfig=getCSFConfig(scale, csf);
+				csfConfig=getCSFConfig(pScale, csf);
 
 				if(csfConfig==null)
 				{
 					return;
 				}
 
-				if(csfConfig.atlas==null && _gafgfxData.createTextures(scale, csf)!=null)
+				if(csfConfig.atlas==null && _gafgfxData.createTextures(pScale, csf))
 				{
-					csfConfig.atlas=CTextureAtlas.createFromTextures(_gafgfxData.getTextures(scale, csf), csfConfig);
+					trace ("C");
+					csfConfig.atlas=CTextureAtlas.createFromTextures(_gafgfxData.getTextures(pScale, csf), csfConfig);
 				}
 				return;
 		}
@@ -168,7 +172,7 @@ class GAFTimeline
 	 * @param scale in case when specified content is CONTENT_SPECIFY scale and csf should be set in required values
 	 * @param csf in case when specified content is CONTENT_SPECIFY scale and csf should be set in required values
 	 */
-	public function unloadFromVideoMemory(content:String="contentDefault", ?scale:Float, ?csf:Float):Void
+	public function unloadFromVideoMemory(content:String="contentDefault", ?pScale:Float, ?csf:Float):Void
 	{
 		if(_config.textureAtlas==null || _config.textureAtlas.contentScaleFactor.elements==null)
 		{
@@ -184,14 +188,14 @@ class GAFTimeline
 				_config.dispose();
 				return;
 			case CONTENT_DEFAULT:
-				_gafgfxData.disposeTextures(scale, contentScaleFactor);
+				_gafgfxData.disposeTextures(pScale, contentScaleFactor);
 				_config.textureAtlas.contentScaleFactor.dispose();
 				return;
 			case CONTENT_SPECIFY:
-				csfConfig=getCSFConfig(scale, csf);
+				csfConfig=getCSFConfig(pScale, csf);
 				if(csfConfig!=null)
 				{
-					_gafgfxData.disposeTextures(scale, csf);
+					_gafgfxData.disposeTextures(pScale, csf);
 					csfConfig.dispose();
 				}
 				return;
@@ -307,6 +311,7 @@ class GAFTimeline
 	public var textureAtlas(get_textureAtlas, null):CTextureAtlas;
  	private function get_textureAtlas():CTextureAtlas
 	{
+		
 		if(_config.textureAtlas==null)
 		{
 			return null;
@@ -316,7 +321,7 @@ class GAFTimeline
 		{
 			loadInVideoMemory(CONTENT_DEFAULT);
 		}
-
+		
 		return _config.textureAtlas.contentScaleFactor.atlas;
 	}
 

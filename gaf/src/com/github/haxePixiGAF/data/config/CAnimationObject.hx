@@ -27,7 +27,7 @@ class CAnimationObject
 	private var _instanceID:String;
 	private var _regionID:String;
 	private var _type:String;
-	private var _mask:Bool;
+	private var _mask:Bool=false;
 	private var _maxSize:Point;
 
 	//--------------------------------------------------------------------------

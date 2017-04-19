@@ -1,11 +1,14 @@
 package com.github.haxePixiGAF.data.textures;
 
+import com.github.haxePixiGAF.utils.MatrixUtils;
+import js.Lib;
 import pixi.core.math.Matrix;
 import pixi.core.math.shapes.Rectangle;
 import pixi.core.textures.BaseTexture;
 import pixi.core.textures.Texture;
 
 /**
+ * TODO: check
  * AS3 Conversion of Starling SubTexture class
  * @author Mathieu Anthoine
  */
@@ -15,15 +18,16 @@ import pixi.core.textures.Texture;
  *
  *<p><em>Note that it is OK to create subtextures of subtextures.</em></p>
  */
-class SubTexture extends Texture
+class SubTexture extends TextureWrapper
 {
-	private var _parent:Texture;
-	private var _ownsParent:Bool;
+	private var _parent:TextureWrapper;
+	private var _ownsParent:Bool=false;
 	private var _region:Rectangle;
-	private var _rotated:Bool;
-	private var _scale:Float;
+	private var _rotated:Bool=false;
+	private var _scale:Float;	
 	private var _transformationMatrix:Matrix;
 	private var _transformationMatrixToRoot:Matrix;
+
 
 	/** Creates a new SubTexture containing the specified region of a parent texture.
 	 *
@@ -39,17 +43,75 @@ class SubTexture extends Texture
 	 *  @param scaleModifier  The scale factor of the SubTexture will be calculated by
 	 *					multiplying the parent texture's scale factor with this value.
 	 */
-	public function new(parent:Texture, region:Rectangle=null,
-							   ownsParent:Bool=false, frame:Rectangle=null,
-							   rotated:Bool=false, scaleModifier:Float=1)
-	{
-		//new(baseTexture:BaseTexture, ?frame:Rectangle, ?crop:Rectangle, ?trim:Rectangle, ?rotate:Bool);
-		super(null,null,null,null,null/*baseTexture,frame,crop,trim,rotate*/);
+	public function new(pParent:TextureWrapper, pRegion:Rectangle=null, pOwnsParent:Bool=false, pFrame:Rectangle=null, pRotated:Bool=false, pScaleModifier:Float=1)
+	{	
 		
 		//starling_internal::setTo(parent, region, ownsParent, frame, rotated, scaleModifier);
-		setTo(parent, region, ownsParent, frame, rotated, scaleModifier);
+		super(pParent.baseTexture, pRegion,null,null,pRotated);
+		//super(pParent.baseTexture, pFrame, pRegion);
+		setTo(pParent, pRegion, pOwnsParent, pFrame, pRotated, pScaleModifier);
+		
 	}
-
+	
+	override private function get_base ():BaseTexture {
+		return _parent.baseTexture;
+	}
+	
+	override private function get_frameHeight():Float 
+	{
+		return frame.height;
+	}
+	
+	override private function get_frameWidth():Float 
+	{
+		return frame.width;
+	}
+	
+	override private function get_mipMapping():Bool 
+	{
+		return _parent.mipMapping;
+	}
+	
+	override private function get_nativeHeight():Float 
+	{
+		return height * _scale;
+	}
+	
+	override private function get_nativeWidth():Float 
+	{
+		return width * _scale;
+	}
+	
+	override private function get_format():String 
+	{
+		return _parent.format;
+	}
+	
+	override private function get_premultipliedAlpha():Bool 
+	{
+		return _parent.premultipliedAlpha;
+	}
+	
+	override private function get_root():TextureWrapper 
+	{
+		return _parent.root;
+	}
+	
+	override private function get_scale():Float 
+	{
+		return _scale;
+	}
+	
+	override private function get_transformationMatrix():Matrix 
+	{
+		return _transformationMatrix;
+	}
+	
+	override private function get_transformationMatrixToRoot():Matrix 
+	{
+		return _transformationMatrixToRoot;
+	}
+	
 	/** @private
 	 *
 	 *<p>Textures are supposed to be immutable, and Starling uses this assumption for
@@ -57,58 +119,51 @@ class SubTexture extends Texture
 	 *  the texture is not accessible to the outside, this can be overruled in order to avoid
 	 *  allocations.</p>
 	 */
-	/*starling_private*/ function setTo(parent:Texture, region:Rectangle=null,
-									 ownsParent:Bool=false, frame:Rectangle=null,
-									 rotated:Bool=false, scaleModifier:Float=1):Void
+	/*starling_private*/ public function setTo(pParent:TextureWrapper, pRegion:Rectangle=null, pOwnsParent:Bool=false, pFrame:Rectangle=null, pRotated:Bool=false, pScaleModifier:Float=1):Void
 	{
 		if(_region==null) _region=new Rectangle(0,0,0,0);
-		if (region!=null) {
-			_region.x = region.x;
-			_region.y = region.y;
-			_region.width = region.width;
-			_region.height = region.height;
+		if (pRegion!=null) {
+			_region.x = pRegion.x;
+			_region.y = pRegion.y;
+			_region.width = pRegion.width;
+			_region.height = pRegion.height;
 		} else {
 			_region.x = 0;
 			_region.y = 0;
-			_region.width = parent.width;
-			_region.height = parent.height;
+			_region.width = pParent.width;
+			_region.height = pParent.height;
 		}
 
-		//if(frame!=null)
+		//if(pFrame!=null)
 		//{
-			//if (frame) {
-				//frame.x=frame.x;
-				//frame.y=frame.x;
-				//frame.width=frame.width;
-				//frame.height=frame.height;
+			//if (frame!=null) {
+				//frame.x=pFrame.x;
+				//frame.y=pFrame.y;
+				//frame.width=pFrame.width;
+				//frame.height=pFrame.height;
 			//}
-			//else frame=frame.clone();
+			//else frame=pFrame.clone();
 		//}
 		//else frame=null;
+
+		_parent=pParent;
+		_ownsParent=pOwnsParent;
+		_rotated=pRotated;
 		
-		//TODO: verifier que ca change rien en virant le getter/setter _frame
+		//width=(pRotated ? _region.height:_region.width)/ pScaleModifier;
+		//height=(pRotated ? _region.width:_region.height)/ pScaleModifier;
 		if (frame!=null) {
-			frame.x=frame.x;
-			frame.y=frame.x;
-			frame.width=frame.width;
-			frame.height=frame.height;
+			frame.width=(pRotated ? _region.height:_region.width)/ pScaleModifier;
+			frame.height=(pRotated ? _region.width:_region.height)/ pScaleModifier;
 		}
-		else frame=frame.clone();
 		
+		_scale = (_parent!=null ? _parent.scale : 1) * pScaleModifier;
 
-		_parent=parent;
-		_ownsParent=ownsParent;
-		_rotated=rotated;
-		width=(rotated!=null ? _region.height:_region.width)/ scaleModifier;
-		height=(rotated!=null ? _region.width:_region.height)/ scaleModifier;
-		//TODO: check la notion de scale et de _parent
-		//_scale = _parent.scale * scaleModifier;
-
-		if(frame!=null &&(frame.x>0 || frame.y>0 ||
-			frame.x+frame.width<width || frame.y+frame.height<height))
-		{
-			trace("[Starling] Warning:frames inside the texture's region are unsupported.");
-		}
+		//if(frame!=null &&(frame.x>0 || frame.y>0 ||
+			//frame.x+frame.width<width || frame.y+frame.height<height))
+		//{
+			//trace("[Starling] Warning:frames inside the texture's region are unsupported.");
+		//}
 
 		updateMatrices();
 	}
@@ -121,7 +176,7 @@ class SubTexture extends Texture
 		if(_transformationMatrixToRoot!=null) _transformationMatrixToRoot.identity();
 		else _transformationMatrixToRoot=new Matrix();
 
-		if(_rotated!=null)
+		if(_rotated)
 		{
 			_transformationMatrix.translate(0, -1);
 			_transformationMatrix.rotate(Math.PI / 2.0);
@@ -133,10 +188,10 @@ class SubTexture extends Texture
 		var texture:SubTexture=this;
 		while(texture!=null)
 		{
-			//TODO: déterminer quelle est la formule équivalente pour la concatenation
-			// Recheck dans tout le code AS3 ou il y a concat et ce que j'ai fait.
-			//_transformationMatrixToRoot.concat(texture._transformationMatrix);
-			texture=cast(texture.parent,SubTexture);
+			MatrixUtils.concat(_transformationMatrixToRoot, texture._transformationMatrix).copy(_transformationMatrixToRoot);
+			
+			if (Std.is(texture.parent,SubTexture)) texture=cast(texture.parent,SubTexture);
+			else texture = null;
 		}
 	}
 	
@@ -145,16 +200,14 @@ class SubTexture extends Texture
 	public override function destroy(?destroyBase:Bool):Void
 	{
 		if (_ownsParent) {
-			//_parent.dispose();
 			_parent.destroy();
 		}
-		//super.dispose();
 		super.destroy(destroyBase);
 	}
 
 	/** The texture which the SubTexture is based on. */
-	public var parent(get_parent, null):Texture;
- 	private function get_parent():Texture { return _parent;}
+	public var parent(get_parent, null):TextureWrapper;
+ 	private function get_parent():TextureWrapper { return _parent;}
 	
 	/** Indicates if the parent texture is disposed when this object is disposed. */
 	public var ownsParent(get_ownsParent, null):Bool;
@@ -168,45 +221,8 @@ class SubTexture extends Texture
 	 *
 	 *<p>CAUTION:not a copy, but the actual object! Do not modify!</p>*/
 	public var region(get_region, null):Rectangle;
- 	private function get_region():Rectangle { return _region;}
-
-	/** @inheritDoc */
-	public var transformationMatrix (get_transformationMatrix, null):Matrix;
- 	private function get_transformationMatrix():Matrix { return null /*_transformationMatrix*/;}
-
-	/** @inheritDoc */
-	public var transformationMatrixToRoot (get_transformationMatrixToRoot, null):Matrix;
- 	private function get_transformationMatrixToRoot():Matrix { return null /*_transformationMatrixToRoot*/;}
+ 	private function get_region():Rectangle { 
+		return _region;
+	}	
 	
-	/** @inheritDoc */
- 	public var base (get_base, null):BaseTexture;
-	private function get_base():BaseTexture { return null/*_parent.base*/;}
-	
-	/** @inheritDoc */
- 	public var root (get_root, null):Dynamic;
-	private function get_root():Dynamic/*ConcreteTexture*/ { return null /*_parent.root*/;}
-	
-	/** @inheritDoc */
- 	public var format (get_format, null):String;
-	private function get_format():String { return null /*_parent.format*/;}
-	
-	/** @inheritDoc */
-	public var nativeWidth (get_nativeWidth, null):Float;
-	private function get_nativeWidth():Float { return width * _scale;}
-	
-	/** @inheritDoc */
- 	public var nativeHeight (get_nativeHeight, null):Float;
-	private function get_nativeHeight():Float { return height * _scale;}
-	
-	/** @inheritDoc */
-	public var mipMapping (get_mipMapping, null):Bool;
- 	private function get_mipMapping():Bool { return null /* _parent.mipMapping*/; }
-	
-	/** @inheritDoc */
-	public var premultipliedAlpha (get_premultipliedAlpha, null):Bool;
- 	private function get_premultipliedAlpha():Bool { return null /*_parent.premultipliedAlpha*/;}
-	
-	/** @inheritDoc */
-	public var scale (get_scale, null):Float;
- 	private function get_scale():Float { return 1 /*_scale*/;}
 }

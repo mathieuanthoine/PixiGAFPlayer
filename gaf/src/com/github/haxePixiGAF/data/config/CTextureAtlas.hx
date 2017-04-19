@@ -1,11 +1,11 @@
 package com.github.haxePixiGAF.data.config;
 
 import com.github.haxePixiGAF.data.textures.TextureAtlas;
+import com.github.haxePixiGAF.data.textures.TextureWrapper;
 import com.github.haxePixiGAF.display.GAFScale9Texture;
 import com.github.haxePixiGAF.display.GAFTexture;
 import com.github.haxePixiGAF.display.IGAFTexture;
 import pixi.core.math.Matrix;
-import pixi.core.textures.Texture;
 
 /**
  * TODO
@@ -26,7 +26,7 @@ class CTextureAtlas
 	//
 	//--------------------------------------------------------------------------
 
-	private var _textureAtlasesDictionary:Map<String,Dynamic/*TODO: TextureAtlas*/>;
+	private var _textureAtlasesDictionary:Map<String,TextureAtlas>;
 	private var _textureAtlasConfig:CTextureAtlasCSF;
 
 	//--------------------------------------------------------------------------
@@ -35,7 +35,7 @@ class CTextureAtlas
 	//
 	//--------------------------------------------------------------------------
 
-	public function new(textureAtlasesDictionary:Dynamic, textureAtlasConfig:CTextureAtlasCSF)
+	public function new(textureAtlasesDictionary:Map<String,TextureAtlas>, textureAtlasConfig:CTextureAtlasCSF)
 	{
 		_textureAtlasesDictionary=textureAtlasesDictionary;
 		_textureAtlasConfig=textureAtlasConfig;
@@ -47,24 +47,25 @@ class CTextureAtlas
 	//
 	//--------------------------------------------------------------------------
 
-	public static function createFromTextures(texturesDictionary:Dynamic,textureAtlasConfig:CTextureAtlasCSF):CTextureAtlas
+	public static function createFromTextures(texturesDictionary:Map<String,TextureWrapper>,textureAtlasConfig:CTextureAtlasCSF):CTextureAtlas
 	{
-		var atlasesDictionary:Dynamic=new Map<String,Dynamic/*TODO: TextureAtlas*/>();
+		var atlasesDictionary:Map<String,TextureAtlas>=new Map<String,TextureAtlas>();
 
-		//var atlas:TextureAtlas;
-//
-		//for(element in textureAtlasConfig.elements.elementsVector)
-		//{
-			//if(!atlasesDictionary[element.atlasID])
-			//{
-				//atlasesDictionary[element.atlasID]=new TextureAtlas(texturesDictionary[element.atlasID]);
-			//}
-//
-			//atlas=atlasesDictionary[element.atlasID];
-//
-			//atlas.addRegion(element.id, element.region, null, element.rotated);
-		//}
+		var atlas:TextureAtlas;
 
+		for(element in textureAtlasConfig.elements.elementsVector)
+		{
+			if(atlasesDictionary[element.atlasID]==null)
+			{
+				
+				atlasesDictionary[element.atlasID]=new TextureAtlas(texturesDictionary[element.atlasID]);
+			}
+
+			atlas=atlasesDictionary[element.atlasID];
+			
+			atlas.addRegion(element.id, element.region, null, element.rotated);
+		}
+		
 		return new CTextureAtlas(atlasesDictionary, textureAtlasConfig);
 	}
 
@@ -82,7 +83,7 @@ class CTextureAtlas
 		if(textureAtlasElement!=null)
 		{
 			//var texture:Texture=gaf_internal::getTextureByIDAndAtlasID(id, textureAtlasElement.atlasID);
-			var texture:Texture=getTextureByIDAndAtlasID(id, textureAtlasElement.atlasID);
+			var texture:TextureWrapper=getTextureByIDAndAtlasID(id, textureAtlasElement.atlasID);
 
 			var pivotMatrix:Matrix;
 
@@ -115,7 +116,7 @@ class CTextureAtlas
 	//--------------------------------------------------------------------------
 
 	//TODO: 
-	/*gaf _private*/ public function getTextureByIDAndAtlasID(id:String, atlasID:String):Texture
+	/*gaf _private*/ public function getTextureByIDAndAtlasID(id:String, atlasID:String):TextureWrapper
 	{
 		var textureAtlas:TextureAtlas=_textureAtlasesDictionary[atlasID];
 

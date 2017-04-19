@@ -116,7 +116,7 @@ class CTextureAtlasScale
 	}
 
 	private function set_contentScaleFactor(value:CTextureAtlasCSF):CTextureAtlasCSF
-	{
+	{	
 		return _contentScaleFactor=value;
 	}
 }

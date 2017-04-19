@@ -1,21 +1,24 @@
 package com.github.haxePixiGAF.display;
 
 import com.github.haxePixiGAF.data.config.CFilter;
+import com.github.haxePixiGAF.utils.MatrixUtils;
 import pixi.core.display.DisplayObject;
 import pixi.core.math.Matrix;
 import pixi.core.math.Point;
 import pixi.core.math.shapes.Rectangle;
 import pixi.core.sprites.Sprite;
+import pixi.core.textures.Texture;
+import haxe.extern.EitherType;
 
 
 /**
- * TODO
+ * TODO : check doublons (scale, scaleX, pivot, pivotX) et supprimer ce qui est en trop
  * @author Mathieu Anthoine
  */
 /**
  * GAFImage represents static GAF display object that is part of the<code>GAFMovieClip</code>.
  */
-class GAFImage extends Sprite/*Image*/ implements IGAFImage implements IMaxSize implements IGAFDebug
+class GAFImage extends Sprite implements IGAFImage implements IMaxSize implements IGAFDebug
 {
 	//--------------------------------------------------------------------------
 	//
@@ -29,9 +32,9 @@ class GAFImage extends Sprite/*Image*/ implements IGAFImage implements IMaxSize 
 	//
 	//--------------------------------------------------------------------------
 
-	private static inline var V_DATA_ATTR:String="position";
+	//private static inline var V_DATA_ATTR:String="position";
 
-	private static var HELPER_POINT:Point=new Point();
+	//private static var HELPER_POINT:Point=new Point();
 	//private static var HELPER_POINT_3D:Vector3D=new Vector3D();
 	private static var HELPER_MATRIX:Matrix=new Matrix();
 	//private static var HELPER_MATRIX_3D:Matrix3D=new Matrix3D();
@@ -39,18 +42,18 @@ class GAFImage extends Sprite/*Image*/ implements IGAFImage implements IMaxSize 
 	private var _assetTexture:IGAFTexture;
 
 	//private var _filterChain:GAFFilterChain;
-	private var _filterConfig:CFilter;
-	private var _filterScale:Float;
+	//private var _filterConfig:CFilter;
+	//private var _filterScale:Float;
 
 	private var _maxSize:Point;
 
-	private var _pivotChanged:Bool;
+	private var _pivotChanged:Bool=false;
 
 	/** @private */
 	//gaf_private var __debugOriginalAlpha:Float=NaN;
 	public var __debugOriginalAlpha:Float=null;
 
-	private var _orientationChanged:Bool;
+	private var _orientationChanged:Bool=false;
 
 	//--------------------------------------------------------------------------
 	//
@@ -67,6 +70,7 @@ class GAFImage extends Sprite/*Image*/ implements IGAFImage implements IMaxSize 
 		_assetTexture=assetTexture.clone();
 
 		super(_assetTexture.texture);
+		
 	}
 
 	//--------------------------------------------------------------------------
@@ -86,7 +90,7 @@ class GAFImage extends Sprite/*Image*/ implements IGAFImage implements IMaxSize 
 	/** @private */
 	public function invalidateOrientation():Void
 	{
-		_orientationChanged=true;
+		_orientationChanged = true;
 	}
 
 	/** @private */
@@ -95,54 +99,53 @@ class GAFImage extends Sprite/*Image*/ implements IGAFImage implements IMaxSize 
 	{
 		return null;
 		
-		//var alpha0:Float;
-		//var alpha1:Float;
+		/*var alpha0:Float;
+		var alpha1:Float;
 
-		//switch(value.length)
-		//{
-			//case 1:
-				//color=value[0];
-				//alpha=(value[0]>>>24)/ 255;
-				//break;
-			//case 2:
-				//setVertexColor(0, value[0]);
-				//setVertexColor(1, value[0]);
-				//setVertexColor(2, value[1]);
-				//setVertexColor(3, value[1]);
-//
-				//alpha0=(value[0]>>>24)/ 255;
-				//alpha1=(value[1]>>>24)/ 255;
-				//setVertexAlpha(0, alpha0);
-				//setVertexAlpha(1, alpha0);
-				//setVertexAlpha(2, alpha1);
-				//setVertexAlpha(3, alpha1);
-				//break;
-			//case 3:
-				//setVertexColor(0, value[0]);
-				//setVertexColor(1, value[0]);
-				//setVertexColor(2, value[1]);
-				//setVertexColor(3, value[2]);
-//
-				//alpha0=(value[0]>>>24)/ 255;
-				//setVertexAlpha(0, alpha0);
-				//setVertexAlpha(1, alpha0);
-				//setVertexAlpha(2,(value[1]>>>24)/ 255);
-				//setVertexAlpha(3,(value[2]>>>24)/ 255);
-				//break;
-			//case 4:
-				//setVertexColor(0, value[0]);
-				//setVertexColor(1, value[1]);
-				//setVertexColor(2, value[2]);
-				//setVertexColor(3, value[3]);
-//
-				//setVertexAlpha(0,(value[0]>>>24)/ 255);
-				//setVertexAlpha(1,(value[1]>>>24)/ 255);
-				//setVertexAlpha(2,(value[2]>>>24)/ 255);
-				//setVertexAlpha(3,(value[3]>>>24)/ 255);
-				//break;
-		//}
-		
-		
+		switch(value.length)
+		{
+			case 1:
+				color=value[0];
+				alpha=(value[0]>>>24)/ 255;
+				break;
+			case 2:
+				setVertexColor(0, value[0]);
+				setVertexColor(1, value[0]);
+				setVertexColor(2, value[1]);
+				setVertexColor(3, value[1]);
+
+				alpha0=(value[0]>>>24)/ 255;
+				alpha1=(value[1]>>>24)/ 255;
+				setVertexAlpha(0, alpha0);
+				setVertexAlpha(1, alpha0);
+				setVertexAlpha(2, alpha1);
+				setVertexAlpha(3, alpha1);
+				break;
+			case 3:
+				setVertexColor(0, value[0]);
+				setVertexColor(1, value[0]);
+				setVertexColor(2, value[1]);
+				setVertexColor(3, value[2]);
+
+				alpha0=(value[0]>>>24)/ 255;
+				setVertexAlpha(0, alpha0);
+				setVertexAlpha(1, alpha0);
+				setVertexAlpha(2,(value[1]>>>24)/ 255);
+				setVertexAlpha(3,(value[2]>>>24)/ 255);
+				break;
+			case 4:
+				setVertexColor(0, value[0]);
+				setVertexColor(1, value[1]);
+				setVertexColor(2, value[2]);
+				setVertexColor(3, value[3]);
+
+				setVertexAlpha(0,(value[0]>>>24)/ 255);
+				setVertexAlpha(1,(value[1]>>>24)/ 255);
+				setVertexAlpha(2,(value[2]>>>24)/ 255);
+				setVertexAlpha(3,(value[3]>>>24)/ 255);
+				break;
+		}*/
+			
 	}
 
 	/**
@@ -159,44 +162,46 @@ class GAFImage extends Sprite/*Image*/ implements IGAFImage implements IMaxSize 
 	/** @private */
 	public function setFilterConfig(value:CFilter, scale:Float=1):Void
 	{
-		//if(!Starling.current.contextValid)
-		//{
-			//return;
-		//}
+		//trace ("setFilterConfig: TODO");
+		
+		/*if(!Starling.current.contextValid)
+		{
+			return;
+		}
 
-		//if(_filterConfig !=value || _filterScale !=scale)
-		//{
-			//if(value)
-			//{
-				//_filterConfig=value;
-				//_filterScale=scale;
-//
-				//if(_filterChain)
-				//{
-					//_filterChain.dispose();
-				//}
-				//else
-				//{
-					//_filterChain=new GAFFilterChain();
-				//}
-//
-				//_filterChain.setFilterData(_filterConfig);
-//
-				//filter=_filterChain;
-			//}
-			//else
-			//{
-				//if(filter)
-				//{
-					//filter.dispose();
-					//filter=null;
-				//}
-//
-				//_filterChain=null;
-				//_filterConfig=null;
-				//_filterScale=NaN;
-			//}
-		//}
+		if(_filterConfig !=value || _filterScale !=scale)
+		{
+			if(value)
+			{
+				_filterConfig=value;
+				_filterScale=scale;
+
+				if(_filterChain)
+				{
+					_filterChain.dispose();
+				}
+				else
+				{
+					_filterChain=new GAFFilterChain();
+				}
+
+				_filterChain.setFilterData(_filterConfig);
+
+				filter=_filterChain;
+			}
+			else
+			{
+				if(filter)
+				{
+					filter.dispose();
+					filter=null;
+				}
+
+				_filterChain=null;
+				_filterConfig=null;
+				_filterScale=NaN;
+			}
+		}*/
 	}
 
 
@@ -250,11 +255,11 @@ class GAFImage extends Sprite/*Image*/ implements IGAFImage implements IMaxSize 
 	//private final function updateTransformMatrix():Void
 	private function updateTransformMatrix():Void
 	{
-		//if(_orientationChanged!=null)
-		//{
-			//transformationMatrix=transformationMatrix;
-			//_orientationChanged=false;
-		//}
+		if(_orientationChanged)
+		{
+			transformationMatrix=transformationMatrix;
+			_orientationChanged=false;
+		}
 	}
 
 	//--------------------------------------------------------------------------
@@ -266,7 +271,7 @@ class GAFImage extends Sprite/*Image*/ implements IGAFImage implements IMaxSize 
 	/**
 	 * Disposes all resources of the display object.
 	 */
-	override public function destroy():Void
+	override public function destroy(?options:EitherType<Bool, DestroyOptions>):Void
 	{
 		//if(filter!=null)
 		//{
@@ -274,14 +279,18 @@ class GAFImage extends Sprite/*Image*/ implements IGAFImage implements IMaxSize 
 			//filter=null;
 		//}
 		_assetTexture=null;
-		_filterConfig=null;
+		//_filterConfig=null;
 
 		//super.dispose();
+		super.destroy(options);
 	}
 
+	
+	//TODO: getGAFGetbounds
+	
 	//override public function getBounds(targetSpace:DisplayObject, resultRect:Rectangle=null):Rectangle
 	//{
-		//if(resultRect==null)resultRect=new Rectangle(0,0,0,0);
+		//if(!resultRect)resultRect=new Rectangle(0,0,0,0);
 //
 		//if(targetSpace==this)// optimization
 		//{
@@ -319,20 +328,20 @@ class GAFImage extends Sprite/*Image*/ implements IGAFImage implements IMaxSize 
 	}
 
 	/** @private */
-	//override public var pivotX(null, set_pivotX):Float;
- 	//private function set_pivotX(value:Float):Void
-	//{
-		//_pivotChanged=true;
-		//super.pivotX=value;
-	//}
+	public var pivotX(null, set_pivotX):Float;
+ 	private function set_pivotX(value:Float):Float
+	{
+		_pivotChanged = true;
+		return pivot.x = value;
+	}
 
 	/** @private */
-	//override public var pivotY(null, set_pivotY):Float;
- 	//private function set_pivotY(value:Float):Void
-	//{
-		//_pivotChanged=true;
-		//super.pivotY=value;
-	//}
+	public var pivotY(null, set_pivotY):Float;
+ 	private function set_pivotY(value:Float):Float
+	{
+		_pivotChanged=true;
+		return pivot.y=value;
+	}
 
 	/** @private */
 	//override public function get x():Float
@@ -357,36 +366,36 @@ class GAFImage extends Sprite/*Image*/ implements IGAFImage implements IMaxSize 
 	//}
 
 	/** @private */
-	//override public var scaleX(get_scaleX, set_scaleX):Float;
- 	//private function get_scaleX():Float
-	//{
-		//updateTransformMatrix();
-		//return super.scaleX;
-	//}
+	public var scaleX(get_scaleX, null):Float;
+ 	private function get_scaleX():Float
+	{
+		updateTransformMatrix();
+		return scale.x;
+	}
 
 	/** @private */
-	//override public var scaleY(get_scaleY, set_scaleY):Float;
- 	//private function get_scaleY():Float
-	//{
-		//updateTransformMatrix();
-		//return super.scaleY;
-	//}
+	public var scaleY(get_scaleY, null):Float;
+ 	private function get_scaleY():Float
+	{
+		updateTransformMatrix();
+		return scale.y;
+	}
 
 	/** @private */
-	//override public var skewX(get_skewX, set_skewX):Float;
- 	//private function get_skewX():Float
-	//{
-		//updateTransformMatrix();
-		//return super.skewX;
-	//}
+	public var skewX(get_skewX, null):Float;
+ 	private function get_skewX():Float
+	{
+		updateTransformMatrix();
+		return skew.x;
+	}
 
 	/** @private */
-	//override public var skewY(get_skewY, set_skewY):Float;
- 	//private function get_skewY():Float
-	//{
-		//updateTransformMatrix();
-		//return super.skewY;
-	//}
+	public var skewY(get_skewY, null):Float;
+ 	private function get_skewY():Float
+	{
+		updateTransformMatrix();
+		return skew.y;
+	}
 
 	//--------------------------------------------------------------------------
 	//
@@ -423,8 +432,8 @@ class GAFImage extends Sprite/*Image*/ implements IGAFImage implements IMaxSize 
 	{
 		return _assetTexture;
 	}
-
-	/** @private */
+//
+	///** @private */
 	public var pivotMatrix(get_pivotMatrix, null):Matrix;
  	private function get_pivotMatrix():Matrix
 	{
@@ -432,10 +441,80 @@ class GAFImage extends Sprite/*Image*/ implements IGAFImage implements IMaxSize 
 
 		if(_pivotChanged)
 		{
-			//HELPER_MATRIX.tx=pivotX;
-			//HELPER_MATRIX.ty=pivotY;
+			HELPER_MATRIX.tx=pivotX;
+			HELPER_MATRIX.ty=pivotY;
 		}
-
+		
 		return HELPER_MATRIX;
 	}
+	
+	public var transformationMatrix(get_transformationMatrix,set_transformationMatrix):Matrix;
+	private function get_transformationMatrix():Matrix {
+		
+		//if(_orientationChanged)
+		//{
+			//_orientationChanged=false;
+			//
+			//if(skew.x==0.0 && skew.y==0.0)
+			//{
+				//// optimization:no skewing / rotation simplifies the matrix math
+				//
+				//if(rotation==0.0)
+				//{
+					//worldTransform.a = scale.x;
+					//worldTransform.b = 0;
+					//worldTransform.c = 0;
+					//worldTransform.d = scale.y;
+					//worldTransform.tx = x - pivot.x * scale.x;
+					//worldTransform.ty = y - pivot.y * scale.y;
+					////.setTo(scale.x, 0.0, 0.0, scale.y,x - pivot.x * scale.x, y - pivot.y * scale.y);
+				//}
+				//else
+				//{
+					//var cos:Float=Math.cos(rotation);
+					//var sin:Float=Math.sin(rotation);
+					//var a:Float=scale.x *  cos;
+					//var b:Float=scale.x *  sin;
+					//var c:Float=scale.y * -sin;
+					//var d:Float=scale.y *  cos;
+					//var tx:Float=x - pivot.x * a - pivot.y * c;
+					//var ty:Float=y - pivot.x * b - pivot.y * d;
+					//
+					////worldTransform.setTo(a, b, c, d, tx, ty);
+					//
+					//worldTransform.a = a;
+					//worldTransform.b = b;
+					//worldTransform.c = c;
+					//worldTransform.d = d;
+					//worldTransform.tx = tx;
+					//worldTransform.ty = ty;
+//
+				//}
+			//}
+			//else
+			//{
+				//worldTransform.identity();
+				//worldTransform.scale(scale.x, scale.y);
+				////TODO : MatrixUtil.skew(worldTransform, skew.x, skew.y);
+				//worldTransform.rotate(rotation);
+				//worldTransform.translate(x, y);
+				//
+				//if(pivot.x !=0.0 || pivot.y !=0.0)
+				//{
+					//// prepend pivot transformation
+					//worldTransform.tx=x - worldTransform.a * pivot.x
+												  //- worldTransform.c * pivot.y;
+					//worldTransform.ty=y - worldTransform.b * pivot.x
+												  //- worldTransform.d * pivot.y;
+				//}
+			//}
+		//}
+		
+		return localTransform;
+		
+	}
+	private function set_transformationMatrix(matrix:Matrix):Matrix {
+		return localTransform=matrix;
+	}
+	
 }

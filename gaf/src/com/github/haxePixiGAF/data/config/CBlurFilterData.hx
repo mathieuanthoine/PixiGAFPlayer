@@ -14,8 +14,8 @@ class CBlurFilterData implements ICFilterData
 	public var distance:Float=0;
 	public var strength:Float=0;
 	public var alpha:Float=1;
-	public var inner:Bool;
-	public var knockout:Bool;
+	public var inner:Bool=false;
+	public var knockout:Bool=false;
 	public var resolution:Float=1;
 	
 	public function new () {}

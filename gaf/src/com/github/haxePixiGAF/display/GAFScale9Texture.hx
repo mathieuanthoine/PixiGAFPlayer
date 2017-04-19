@@ -1,7 +1,8 @@
 package com.github.haxePixiGAF.display;
+
+import com.github.haxePixiGAF.data.textures.TextureWrapper;
 import pixi.core.math.Matrix;
 import pixi.core.math.shapes.Rectangle;
-import pixi.core.textures.Texture;
 
 /**
  * TODO
@@ -32,7 +33,7 @@ class GAFScale9Texture implements IGAFTexture
 	private static var HELPER_RECTANGLE:Rectangle = new Rectangle(0, 0, 0, 0);
 
 	private var _id:String;
-	private var _texture:Texture;
+	private var _texture:TextureWrapper;
 	private var _pivotMatrix:Matrix;
 	private var _scale9Grid:Rectangle;
 
@@ -52,7 +53,7 @@ class GAFScale9Texture implements IGAFTexture
 	//
 	//--------------------------------------------------------------------------
 
-	public function new(id:String, texture/*:Texture*/, pivotMatrix:Matrix, scale9Grid:Rectangle)
+	public function new(id:String, texture:TextureWrapper, pivotMatrix:Matrix, scale9Grid:Rectangle)
 	{
 		_id=id;
 		_pivotMatrix=pivotMatrix;
@@ -104,7 +105,7 @@ class GAFScale9Texture implements IGAFTexture
 	private function initialize():Void
 	{
 		//var textureFrame:Rectangle=_texture.frame;
-		//if(textureFrame==null)
+		//if(!textureFrame)
 		//{
 			//textureFrame=HELPER_RECTANGLE;
 			//textureFrame.setTo(0, 0, _texture.width, _texture.height);
@@ -192,8 +193,8 @@ class GAFScale9Texture implements IGAFTexture
 		return _pivotMatrix;
 	}
 
-	public var texture(get_texture, null):Texture;
- 	private function get_texture():Texture
+	public var texture(get_texture, null):TextureWrapper;
+ 	private function get_texture():TextureWrapper
 	{
 		return _texture;
 	}

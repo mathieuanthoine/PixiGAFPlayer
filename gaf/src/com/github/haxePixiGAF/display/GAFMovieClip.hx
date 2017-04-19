@@ -12,13 +12,15 @@ import com.github.haxePixiGAF.data.config.CFilter;
 import com.github.haxePixiGAF.data.config.CFrameAction;
 import com.github.haxePixiGAF.data.config.CTextureAtlas;
 import com.github.haxePixiGAF.utils.DebugUtility;
+import com.github.mathieuanthoine.gaf.Main;
+import js.Lib;
 import pixi.core.display.Container;
 import pixi.core.display.DisplayObject;
 import pixi.core.math.Matrix;
 import pixi.core.math.Point;
 import pixi.core.math.shapes.Rectangle;
 import pixi.core.sprites.Sprite;
-import pixi.extras.MovieClip;
+import haxe.extern.EitherType;
 
 /** Dispatched when playhead reached first frame of sequence */
 //[Event(name="typeSequenceStart", type="starling.events.Event")]
@@ -38,7 +40,7 @@ import pixi.extras.MovieClip;
  * TODO
  * @author Mathieu Anthoine
  */
-class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements IGAFDisplayObject implements IMaxSize
+class GAFMovieClip extends Container implements IAnimatable implements IGAFDisplayObject implements IMaxSize
 {
 	public static inline var EVENT_TYPE_SEQUENCE_START:String="typeSequenceStart";
 	public static inline var EVENT_TYPE_SEQUENCE_END:String="typeSequenceEnd";
@@ -73,17 +75,17 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 
 	private var _loop:Bool=true;
 	private var _skipFrames:Bool=true;
-	private var _reset:Bool;
-	private var _masked:Bool;
-	private var _inPlay:Bool;
-	private var _hidden:Bool;
-	private var _reverse:Bool;
-	private var _started:Bool;
-	private var _disposed:Bool;
-	private var _hasFilter:Bool;
-	private var _useClipping:Bool;
-	private var _alphaLessMax:Bool;
-	private var _addToJuggler:Bool;
+	private var _reset:Bool=false;
+	private var _masked:Bool=false;
+	private var _inPlay:Bool=false;
+	private var _hidden:Bool=false;
+	private var _reverse:Bool=false;
+	private var _started:Bool=false;
+	private var _disposed:Bool=false;
+	private var _hasFilter:Bool=false;
+	private var _useClipping:Bool=false;
+	private var _alphaLessMax:Bool=false;
+	private var _addToJuggler:Bool=false;
 
 	private var _scale:Float;
 	private var _contentScaleFactor:Float;
@@ -102,13 +104,13 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 	private var _filterConfig:CFilter;
 	private var _filterScale:Float;
 
-	private var _pivotChanged:Bool;
+	private var _pivotChanged:Bool=false;
 
 	/** @private */
 	//gaf_private var __debugOriginalAlpha:Float=NaN;
 	private var __debugOriginalAlpha:Float=null;
 
-	private var _orientationChanged:Bool;
+	private var _orientationChanged:Bool=false;
 
 	//private var _stencilMaskStyle:GAFStencilMaskStyle;
 
@@ -128,8 +130,7 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 	 */
 	public function new(gafTimeline:GAFTimeline, pFps:Int=-1, addToJuggler:Bool=true)
 	{
-		//TODO: tableau de textures...
-		super(null);
+		super();
 		
 		_gafTimeline=gafTimeline;
 		_config=gafTimeline.config;
@@ -286,10 +287,8 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 	 * @param applyToAllChildren Specifies whether playhead should be moved in the timeline of the movie clip
 	 *(<code>false</code>)or also in the timelines of all child movie clips(<code>true</code>).
 	 */
-	override public function play(/*TODO:crer une méthode additionnelle ?  applyToAllChildren:Bool=false*/):Void
+	public function play(applyToAllChildren:Bool=false):Void
 	{
-		// TEMP (lié au TODO)
-		var applyToAllChildren:Bool = false;
 		
 		_started=true;
 
@@ -313,10 +312,8 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 	 * @param applyToAllChildren Specifies whether playhead should be stopped in the timeline of the
 	 * movie clip(<code>false</code>)or also in the timelines of all child movie clips(<code>true</code>)
 	 */
-	override public function stop(/*TODO:crer une méthode additionnelle ?  applyToAllChildren:Bool=false*/):Void
+	public function stop(applyToAllChildren:Bool=false):Void
 	{
-		// TEMP (lié au TODO)
-		var applyToAllChildren:Bool = false;
 		
 		_started=false;
 
@@ -337,7 +334,7 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 	 *
 	 * @param frame A number representing the frame number, or a string representing the label of the frame, to which the playhead is sent.
 	 */
-	override public function gotoAndStop(frame:Dynamic):Void
+	public function gotoAndStop(frame:Dynamic):Void
 	{
 		checkAndSetCurrentFrame(frame);
 
@@ -349,7 +346,7 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 	 *
 	 * @param frame A number representing the frame number, or a string representing the label of the frame, to which the playhead is sent.
 	 */
-	override public function gotoAndPlay(frame:Dynamic):Void
+	public function gotoAndPlay(frame:Dynamic):Void
 	{
 		checkAndSetCurrentFrame(frame);
 
@@ -377,6 +374,7 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 	 */
 	public function advanceTime(passedTime:Float):Void
 	{
+
 		if(_disposed)
 		{
 			trace("WARNING:GAFMovieClip is disposed but is not removed from the Juggler");
@@ -433,13 +431,13 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 	{
 		if(_config.bounds!=null)
 		{
-			//if(_boundsAndPivot==null)
+			//if(!_boundsAndPivot)
 			//{
 				//_boundsAndPivot=new MeshBatch();
 				//updateBounds(_config.bounds);
 			//}
 //
-			//if(value!=null)
+			//if(value)
 			//{
 				//addChild(_boundsAndPivot);
 			//}
@@ -534,8 +532,7 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 			_inPlay=true;
 		}
 
-		if(applyToAllChildren
-				&& _config.animationConfigFrames.frames.length>0)
+		if(applyToAllChildren && _config.animationConfigFrames.frames.length>0)
 		{
 			var frameConfig:CAnimationFrame=_config.animationConfigFrames.frames[_currentFrame];
 			if(frameConfig.actions!=null)
@@ -564,9 +561,9 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 				if(Std.is(child, GAFMovieClip))
 				{
 					childMC=cast(child, GAFMovieClip);
-					if(calledByUser!=null)
+					if(calledByUser)
 					{
-						childMC.play(/*TODO: true*/);
+						childMC.play(true);
 					}
 					else
 					{
@@ -596,9 +593,9 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 				if(Std.is(child, GAFMovieClip))
 				{
 					childMC=cast(child, GAFMovieClip);
-					if(calledByUser!=null)
+					if(calledByUser)
 					{
-						childMC.stop(/*TODO: true*/);
+						childMC.stop(true);
 					}
 					else
 					{
@@ -645,7 +642,7 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 		}
 
 		var i:Int, l:Int;
-		var actions:Array<CFrameAction>=_config.animationConfigFrames.frames[_currentFrame].actions;
+		var actions:Array<CFrameAction> = _config.animationConfigFrames.frames[_currentFrame].actions;
 		if(actions!=null)
 		{
 			var action:CFrameAction;
@@ -738,6 +735,7 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 
 	private function draw():Void
 	{
+		
 		var i:Int;
 		var l:Int;
 
@@ -785,7 +783,9 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 				if(displayObject!=null)
 				{
 					objectPivotMatrix=getTransformMatrix(displayObject, HELPER_MATRIX);
-					mc=cast(displayObject, GAFMovieClip);
+					if (Std.is(displayObject, GAFMovieClip)) mc = cast(displayObject, GAFMovieClip);
+					else mc = null;
+					
 					if(mc!=null)
 					{
 						if(instance.alpha<0)
@@ -807,10 +807,10 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 					displayObject.alpha=instance.alpha;
 
 					//if display object is not a mask
-					if(animationObjectsDictionary[instance.id].mask==null)
+					if(!animationObjectsDictionary[instance.id].mask)
 					{
 						//if display object is under mask
-						if(instance.maskID!=null)
+						if(instance.maskID!="")
 						{
 							renderDebug(mc, instance, true);
 
@@ -835,12 +835,11 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 						else //if display object is not masked
 						{
 							renderDebug(mc, instance, _masked);
-
 							instance.applyTransformMatrix(displayObject.transformationMatrix, objectPivotMatrix, _scale);
-							displayObject.invalidateOrientation();
+							displayObject.invalidateOrientation();														
 							displayObject.setFilterConfig(instance.filter, _scale);
-
-							addChild(cast(displayObject,DisplayObject));
+							addChild(cast(displayObject,DisplayObject));						
+							
 						}
 
 						if(mc!=null && mc._started)
@@ -850,8 +849,7 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 
 						if(DebugUtility.RENDERING_DEBUG && Std.is(displayObject,IGAFDebug))
 						{
-							var colors:Array<Int>=DebugUtility.getRenderingDifficultyColor(
-									instance, _alphaLessMax, _masked, _hasFilter);
+							var colors:Array<Int>=DebugUtility.getRenderingDifficultyColor(instance, _alphaLessMax, _masked, _hasFilter);
 							cast(displayObject,IGAFDebug).debugColors=colors;
 						}
 					}
@@ -872,7 +870,9 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 								throw "Unable to find mask with ID " + instance.id;
 							}
 
-							mc=cast(maskObject, GAFMovieClip);
+							if (Std.is(maskObject, GAFMovieClip)) mc = cast(maskObject, GAFMovieClip);
+							else mc = null;
+							
 							if(mc!=null && mc._started)
 							{
 								mc._play(true);
@@ -899,7 +899,7 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 			////var alphaLessMax:Bool=instance.alpha<GAF.gaf_internal::maxAlpha || _alphaLessMax;
 			//var alphaLessMax:Bool=instance.alpha<GAF.maxAlpha || _alphaLessMax;
 //
-			//var changed:Bool;
+			//var changed:Bool=false;
 			//if(mc._alphaLessMax !=alphaLessMax)
 			//{
 				//mc._alphaLessMax=alphaLessMax;
@@ -970,19 +970,20 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 		_mcVector=[];
 
 		_currentFrame=0;
-		_totalFrames=_config.framesCount;
+		_totalFrames = _config.framesCount;
+		trace ("TODO: Fps");
 		//fps=_config.stageConfig ? _config.stageConfig.fps:Starling.current.nativeStage.frameRate;
-		//TODO
 		fps=_config.stageConfig!=null ? _config.stageConfig.fps: 60;
 
 		var animationObjectsDictionary:Map<String,CAnimationObject>=_config.animationObjects.animationObjectsDictionary;
 
-		var displayObject:DisplayObject;
+		var displayObject:DisplayObject=null;
 		for (animationObjectConfig in animationObjectsDictionary)
 		{
 			switch(animationObjectConfig.type)
 			{
 				case CAnimationObject.TYPE_TEXTURE:
+					
 					var texture:IGAFTexture=textureAtlas.getTexture(animationObjectConfig.regionID);
 					if(Std.is(texture, GAFScale9Texture) && !animationObjectConfig.mask)// GAFScale9Image doesn't work as mask
 					{
@@ -991,7 +992,7 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 					}
 					else
 					{
-						displayObject=new GAFImage(texture);
+						displayObject = new GAFImage(texture);
 						//cast(displayObject,GAFImage).textureSmoothing=_smoothing;
 					}
 				case CAnimationObject.TYPE_TEXTFIELD:
@@ -1038,7 +1039,7 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 
 	private function addDisplayObject(id:String, displayObject:DisplayObject, asMask:Bool=false):Void
 	{
-		if(asMask!=null)
+		if(asMask)
 		{
 			_stencilMasksDictionary[id]=displayObject;
 		}
@@ -1127,12 +1128,12 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 	//[Inline]
 	//private final function updateTransformMatrix():Void
 	private function updateTransformMatrix():Void
-	{
-		//if(_orientationChanged!=null)
-		//{
-			//transformationMatrix=transformationMatrix;
-			//_orientationChanged=false;
-		//}
+	{		
+		if(_orientationChanged)
+		{
+			transformationMatrix=transformationMatrix;
+			_orientationChanged=false;
+		}
 	}
 
 	//--------------------------------------------------------------------------
@@ -1231,10 +1232,10 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 	 * from what<code>GAFMovieClip</code>was instantiated.
 	 * Call this method every time before delete no longer required instance! Otherwise GPU memory leak may occur!
 	 */
-	//override public function dispose():Void
-	override public function destroy():Void
+	//override public function dispose():Void	
+	override public function destroy(?options:EitherType<Bool, DestroyOptions>):Void
 	{
-		if(_disposed!=null)
+		if(_disposed)
 		{
 			return;
 		}
@@ -1248,7 +1249,7 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 		var l:Int=_displayObjectsVector.length;
 		for(i in 0...l)
 		{
-			_displayObjectsVector[i].dispose();
+			_displayObjectsVector[i].destroy();
 		}
 
 		//for(key in _stencilMasksDictionary)
@@ -1256,7 +1257,7 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 			//_stencilMasksDictionary[key].dispose();
 		//}
 //
-		//if(_boundsAndPivot!=null)
+		//if(_boundsAndPivot)
 		//{
 			//_boundsAndPivot.dispose();
 			//_boundsAndPivot=null;
@@ -1274,7 +1275,7 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 		{
 			//removeFromParent();
 		}
-		super.destroy();
+		super.destroy(options);
 
 		_disposed=true;
 	}
@@ -1435,7 +1436,7 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 			checkPlaybackEvents();
 		}
 
-		//if(resetInvisibleChildren!=null)
+		//if(resetInvisibleChildren)
 		//{
 			////reset timelines that aren't visible
 			//var i:Int=_mcVector.length;
@@ -1458,20 +1459,20 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 	/**
 	 * Specifies the number of the frame in which the playhead is located in the timeline of the GAFMovieClip instance. First frame is "1"
 	 */
-	//public var currentFrame(get_currentFrame, set_currentFrame):Int;
- 	//private function get_currentFrame():Int
-	//{
-		//return _currentFrame + 1;// Like in standart AS3 API for MovieClip first frame is "1" instead of "0"(but Internally used "0")
-	//}
+	public var currentFrame(get_currentFrame, null):Int;
+ 	private function get_currentFrame():Int
+	{
+		return _currentFrame + 1;// Like in standart AS3 API for MovieClip first frame is "1" instead of "0"(but Internally used "0")
+	}
 
 	/**
 	 * The total number of frames in the GAFMovieClip instance.
 	 */
-	//public var totalFrames(get_totalFrames, set_totalFrames):Int;
- 	//private function get_totalFrames():Int
-	//{
-		//return _totalFrames;
-	//}
+	public var totalFrames(get_totalFrames, null):Int;
+ 	private function get_totalFrames():Int
+	{
+		return _totalFrames;
+	}
 
 	/**
 	 * Indicates whether GAFMovieClip instance already in play
@@ -1485,23 +1486,23 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 	/**
 	 * Indicates whether GAFMovieClip instance continue playing from start frame after playback reached animation end
 	 */
-	//public var loop(get_loop, set_loop):Bool;
- 	//private function get_loop():Bool
-	//{
-		//return _loop;
-	//}
+	public var loop(get_loop, set_loop):Bool;
+ 	private function get_loop():Bool
+	{
+		return _loop;
+	}
 
-	//private function set_loop(loop:Bool):Void
-	//{
-		//_loop=loop;
-	//}
+	private function set_loop(loop:Bool):Bool
+	{
+		return _loop=loop;
+	}
 
 	/**
 	 * The smoothing filter that is used for the texture. Possible values are<code>TextureSmoothing.BILINEAR, TextureSmoothing.NONE, TextureSmoothing.TRILINEAR</code>
 	 */
 	private function set_smoothing(value:String):String
 	{
-		//if(TextureSmoothing.isValid(value)!=null)
+		//if(TextureSmoothing.isValid(value))
 		//{
 			//_smoothing=value;
 //
@@ -1640,21 +1641,30 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 	}
 
 	/** @private */
-	//public var pivotMatrix(get_pivotMatrix, set_pivotMatrix):Matrix;
- 	//private function get_pivotMatrix():Matrix
-	//{
-		////HELPER_MATRIX.copyFrom(_pivotMatrix);
-		//HELPER_MATRIX.identity();
-//
-		//if(_pivotChanged)
-		//{
+	public var pivotMatrix(get_pivotMatrix, null):Matrix;
+ 	private function get_pivotMatrix():Matrix
+	{
+		//HELPER_MATRIX.copyFrom(_pivotMatrix);
+		HELPER_MATRIX.identity();
+
+		if(_pivotChanged)
+		{
 			//HELPER_MATRIX.tx=pivotX;
 			//HELPER_MATRIX.ty=pivotY;
-		//}
-//
-		//return HELPER_MATRIX;
-	//}
+		}
 
+		return HELPER_MATRIX;
+	}
+
+	public var transformationMatrix(get_transformationMatrix,set_transformationMatrix):Matrix;
+	private function get_transformationMatrix():Matrix {
+		return localTransform;
+		
+	}
+	private function set_transformationMatrix(matrix:Matrix):Matrix {
+		return localTransform=matrix;
+	}	
+	
 	//--------------------------------------------------------------------------
 	//
 	//  STATIC METHODS
@@ -1668,4 +1678,6 @@ class GAFMovieClip extends MovieClip/*Sprite*/ implements IAnimatable implements
 		displayObject.pivotMatrix.copy(matrix);
 		return matrix;
 	}
+
+	
 }

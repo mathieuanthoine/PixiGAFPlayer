@@ -3,19 +3,23 @@ package com.github.mathieuanthoine.gaf;
 import com.github.haxePixiGAF.core.GAFLoader;
 import com.github.haxePixiGAF.core.ZipToGAFAssetConverter;
 import com.github.haxePixiGAF.data.GAFBundle;
+import com.github.haxePixiGAF.data.GAFGFXData;
 import com.github.haxePixiGAF.data.GAFTimeline;
+import com.github.haxePixiGAF.display.GAFImage;
 import com.github.haxePixiGAF.display.GAFMovieClip;
+import com.github.haxePixiGAF.display.GAFTexture;
+import com.github.haxePixiGAF.display.IGAFTexture;
 import com.github.haxePixiGAF.events.GAFEvent;
-import haxe.io.Bytes;
-import haxe.io.BytesInput;
-import haxe.io.BytesOutput;
+import haxe.Timer;
 import js.Browser;
+import js.Lib;
 import pixi.core.display.Container;
+import pixi.core.math.Matrix;
 import pixi.core.renderers.Detector;
 import pixi.core.renderers.webgl.WebGLRenderer;
-import pixi.interaction.EventTarget;
+import pixi.core.sprites.Sprite;
+import pixi.core.textures.Texture;
 import pixi.loaders.LoaderOptions;
-import pixi.loaders.Resource;
 
 /**
  * ...
@@ -64,28 +68,13 @@ class Main
 	*/
 	private function new ()
 	{
-		renderer = Detector.autoDetectRenderer(960, 640, {backgroundColor : 0x000000});
+		renderer = Detector.autoDetectRenderer(960, 640, {backgroundColor : 0xCCCCCC});
 		Browser.document.body.appendChild(renderer.view);
 
 		stage = new Container();
 
-		//
-		//var lBob:BytesOutput = new BytesOutput();
-		//lBob.bigEndian = false;
-		//lBob.writeFloat(1000002);
-		////lBob.position = 0;
-		//var lBill:BytesInput = new BytesInput(lBob.getBytes());
-		//trace (lBill.readInt32());
-		//
-		//// 1232348192
-		//// 1232348192
-		//
-		//return;
-
-		urlsList.push("gun_swap/gun_swap.gaf");
-		//urlsList.push("gun_swap/gun_swap.png");
-		//urlsList.push("gun_swap/gun_swap_2.png");
-		//urlsList.push("gun_swap/gun_swap_3.png");
+		urlsList.push(FILE_NAME+"/"+FILE_NAME+".gaf");
+		
 
 		load();
 
@@ -123,27 +112,53 @@ class Main
 		load();
 	}
 	
-	private function onConverted (pEvent:EventTarget):Void {
+	private function onConverted (pEvent:Dynamic):Void {
 		trace ("YEAH");
 		
 		var gafBundle: GAFBundle = cast(pEvent.target,ZipToGAFAssetConverter).gafBundle;
 		//"gun_swap" - the name of the SWF which was converted to GAF
 		var gafTimeline: GAFTimeline = gafBundle.getGAFTimeline(FILE_NAME, "rootTimeline");
-
+		
+		//var lTexture:IGAFTexture = new GAFTexture("a", gafTimeline.gafgfxData.getTexture(1, 1, "1"), new Matrix());
+//
+		//var lImage:GAFImage = new GAFImage(lTexture);
+		//stage.addChild(lImage);
+		//
+		//var lTexture:IGAFTexture = gafTimeline.getTextureByName("GUN");
+		//trace (lTexture);
+		//
+		//var lImage:GAFImage = new GAFImage(lTexture);
+		//stage.addChild(lImage);
+		//
+		//return;
+		
+		//Lib.debug();
 		gafMovieClip = new GAFMovieClip(gafTimeline);
-		//gafMovieClip.play(true);
-		//addChild(gafMovieClip);
+		stage.addChild(gafMovieClip);
 
+		gafMovieClip.play(true);
+		//gafMovieClip.gotoAndStop(2);
+		//renderer.render(stage);
 		
+		//var lGAFTexture:IGAFTexture = new GAFTexture("test", Texture.fromImage("gun_swap/gun_swap.png"), new Matrix());
+		//var lImage:GAFImage = new GAFImage(lGAFTexture);		
+		//stage.addChild(lImage);
 		
+		Browser.window.requestAnimationFrame(gameLoop);
 	}
-
+	
 	/**
 	 * game loop
 	 */
 	private function gameLoop(pIdentifier:Float)
 	{
 		Browser.window.requestAnimationFrame(gameLoop);
+		gafMovieClip.advanceTime(0.02/*0.002*/);
+		//gafMovieClip.gotoAndStop((gafMovieClip.currentFrame+1)%gafMovieClip.totalFrames);
+		render();
+	}
+	
+	public function render ():Void {
 		renderer.render(stage);
 	}
 

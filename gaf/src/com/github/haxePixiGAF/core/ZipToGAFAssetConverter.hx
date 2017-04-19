@@ -13,8 +13,7 @@ import com.github.haxePixiGAF.events.GAFEvent;
 import com.github.haxePixiGAF.sound.GAFSoundData;
 import com.github.haxePixiGAF.utils.GAFBytesInput;
 import com.github.haxePixiGAF.utils.MathUtility;
-import eventemitter3.EventEmitter;
-import pixi.interaction.EventTarget;
+import pixi.interaction.EventEmitter;
 import pixi.loaders.Loader;
 
 /**
@@ -26,7 +25,36 @@ typedef AssetsList = Array<GAFLoader>;
  
 class ZipToGAFAssetConverter extends EventEmitter
 {
+	
+	//--------------------------------------------------------------------------
+	//
+	//  PUBLIC VARIABLES
+	//
+	//--------------------------------------------------------------------------
 
+	/**
+	 * In process of conversion doesn't create textures (doesn't load in GPU memory).
+	 * Be sure to set up <code>Starling.handleLostContext = true</code> when using this action, otherwise Error will occur
+	 */
+	public static inline var ACTION_DONT_LOAD_IN_GPU_MEMORY: String = "actionDontLoadInGPUMemory";
+
+	/**
+	 * In process of conversion create textures (load in GPU memory).
+	 */
+	public static inline var ACTION_LOAD_ALL_IN_GPU_MEMORY: String = "actionLoadAllInGPUMemory";
+
+	/**
+	 * In process of conversion create textures (load in GPU memory) only atlases for default scale and csf
+	 */
+	public static inline var ACTION_LOAD_IN_GPU_MEMORY_ONLY_DEFAULT: String = "actionLoadInGPUMemoryOnlyDefault";
+	
+	/**
+	 * Action that should be applied to atlases in process of conversion. Possible values are action constants.
+	 * By default loads in GPU memory only atlases for default scale and csf
+	 */
+	public static var actionWithAtlases: String = ACTION_LOAD_IN_GPU_MEMORY_ONLY_DEFAULT;
+	
+	
 	//--------------------------------------------------------------------------
 	//
 	//  PRIVATE VARIABLES
@@ -56,8 +84,8 @@ class ZipToGAFAssetConverter extends EventEmitter
 	private var _defaultScale:Float;
 	private var _defaultContentScaleFactor:Float;
 
-	private var _parseConfigAsync:Bool;
-	private var _ignoreSounds:Bool;
+	private var _parseConfigAsync:Bool=false;
+	private var _ignoreSounds:Bool=false;
 
 	///////////////////////////////////
 
@@ -297,7 +325,7 @@ class ZipToGAFAssetConverter extends EventEmitter
 		}
 	}
 	
-	private function createGAFTimelines(event:EventTarget=null):Void
+	private function createGAFTimelines(event:Dynamic=null):Void
 	{
 		
 		if (event != null) {
@@ -340,7 +368,7 @@ class ZipToGAFAssetConverter extends EventEmitter
 			_gafBundle.addGAFAsset(gafAsset);
 		}
 
-		if(gafAsset==null || gafAsset.timelines.length==null)
+		if(gafAsset==null || gafAsset.timelines.length==0)
 		{
 			//zipProcessError(ErrorConstants.TIMELINES_NOT_FOUND);
 			return;
@@ -436,20 +464,18 @@ class ZipToGAFAssetConverter extends EventEmitter
 		}
 
 		var timeline:GAFTimeline=new GAFTimeline(config);
+		
 		timeline.gafgfxData=_gfxData;
 		timeline.gafSoundData=_soundData;
 		timeline.gafAsset=asset;
-
-		//switch(ZipToGAFAssetConverter.actionWithAtlases)
-		//{
-			//case ZipToGAFAssetConverter.ACTION_LOAD_ALL_IN_GPU_MEMORY:
-				//timeline.loadInVideoMemory(GAFTimeline.CONTENT_ALL);
-				//break;
-//
-			//case ZipToGAFAssetConverter.ACTION_LOAD_IN_GPU_MEMORY_ONLY_DEFAULT:
-				//timeline.loadInVideoMemory(GAFTimeline.CONTENT_DEFAULT);
-				//break;
-		//}
+		
+		switch(ZipToGAFAssetConverter.actionWithAtlases)
+		{
+			case ZipToGAFAssetConverter.ACTION_LOAD_ALL_IN_GPU_MEMORY:
+				timeline.loadInVideoMemory(GAFTimeline.CONTENT_ALL);
+			case ZipToGAFAssetConverter.ACTION_LOAD_IN_GPU_MEMORY_ONLY_DEFAULT:
+				timeline.loadInVideoMemory(GAFTimeline.CONTENT_DEFAULT);
+		}
 
 		return timeline;
 	}
@@ -489,7 +515,7 @@ class ZipToGAFAssetConverter extends EventEmitter
 	//
 	//--------------------------------------------------------------------------
 
-	private function onConvertError(event:EventTarget):Void
+	private function onConvertError(event:Dynamic):Void
 	{
 		throw "ZipToGAFAssetConverter: " + event.type;
 		
@@ -503,7 +529,7 @@ class ZipToGAFAssetConverter extends EventEmitter
 		//}
 	}
 
-	private function onConverted(event:EventTarget):Void
+	private function onConverted(event:Dynamic):Void
 	{
 		//*use namespace gaf_internal;*/
 
@@ -518,7 +544,7 @@ class ZipToGAFAssetConverter extends EventEmitter
 		_gafAssetConfigs[configID]=converter.config;
 		
 		var sounds:Array<CSound>=converter.config.sounds;
-		if(sounds!=null && _ignoreSounds==null)
+		if(sounds!=null && !_ignoreSounds)
 		{
 			for(i in 0...sounds.length)
 			{
@@ -554,7 +580,7 @@ class ZipToGAFAssetConverter extends EventEmitter
 		}
 	}
 	
-	private function onTexturesReady(event:EventTarget):Void
+	private function onTexturesReady(event:Dynamic):Void
 	{
 		_gfxData.off(GAFGFXData.EVENT_TYPE_TEXTURES_READY, onTexturesReady);
 

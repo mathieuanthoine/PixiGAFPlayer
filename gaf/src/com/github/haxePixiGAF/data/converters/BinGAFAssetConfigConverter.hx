@@ -19,7 +19,7 @@ import com.github.haxePixiGAF.data.converters.ErrorConstants.ErrorConstants;
 import com.github.haxePixiGAF.events.GAFEvent;
 import com.github.haxePixiGAF.utils.GAFBytesInput;
 import com.github.haxePixiGAF.utils.MathUtility;
-import eventemitter3.EventEmitter;
+import com.github.haxePixiGAF.utils.MatrixUtils;
 import haxe.Json;
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
@@ -27,6 +27,7 @@ import js.Lib;
 import pixi.core.math.Matrix;
 import pixi.core.math.Point;
 import pixi.core.math.shapes.Rectangle;
+import pixi.interaction.EventEmitter;
 
 /**
  * TODO
@@ -73,10 +74,10 @@ class BinGAFAssetConfigConverter extends EventEmitter
 
 
 	private var _time:Int;
-	private var _isTimeline:Bool;
+	private var _isTimeline:Bool=false;
 	private var _currentTimeline:GAFTimelineConfig;
-	private var _async:Bool;
-	private var _ignoreSounds:Bool;
+	private var _async:Bool=false;
+	private var _ignoreSounds:Bool=false;
 	
 	// --------------------------------------------------------------------------
 	//
@@ -349,7 +350,7 @@ class BinGAFAssetConfigConverter extends EventEmitter
 
 				contentScaleFactor=getTextureAtlasCSF(scale, csf);
 				updateTextureAtlasSources(contentScaleFactor, Std.string(atlasID), source);
-				if(contentScaleFactor.elements!=null)
+				if(contentScaleFactor.elements==null)
 				{
 					contentScaleFactor.elements=elements;
 				}
@@ -361,7 +362,7 @@ class BinGAFAssetConfigConverter extends EventEmitter
 		var elementsLength:Int = _bytes.readUnsignedInt();
 		
 		var element:CTextureAtlasElement;
-		var hasScale9Grid:Bool;
+		var hasScale9Grid:Bool=false;
 		var scale9Grid:Rectangle=null;
 		var pivot:Point;
 		var topLeft:Point;
@@ -418,14 +419,13 @@ class BinGAFAssetConfigConverter extends EventEmitter
 			{
 				element=new CTextureAtlasElement(Std.string(elementAtlasID), Std.string(atlasID));
 				element.region=new Rectangle(Std.int(topLeft.x), Std.int(topLeft.y), elementWidth, elementHeight);
-				element.pivotMatrix = new Matrix();
-			element.pivotMatrix.fromArray([1 / elementScaleX, 0, 0, 1 / elementScaleY, -pivot.x / elementScaleX, -pivot.y / elementScaleY]);
+				element.pivotMatrix = new Matrix(1 / elementScaleX, 0, 0, 1 / elementScaleY, -pivot.x / elementScaleX, -pivot.y / elementScaleY);
 				element.scale9Grid=scale9Grid;
 				element.linkage=linkageName;
 				element.rotated=rotation;
 				elements.addElement(element);
 
-				if(element.rotated!=null)
+				if(element.rotated)
 				{
 					sHelperRectangle.x = 0;
 					sHelperRectangle.y = 0;
@@ -611,11 +611,11 @@ class BinGAFAssetConfigConverter extends EventEmitter
 		var alpha:Float;
 		var matrix:Matrix;
 		var maskID:String;
-		var hasMask:Bool;
-		var hasEffect:Bool;
-		var hasActions:Bool;
-		var hasColorTransform:Bool;
-		var hasChangesInDisplayList:Bool;
+		var hasMask:Bool=false;
+		var hasEffect:Bool=false;
+		var hasActions:Bool=false;
+		var hasColorTransform:Bool=false;
+		var hasChangesInDisplayList:Bool=false;
 
 		var timelineConfig:GAFTimelineConfig=_config.timelines[_config.timelines.length - 1];
 		var instance:CAnimationFrameInstance;
@@ -691,8 +691,7 @@ class BinGAFAssetConfigConverter extends EventEmitter
 						{
 							alpha = 1;//TODO : *GAF.gaf_internal::maxAlpha;
 						}
-						matrix = new Matrix();
-						matrix.fromArray([_bytes.readFloat(), _bytes.readFloat(), _bytes.readFloat(),_bytes.readFloat(), _bytes.readFloat(), _bytes.readFloat()]);
+						matrix = new Matrix(_bytes.readFloat(), _bytes.readFloat(), _bytes.readFloat(),_bytes.readFloat(), _bytes.readFloat(), _bytes.readFloat());
 
 						filter=null;
 
