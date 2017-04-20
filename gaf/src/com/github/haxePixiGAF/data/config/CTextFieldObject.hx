@@ -4,7 +4,7 @@ import pixi.core.math.Point;
 /**
  * TODO
  * @author Mathieu Anthoine
- * @private
+ * 
  */
 class CTextFieldObject
 {

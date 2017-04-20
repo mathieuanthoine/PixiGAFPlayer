@@ -3,7 +3,7 @@ package com.github.haxePixiGAF.data.converters;
 /**
  * AS3 Conversion
  * @author Mathieu Anthoine
- * @private
+ * 
  */
 class WarningConstants
 {

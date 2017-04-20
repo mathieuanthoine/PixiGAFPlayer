@@ -3,7 +3,7 @@ package com.github.haxePixiGAF.data.config;
 /**
  * TODO
  * @author Mathieu Anthoine
- * @private
+ * 
  */
 class CSound
 {

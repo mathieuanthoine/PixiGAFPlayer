@@ -3,7 +3,7 @@ package com.github.haxePixiGAF.display;
 /**
  * AS3 Conversion
  * @author Mathieu Anthoine
- * @private
+ * 
  */
 interface IGAFDebug
 {

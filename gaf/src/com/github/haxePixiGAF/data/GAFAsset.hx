@@ -13,7 +13,7 @@ import pixi.core.math.Matrix;
 /**
  * TODO
  * @author Mathieu Anthoine
- * @private
+ * 
  */
 class GAFAsset
 {
@@ -78,10 +78,9 @@ class GAFAsset
 		_config=null;
 	}
 
-	/** @private */
+	/**  */
 	public function addGAFTimeline(timeline:GAFTimeline):Void
 	{
-		//use namespace gaf_internal;
 		if(_timelinesDictionary[timeline.id]==null)
 		{
 			_timelinesDictionary[timeline.id]=timeline;
@@ -116,7 +115,7 @@ class GAFAsset
 	//
 	//--------------------------------------------------------------------------
 
-	/** @private
+	/** 
 	 * Returns<code>GAFTimeline</code>from gaf asset by ID
 	 * @param id Internal timeline id
 	 * @return<code>GAFTimeline</code>from gaf asset
@@ -127,7 +126,7 @@ class GAFAsset
 		return _timelinesDictionary[id];
 	}
 
-	/** @private
+	/** 
 	 * Returns<code>GAFTimeline</code>from gaf asset bundle by linkage
 	 * @param linkage linkage in a *.fla file library
 	 * @return<code>GAFTimeline</code>from gaf asset
@@ -137,7 +136,6 @@ class GAFAsset
 		//return _timelinesByLinkage[linkage];
 	//}
 
-	//gaf_private function getCustomRegion(linkage:String, ?scale:Float, ?csf:Float):IGAFTexture
 	public function getCustomRegion(linkage:String, ?scale:Float, ?csf:Float):IGAFTexture
 	{
 		if(scale==null)scale=_scale;
@@ -165,7 +163,6 @@ class GAFAsset
 
 						if(element!=null)
 						{
-							//var texture:Texture=atlasCSF.atlas.gaf_internal::getTextureByIDAndAtlasID(element.id, element.atlasID);
 							var texture:TextureWrapper=atlasCSF.atlas.getTextureByIDAndAtlasID(element.id, element.atlasID);
 							var pivotMatrix:Matrix=element.pivotMatrix;
 							if(element.scale9Grid !=null)
@@ -188,8 +185,7 @@ class GAFAsset
 		return gafTexture;
 	}
 
-	/** @private */
-	/*gaf_private*/ public function getValidScale(value:Float):Float
+	public function getValidScale(value:Float):Float
 	{
 		var index:Int=MathUtility.getItemIndex(_config.scaleValues, value);
 		if(index !=-1)
@@ -199,8 +195,7 @@ class GAFAsset
 		return Math.NaN;
 	}
 
-	/** @private */
-	/*gaf_private*/ public function hasCSF(value:Float):Bool
+	public function hasCSF(value:Float):Bool
 	{
 		return MathUtility.getItemIndex(_config.csfValues, value)>=0;
 	}

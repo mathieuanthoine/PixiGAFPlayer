@@ -4,7 +4,7 @@ import js.Lib;
 /**
  * AS3 Conversion
  * @author Mathieu Anthoine
- * @private
+ * 
  */
 class CTextureAtlasElements
 {

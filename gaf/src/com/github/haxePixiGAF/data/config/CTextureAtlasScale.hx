@@ -4,7 +4,7 @@ import com.github.haxePixiGAF.utils.MathUtility;
 /**
  * AS3 Conversion
  * @author Mathieu Anthoine
- * @private
+ * 
  */
 class CTextureAtlasScale
 {

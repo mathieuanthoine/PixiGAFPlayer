@@ -3,10 +3,12 @@ package com.github.haxePixiGAF.display;
 import com.github.haxePixiGAF.data.textures.TextureWrapper;
 import pixi.core.math.Matrix;
 
+using com.github.haxePixiGAF.utils.MatrixUtility;
+
 /**
- * TODO
+ * AS3 Conversion
  * @author Mathieu Anthoine
- * @private
+ * 
  */
 class GAFTexture implements IGAFTexture
 {
@@ -50,8 +52,7 @@ class GAFTexture implements IGAFTexture
 		{
 			_id=newTexture.id;
 			_texture=newTexture.texture;
-			//_pivotMatrix.copyFrom(newTexture.pivotMatrix);
-			newTexture.pivotMatrix.copy(_pivotMatrix);
+			_pivotMatrix.copyFrom(newTexture.pivotMatrix);
 		}
 		else
 		{

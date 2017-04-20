@@ -19,7 +19,7 @@ import pixi.interaction.EventEmitter;
 /**
  * TODO vu le système de chargement, les onReady et autre test de chargement ne servent a rien, a simplifier
  * @author Mathieu Anthoine
- * @private
+ * 
  */ 
 class GAFGFXData extends EventEmitter
 {
@@ -48,7 +48,6 @@ class GAFGFXData extends EventEmitter
 	//
 	//--------------------------------------------------------------------------
 
-	/** @private */
 	public function new()
 	{
 		super();
@@ -60,7 +59,6 @@ class GAFGFXData extends EventEmitter
 	//
 	//--------------------------------------------------------------------------
 
-	/** @private */
 	public function addTAGFX(scale:Float, csf:Float, imageID:String, taGFX:ITAGFX):Void
 	{
 		var lScale:String = Std.string(scale);
@@ -71,7 +69,6 @@ class GAFGFXData extends EventEmitter
 		if (_taGFXDictionary[lScale][lCsf][imageID]==null) _taGFXDictionary[lScale][lCsf][imageID]=taGFX;
 	}
 
-	/** @private */
 	public function getTAGFXs(scale:Float, csf:Float):Map<String,ITAGFX>
 	{
 		var lScale:String = Std.string(scale);
@@ -88,7 +85,6 @@ class GAFGFXData extends EventEmitter
 		return null;
 	}
 
-	/** @private */
 	public function getTAGFX(scale:Float, csf:Float, imageID:String):ITAGFX
 	{
 		var lScale:String = Std.string(scale);
@@ -354,7 +350,6 @@ class GAFGFXData extends EventEmitter
 	//
 	//--------------------------------------------------------------------------
 
-	/** @private */
 	public var isTexturesReady(get_isTexturesReady, null):Bool;
  	private function get_isTexturesReady():Bool
 	{

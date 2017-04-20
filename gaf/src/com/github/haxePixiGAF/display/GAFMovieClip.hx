@@ -11,6 +11,7 @@ import com.github.haxePixiGAF.data.config.CAnimationSequence;
 import com.github.haxePixiGAF.data.config.CFilter;
 import com.github.haxePixiGAF.data.config.CFrameAction;
 import com.github.haxePixiGAF.data.config.CTextureAtlas;
+import com.github.haxePixiGAF.events.GAFEvent;
 import com.github.haxePixiGAF.utils.DebugUtility;
 import com.github.mathieuanthoine.gaf.Main;
 import js.Lib;
@@ -22,14 +23,8 @@ import pixi.core.math.shapes.Rectangle;
 import pixi.core.sprites.Sprite;
 import haxe.extern.EitherType;
 
-/** Dispatched when playhead reached first frame of sequence */
-//[Event(name="typeSequenceStart", type="starling.events.Event")]
-
-/** Dispatched when playhead reached end frame of sequence */
-//[Event(name="typeSequenceEnd", type="starling.events.Event")]
-
-/** Dispatched whenever the movie has displayed its last frame. */
-//[Event(name="complete", type="starling.events.Event")]
+using com.github.haxePixiGAF.utils.MatrixUtility;
+using com.github.haxePixiGAF.utils.EventEmitterUtility;
 
 /**
  * GAFMovieClip represents animation display object that is ready to be used in Starling display list. It has
@@ -42,8 +37,14 @@ import haxe.extern.EitherType;
  */
 class GAFMovieClip extends Container implements IAnimatable implements IGAFDisplayObject implements IMaxSize
 {
-	public static inline var EVENT_TYPE_SEQUENCE_START:String="typeSequenceStart";
-	public static inline var EVENT_TYPE_SEQUENCE_END:String="typeSequenceEnd";
+	/** Dispatched when playhead reached first frame of sequence */
+	public static inline var EVENT_TYPE_SEQUENCE_START:String = "typeSequenceStart";
+	
+	/** Dispatched when playhead reached end frame of sequence */
+	public static inline var EVENT_TYPE_SEQUENCE_END:String = "typeSequenceEnd";
+	
+	/** Dispatched whenever the movie has displayed its last frame. */
+	// GAFEvent.COMPLETE
 
 	private static var HELPER_MATRIX:Matrix=new Matrix();
 	//--------------------------------------------------------------------------
@@ -58,7 +59,8 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	//
 	//--------------------------------------------------------------------------
 
-	//private var _smoothing:String=TextureSmoothing.BILINEAR;
+	//TODO TextureSmoothing.BILINEAR
+	private var _smoothing:String = "";// TextureSmoothing.BILINEAR;
 
 	private var _displayObjectsDictionary:Map<String,IGAFDisplayObject>;
 	private var _stencilMasksDictionary:Map<String,DisplayObject>;
@@ -69,6 +71,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	private var _playingSequence:CAnimationSequence;
 	private var _timelineBounds:Rectangle;
 	private var _maxSize:Point;
+	//TODO _boundsAndPivot
 	//private var _boundsAndPivot:MeshBatch;
 	private var _config:GAFTimelineConfig;
 	private var _gafTimeline:GAFTimeline;
@@ -100,18 +103,18 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	private var _currentFrame:Int;
 	private var _totalFrames:Int;
 
+	//TODO _filterChain
 	//private var _filterChain:GAFFilterChain;
 	private var _filterConfig:CFilter;
 	private var _filterScale:Float;
 
-	private var _pivotChanged:Bool=false;
+	//private var _pivotChanged:Bool=false;
 
-	/** @private */
-	//gaf_private var __debugOriginalAlpha:Float=NaN;
 	private var __debugOriginalAlpha:Float=null;
 
-	private var _orientationChanged:Bool=false;
+	//private var _orientationChanged:Bool=false;
 
+	//TODO GAFStencilMaskStyle
 	//private var _stencilMaskStyle:GAFStencilMaskStyle;
 
 	// --------------------------------------------------------------------------
@@ -158,7 +161,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	//
 	//--------------------------------------------------------------------------
 
-	/** @private
+	/** 
 	 * Returns the child display object that exists with the specified ID. Use to obtain animation's parts
 	 *
 	 * @param id Child ID
@@ -169,7 +172,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 		return _displayObjectsDictionary[id];
 	}
 
-	/** @private
+	/** 
 	 * Returns the mask display object that exists with the specified ID. Use to obtain animation's masks
 	 *
 	 * @param id Mask ID
@@ -358,7 +361,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	 */
 	public function loopAll(loop:Bool):Void
 	{
-		//TODO
+		//TODO: loop
 		//loop=loop;
 
 		var i:Int=_mcVector.length;
@@ -368,7 +371,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 		}
 	}
 
-	/** @private
+	/** 
 	 * Advances all objects by a certain time(in seconds).
 	 * @see starling.animation.IAnimatable
 	 */
@@ -431,6 +434,9 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	{
 		if(_config.bounds!=null)
 		{
+			//TODO showBounds
+			trace ("TODO showBounds");
+			
 			//if(!_boundsAndPivot)
 			//{
 				//_boundsAndPivot=new MeshBatch();
@@ -448,9 +454,12 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 		}
 	}
 
-	/** @private */
+	/**  */
 	public function setFilterConfig(value:CFilter, scale:Float=1):Void
 	{
+		//TODO: setFilterConfig
+		trace ("TODO: setFilterConfig");
+		
 		//if(!Starling.current.contextValid)
 		//{
 			//return;
@@ -491,10 +500,9 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 		//}
 	}
 
-	/** @private */
 	public function invalidateOrientation():Void
 	{
-		_orientationChanged=true;
+		//_orientationChanged=true;
 	}
 
 	/**
@@ -609,29 +617,30 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	private function checkPlaybackEvents():Void
 	{
 		var sequence:CAnimationSequence;
-		//if(hasEventListener(EVENT_TYPE_SEQUENCE_START))
-		//{
-			//sequence=_config.animationSequences.getSequenceStart(_currentFrame + 1);
-			//if(sequence)
-			//{
-				//dispatchEventWith(EVENT_TYPE_SEQUENCE_START, false, sequence);
-			//}
-		//}
-		//if(hasEventListener(EVENT_TYPE_SEQUENCE_END))
-		//{
-			//sequence=_config.animationSequences.getSequenceEnd(_currentFrame + 1);
-			//if(sequence)
-			//{
-				//dispatchEventWith(EVENT_TYPE_SEQUENCE_END, false, sequence);
-			//}
-		//}
-		//if(hasEventListener(Event.COMPLETE))
-		//{
-			//if(_currentFrame==_finalFrame)
-			//{
-				//dispatchEventWith(Event.COMPLETE);
-			//}
-		//}
+		if(hasEventListener(EVENT_TYPE_SEQUENCE_START))
+		{
+			sequence=_config.animationSequences.getSequenceStart(_currentFrame + 1);
+			if(sequence!=null)
+			{
+				emit(EVENT_TYPE_SEQUENCE_START,{target:this,bubbles:false,data:sequence});
+			}
+		}
+		if(hasEventListener(EVENT_TYPE_SEQUENCE_END))
+		{
+			sequence=_config.animationSequences.getSequenceEnd(_currentFrame + 1);
+			if(sequence!=null)
+			{
+				emit(EVENT_TYPE_SEQUENCE_END,{target:this,bubbles:false,data:sequence});
+			}
+		}
+		if(hasEventListener(GAFEvent.COMPLETE))
+		{
+			if(_currentFrame==_finalFrame)
+			{
+				emit(GAFEvent.COMPLETE);
+			}
+		}
+		
 	}
 
 	private function runActions():Void
@@ -661,24 +670,27 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 					case CFrameAction.GOTO_AND_PLAY:
 						gotoAndPlay(action.params[0]);
 					case CFrameAction.DISPATCH_EVENT:
-						//TODO
-						//var actionType:String=action.params[0];
-						//if(hasEventListener(actionType))
-						//{
-							//switch(action.params.length)
-							//{
-								//case 4:
-									//var data:Dynamic=action.params[3];
-								//case 3:
-									//// cancelable param is not used
-									//var bubbles:Bool=cast(action.params[1],Bool);
-								//case 2:
-									//var bubbles:Bool=cast(action.params[1],Bool);
-							//}
-							//dispatchEventWith(actionType, bubbles, data);
-						//}
-						//if(actionType==CSound.GAF_PLAY_SOUND
-						//&& GAF.autoPlaySounds)
+						//TODO CFrameAction.DISPATCH_EVENT
+						trace ("CFrameAction.DISPATCH_EVENT");
+						var actionType:String=action.params[0];
+						if(hasEventListener(actionType))
+						{
+							var bubbles:Bool = false;
+							var data:Dynamic=null;
+							
+							switch(action.params.length)
+							{
+								case 4:
+									data=action.params[3];
+								case 3:
+									// cancelable param is not used
+									bubbles=cast(action.params[1],Bool);
+								case 2:
+									bubbles=cast(action.params[1],Bool);
+							}
+							emit(actionType, {target:this,bubbles:bubbles, data:data});
+						}
+						//if(actionType==CSound.GAF_PLAY_SOUND && GAF.autoPlaySounds)
 						//{
 							//_gafTimeline.startSound(currentFrame);
 						//}
@@ -809,9 +821,14 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 					//if display object is not a mask
 					if(!animationObjectsDictionary[instance.id].mask)
 					{
+						
+						
 						//if display object is under mask
 						if(instance.maskID!="")
 						{
+							//TODO Mask support
+							trace ("TODO Mask support");
+							
 							renderDebug(mc, instance, true);
 
 							stencilMaskObject=_stencilMasksDictionary[instance.maskID];
@@ -893,12 +910,15 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 
 	private function renderDebug(mc:GAFMovieClip, instance:CAnimationFrameInstance, masked:Bool):Void
 	{
-		//if(DebugUtility.RENDERING_DEBUG && mc!=null)
-		//{
+
+		if(DebugUtility.RENDERING_DEBUG && mc!=null)
+		{
+			//TODO renderDebug
+			trace ("TODO renderDebug");
 			//var hasFilter:Bool=(instance.filter !=null)|| _hasFilter;
-			////var alphaLessMax:Bool=instance.alpha<GAF.gaf_internal::maxAlpha || _alphaLessMax;
+			////var alphaLessMax:Bool=instance.alpha<GAF.maxAlpha || _alphaLessMax;
 			//var alphaLessMax:Bool=instance.alpha<GAF.maxAlpha || _alphaLessMax;
-//
+			//
 			//var changed:Bool=false;
 			//if(mc._alphaLessMax !=alphaLessMax)
 			//{
@@ -919,11 +939,14 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 			//{
 				//mc.draw();
 			//}
-		//}
+		}
 	}
 
 	private function addDebugRegions():Void
 	{
+		//TODO addDebugRegions
+		trace ("TODO addDebugRegions");
+		
 		//var debugView:Quad;
 		//for (debugRegion in _config.debugRegions)
 		//{
@@ -971,8 +994,6 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 
 		_currentFrame=0;
 		_totalFrames = _config.framesCount;
-		trace ("TODO: Fps");
-		//fps=_config.stageConfig ? _config.stageConfig.fps:Starling.current.nativeStage.frameRate;
 		fps=_config.stageConfig!=null ? _config.stageConfig.fps: 60;
 
 		var animationObjectsDictionary:Map<String,CAnimationObject>=_config.animationObjects.animationObjectsDictionary;
@@ -987,20 +1008,21 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 					var texture:IGAFTexture=textureAtlas.getTexture(animationObjectConfig.regionID);
 					if(Std.is(texture, GAFScale9Texture) && !animationObjectConfig.mask)// GAFScale9Image doesn't work as mask
 					{
-						//TODO
+						//TODO initialize GAFScale9Texture
+						trace ("TODO initialize GAFScale9Texture");
 						//displayObject=new GAFScale9Image(cast(texture,GAFScale9Texture));
 					}
 					else
 					{
 						displayObject = new GAFImage(texture);
-						//cast(displayObject,GAFImage).textureSmoothing=_smoothing;
+						cast(displayObject,GAFImage).textureSmoothing=_smoothing;
 					}
 				case CAnimationObject.TYPE_TEXTFIELD:
-					//TODO
+					//TODO initialize GAFTextField
+					trace ("TODO initialize GAFTextField");
 					//var tfObj:CTextFieldObject=_config.textFields.textFieldObjectsDictionary[animationObjectConfig.regionID];
 					//displayObject=new GAFTextField(tfObj, _scale, _contentScaleFactor);
 				case CAnimationObject.TYPE_TIMELINE:
-					//var timeline:GAFTimeline=gafAsset.gaf_internal::getGAFTimelineByID(animationObjectConfig.regionID);
 					var timeline:GAFTimeline=gafAsset.getGAFTimelineByID(animationObjectConfig.regionID);
 					displayObject=new GAFMovieClip(timeline, Std.int(fps), false);
 			}
@@ -1024,7 +1046,6 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 				var instanceName:String=_config.namedParts[animationObjectConfig.instanceID];
 				if (instanceName != null && !Reflect.hasField(this,instanceName))
 				{
-					//this[_config.namedParts[animationObjectConfig.instanceID]]=displayObject;
 					Reflect.setField(this, _config.namedParts[animationObjectConfig.instanceID], displayObject);
 					displayObject.name=instanceName;
 				}
@@ -1060,6 +1081,9 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 
 	private function updateBounds(bounds:Rectangle):Void
 	{
+		//TODO updateBounds
+		trace ("TODO updateBounds");
+		
 		//_boundsAndPivot.clear();
 		////bounds
 		//if(bounds.width>0 &&  bounds.height>0)
@@ -1086,11 +1110,9 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 		//_boundsAndPivot.addMesh(quad);
 	}
 
-	/** @private */
-	//gaf_private function __debugHighlight():Void
+
 	public function __debugHighlight():Void
 	{
-		//use namespace gaf_internal;
 
 		if(Math.isNaN(__debugOriginalAlpha))
 		{
@@ -1099,11 +1121,8 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 		alpha=1;
 	}
 
-	/** @private */
-	//gaf_private function __debugLowlight():Void
 	public function __debugLowlight():Void
 	{
-		//use namespace gaf_internal;
 
 		if(Math.isNaN(__debugOriginalAlpha))
 		{
@@ -1112,11 +1131,8 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 		alpha=.05;
 	}
 
-	/** @private */
-	//gaf_private function __debugResetLight():Void
 	public function __debugResetLight():Void
 	{
-		//use namespace gaf_internal;
 
 		if(!Math.isNaN(__debugOriginalAlpha))
 		{
@@ -1125,15 +1141,13 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 		}
 	}
 
-	//[Inline]
-	//private final function updateTransformMatrix():Void
 	private function updateTransformMatrix():Void
 	{		
-		if(_orientationChanged)
-		{
-			transformationMatrix=transformationMatrix;
-			_orientationChanged=false;
-		}
+		//if(_orientationChanged)
+		//{
+			//transformationMatrix=transformationMatrix;
+			//_orientationChanged=false;
+		//}
 	}
 
 	//--------------------------------------------------------------------------
@@ -1146,6 +1160,9 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	 *  the child are decreased by 1. If requested, the child will be disposed right away. */
 	override public function removeChildAt(index:Int/*, dispose:Bool=false*/):DisplayObject
 	{
+		//TODO: removeChildAt
+		trace ("TODO: removeChildAt");
+		
 		//if(dispose)
 		//{
 			//var key:String;
@@ -1235,6 +1252,8 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	//override public function dispose():Void	
 	override public function destroy(?options:EitherType<Bool, DestroyOptions>):Void
 	{
+		//TODO destroy
+		
 		if(_disposed)
 		{
 			return;
@@ -1280,36 +1299,35 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 		_disposed=true;
 	}
 
-	/** @private */
-	/*override*/ public function render(painter/*:Painter*/):Void
-	{
-		try
-		{
-			//super.render(painter);
-		}
-		catch(error:Dynamic)
-		{
-			throw error;
-			//if(Std.is(error, IllegalOperationError)
-					//&&(error.message as String).indexOf("not possible to stack filters")!=-1)
-			//{
-				//if(hasEventListener(ErrorEvent.ERROR))
-				//{
-					//dispatchEventWith(ErrorEvent.ERROR, true, error.message);
-				//}
-				//else
-				//{
-					//throw error;
-				//}
-			//}
-			//else
-			//{
-				//throw error;
-			//}
-		}
-	}
+	//public function render(painter/*:Painter*/):Void
+	//{
+		//try
+		//{
+			////super.render(painter);
+		//}
+		//catch(error:Dynamic)
+		//{
+			//throw error;
+			////if(Std.is(error, IllegalOperationError)
+					////&&(error.message as String).indexOf("not possible to stack filters")!=-1)
+			////{
+				////if(hasEventListener(ErrorEvent.ERROR))
+				////{
+					////dispatchEventWith(ErrorEvent.ERROR, true, error.message);
+				////}
+				////else
+				////{
+					////throw error;
+				////}
+			////}
+			////else
+			////{
+				////throw error;
+			////}
+		//}
+	//}
 
-	/** @private */
+	/**  */
 	//override public var pivotX(null, set_pivotX):Float;
  	//private function set_pivotX(value:Float):Void
 	//{
@@ -1317,7 +1335,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 		//super.pivotX=value;
 	//}
 
-	/** @private */
+	/**  */
 	//override public var pivotY(null, set_pivotY):Float;
  	//private function set_pivotY(value:Float):Void
 	//{
@@ -1328,21 +1346,21 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	
 	//TODO: trouver un moyen elegant de manipuler tout ca (injection JS en dur ?)
 	
-	/** @private */
+	/**  */
 	//override public function get x():Float
 	//{
 		//updateTransformMatrix();
 		//return super.x;
 	//}
 
-	/** @private */
+	/**  */
 	//override public function get y():Float
 	//{
 		//updateTransformMatrix();
 		//return super.y;
 	//}
 
-	/** @private */
+	/**  */
 	//override public var rotation(get_rotation, set_rotation):Float;
  	//private function get_rotation():Float
 	//{
@@ -1350,7 +1368,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 		//return super.rotation;
 	//}
 
-	/** @private */
+	/**  */
 	//override public var scaleX(get_scaleX, set_scaleX):Float;
  	//private function get_scaleX():Float
 	//{
@@ -1358,7 +1376,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 		//return super.scaleX;
 	//}
 
-	/** @private */
+	/**  */
 	//override public var scaleY(get_scaleY, set_scaleY):Float;
  	//private function get_scaleY():Float
 	//{
@@ -1366,7 +1384,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 		//return super.scaleY;
 	//}
 
-	/** @private */
+	/**  */
 	//override public var skewX(get_skewX, set_skewX):Float;
  	//private function get_skewX():Float
 	//{
@@ -1374,7 +1392,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 		//return super.skewX;
 	//}
 
-	/** @private */
+	/**  */
 	//override public var skewY(get_skewY, set_skewY):Float;
  	//private function get_skewY():Float
 	//{
@@ -1528,14 +1546,14 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 		return _useClipping;
 	}
 
-	/** @private */
+	/**  */
 	public var maxSize(get_maxSize, set_maxSize):Point;
  	private function get_maxSize():Point
 	{
 		return _maxSize;
 	}
 
-	/** @private */
+	/**  */
 	private function set_maxSize(value:Point):Point
 	{
 		return _maxSize=value;
@@ -1640,18 +1658,18 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 		return _skipFrames;
 	}
 
-	/** @private */
+	/**  */
 	public var pivotMatrix(get_pivotMatrix, null):Matrix;
  	private function get_pivotMatrix():Matrix
 	{
 		//HELPER_MATRIX.copyFrom(_pivotMatrix);
 		HELPER_MATRIX.identity();
 
-		if(_pivotChanged)
-		{
+		//if(_pivotChanged)
+		//{
 			//HELPER_MATRIX.tx=pivotX;
 			//HELPER_MATRIX.ty=pivotY;
-		}
+		//}
 
 		return HELPER_MATRIX;
 	}
@@ -1674,8 +1692,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	//[Inline]
 	private static function getTransformMatrix(displayObject:IGAFDisplayObject, matrix:Matrix):Matrix
 	{
-		//matrix.copyFrom(displayObject.pivotMatrix);
-		displayObject.pivotMatrix.copy(matrix);
+		matrix.copyFrom(displayObject.pivotMatrix);
 		return matrix;
 	}
 

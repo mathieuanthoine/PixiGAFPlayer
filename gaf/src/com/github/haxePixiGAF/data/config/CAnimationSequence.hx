@@ -31,7 +31,7 @@ class CAnimationSequence
 	//--------------------------------------------------------------------------
 
 	/**
-	 * @private
+	 * 
 	 */
 	public function new(id:String, startFrameNo:Int, endFrameNo:Int)
 	{
@@ -47,7 +47,7 @@ class CAnimationSequence
 	//--------------------------------------------------------------------------
 
 	/**
-	 * @private
+	 * 
 	 */
 	public function isSequenceFrame(frameNo:Int):Bool
 	{

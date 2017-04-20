@@ -5,7 +5,7 @@ import pixi.core.math.shapes.Rectangle;
 /**
  * AS3 Conversion
  * @author Mathieu Anthoine
- * @private
+ * 
  */
 class CTextureAtlasElement
 {

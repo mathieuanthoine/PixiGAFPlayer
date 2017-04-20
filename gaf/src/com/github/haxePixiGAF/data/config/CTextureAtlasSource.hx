@@ -3,7 +3,7 @@ package com.github.haxePixiGAF.data.config;
 /**
  * AS3 Conversion
  * @author Mathieu Anthoine
- * @private
+ * 
  */
 class CTextureAtlasSource
 {

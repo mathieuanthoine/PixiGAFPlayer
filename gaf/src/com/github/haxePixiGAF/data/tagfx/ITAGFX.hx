@@ -7,7 +7,7 @@ import pixi.core.math.Point;
 /**
  * AS3 Conversion
  * @author Mathieu Anthoine
- * @private
+ * 
  */
 interface ITAGFX extends IEventEmitter
 {

@@ -3,9 +3,9 @@ import com.github.haxePixiGAF.data.GAF;
 import com.github.haxePixiGAF.data.config.CAnimationFrameInstance;
 
 /**
- * TODO
+ * AS3 Conversion
  * @author Mathieu Anthoine
- * @private
+ * 
  */
 class DebugUtility
 {
@@ -35,7 +35,6 @@ class DebugUtility
 		{
 			colors.push(RENDERING_FILTER_COLOR);
 		}
-		//if(instance.alpha<GAF.gaf_internal::maxAlpha || alphaLess1)
 		if(instance.alpha<GAF.maxAlpha || alphaLess1)
 		{
 			colors.push(RENDERING_ALPHA_COLOR);
@@ -117,14 +116,15 @@ class DebugUtility
 
 		try
 		{
-			//TODO
+			//TODO FakeClass
+			trace ("TODO: FakeClass");
 			//FakeClass(obj);
 		}
 		catch(e:Dynamic)
 		{
-			memoryHash = "TODO: DebugUtility memoryHash";
-			// TODO
-			//memoryHash=Std.string(e).replace(/.*([@|\$].*?)to .*$/gi, '$1');
+			//TODO memoryHash
+			trace ("TODO: memoryHash");
+			memoryHash = "TODO: memoryHash";// Std.string(e).replace(/.*([@|\$].*?)to .*$/gi, '$1');
 		}
 
 		return memoryHash;

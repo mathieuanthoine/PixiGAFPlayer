@@ -6,7 +6,7 @@ import pixi.core.textures.BaseTexture;
 import pixi.core.textures.Texture;
 
 /**
- * ...
+ * PixiJs Wrapper of the Starling Texture Class
  * @author Mathieu Anthoine
  */
 class TextureWrapper extends Texture
@@ -97,13 +97,7 @@ class TextureWrapper extends Texture
 	//  STATIC
 	//
 	//--------------------------------------------------------------------------
-	
-	//public static function empty (width:Float=0, height:Float=0, premultipliedAlpha:Bool = true, mipMapping:Bool = false, optimizeForRenderToTexture:Bool = false, scale:Float =-1, format:String = "bgra", forcePotTexture:Bool = false) : Texture {
-		//
-		//trace ("EMPTY");
-		//return Texture.EMPTY;
-	//}
-	
+
 	/** Creates a texture that contains a region (in pixels) of another texture. The new
 	 *  texture will reference the base texture; no data is duplicated.
 	 *

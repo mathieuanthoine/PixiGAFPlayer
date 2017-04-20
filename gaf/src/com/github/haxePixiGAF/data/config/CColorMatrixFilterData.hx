@@ -5,12 +5,11 @@ import haxe.ds.Vector;
 /**
  * AS3 Conversion
  * @author Mathieu Anthoine
- * @private
+ * 
  */
 class CColorMatrixFilterData implements ICFilterData
 {
 	public var matrix:Array<Float>=new Array<Float>();
-	//public var matrix:Vector<Float>=new Vector<Float>(20);
 
 	public function new () {}
 	

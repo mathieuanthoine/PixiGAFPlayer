@@ -4,10 +4,12 @@ import com.github.haxePixiGAF.data.textures.TextureWrapper;
 import pixi.core.math.Matrix;
 import pixi.core.math.shapes.Rectangle;
 
+using com.github.haxePixiGAF.utils.MatrixUtility;
+
 /**
  * TODO
  * @author Mathieu Anthoine
- * @private
+ * 
  */
 class GAFScale9Texture implements IGAFTexture
 {
@@ -24,11 +26,11 @@ class GAFScale9Texture implements IGAFTexture
 	//--------------------------------------------------------------------------
 
 	/**
-	 * @private
+	 * 
 	 */
 	private static inline var DIMENSIONS_ERROR:String="The width and height of the scale9Grid must be greater than zero.";
 	/**
-	 * @private
+	 * 
 	 */
 	private static var HELPER_RECTANGLE:Rectangle = new Rectangle(0, 0, 0, 0);
 
@@ -78,8 +80,7 @@ class GAFScale9Texture implements IGAFTexture
 		{
 			_id=newTexture.id;
 			_texture=newTexture.texture;
-			//_pivotMatrix.copyFrom(newTexture.pivotMatrix);
-			newTexture.pivotMatrix.copy(_pivotMatrix);
+			_pivotMatrix.copyFrom(newTexture.pivotMatrix);
 			//_scale9Grid.copyFrom(cast(newTexture,GAFScale9Texture).scale9Grid);
 			//_topLeft=(newTexture as GAFScale9Texture).topLeft;
 			//_topCenter=(newTexture as GAFScale9Texture).topCenter;

@@ -4,7 +4,7 @@ package com.github.haxePixiGAF.data.config;
 /**
  * AS3 conversion
  * @author Mathieu Anthoine
- * @private
+ * 
  */
 class CAnimationSequences
 {

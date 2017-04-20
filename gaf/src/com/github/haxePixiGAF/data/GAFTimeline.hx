@@ -202,14 +202,11 @@ class GAFTimeline
 		}
 	}
 
-	/** @private */
 	public function startSound(frame:Int):Void
 	{
 		//var frameSoundConfig:CFrameSound=_config.getSound(frame);
 		//if(frameSoundConfig)
 		//{
-			////use namespace gaf_internal;
-//
 			//if(frameSoundConfig.action==CFrameSound.ACTION_STOP)
 			//{
 				//GAFSoundManager.getInstance().stop(frameSoundConfig.soundID, _config.assetID);
@@ -298,7 +295,6 @@ class GAFTimeline
 		return config.linkage;
 	}
 
-	/** @private
 	 * Asset identifier(name given at animation's upload or assigned by developer)
 	 */
 	public var assetID(get_assetID, null):String;
@@ -307,7 +303,6 @@ class GAFTimeline
 		return config.assetID;
 	}
 
-	/** @private */
 	public var textureAtlas(get_textureAtlas, null):CTextureAtlas;
  	private function get_textureAtlas():CTextureAtlas
 	{
@@ -325,7 +320,6 @@ class GAFTimeline
 		return _config.textureAtlas.contentScaleFactor.atlas;
 	}
 
-	/** @private */
 	public var config(get_config, null):GAFTimelineConfig;
  	private function get_config():GAFTimelineConfig
 	{
@@ -341,7 +335,6 @@ class GAFTimeline
 	 */
 	private function set_scale(value:Float):Float
 	{
-		//var scale:Float=_gafAsset.gaf_internal::getValidScale(value);
 		var scale:Float=_gafAsset.getValidScale(value);
 		if(Math.isNaN(scale))
 		{
@@ -396,7 +389,6 @@ class GAFTimeline
 	 */
 	private function set_contentScaleFactor(csf:Float):Void
 	{
-		//if(_gafAsset./*gaf_internal::*/hasCSF(csf))
 		if(_gafAsset.hasCSF(csf))
 		{
 			_gafAsset.csf=csf;
@@ -439,27 +431,23 @@ class GAFTimeline
 		return _gafgfxData;
 	}
 
-	/** @private */
 	public var gafAsset(get_gafAsset, set_gafAsset):GAFAsset;
  	private function get_gafAsset():GAFAsset
 	{
 		return _gafAsset;
 	}
 
-	/** @private */
 	private function set_gafAsset(asset:GAFAsset):GAFAsset
 	{
 		return _gafAsset=asset;
 	}
 
-	/** @private */
 	public var gafSoundData(get_gafSoundData, set_gafSoundData):GAFSoundData;
  	private function get_gafSoundData():GAFSoundData
 	{
 		return _gafSoundData;
 	}
 
-	/** @private */
 	private function set_gafSoundData(gafSoundData:GAFSoundData):GAFSoundData
 	{
 		return _gafSoundData=gafSoundData;

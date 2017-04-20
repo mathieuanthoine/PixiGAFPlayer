@@ -26,11 +26,9 @@ class GAF
 	 */
 	public static var useMipMaps:Bool=false;
 
-	/** @private */
-	/*gaf_internal*/ public static var useDeviceFonts:Bool=false;
+	public static var useDeviceFonts:Bool=false;
 
-	/** @private */
-	/*gaf_internal*/ public static var maxAlpha(get_maxAlpha, null):Float;
+	public static var maxAlpha(get_maxAlpha, null):Float;
  	private static function get_maxAlpha():Float
 	{
 		return GAF.use99alpha ? 0.99:1;

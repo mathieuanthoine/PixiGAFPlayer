@@ -2,13 +2,13 @@ package com.github.haxePixiGAF.utils;
 import pixi.core.math.Matrix;
 
 /**
- * ...
+ * Class that adds equivalents to AS3 methods
  * @author Mathieu Anthoine
  */
-class MatrixUtils
+class MatrixUtility
 {
 	
-	public static function concat (pA:Matrix,pB:Matrix):Matrix {
+	public static function concat (pA:Matrix,pB:Matrix):Void {
 		var lMatrix:Matrix = new Matrix();
 		
 		lMatrix.a = pB.a*pA.a+pB.c*pA.b;
@@ -18,7 +18,12 @@ class MatrixUtils
 		lMatrix.d = pB.b * pA.c + pB.d * pA.d;
 		lMatrix.ty = pB.b*pA.tx+pB.d*pA.ty+pB.ty;
 
-		return lMatrix;
+		lMatrix.copy(pA);
+
+	}
+	
+	public static function copyFrom(pA:Matrix, pB:Matrix):Void {
+		pB.copy(pA);
 	}
 	
 }

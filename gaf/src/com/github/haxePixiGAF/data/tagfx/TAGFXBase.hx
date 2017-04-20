@@ -13,7 +13,7 @@ import pixi.interaction.EventEmitter;
 /**
  * TODO
  * @author Mathieu Anthoine
- * @private
+ * 
  */
 class TAGFXBase extends EventEmitter implements ITAGFX
 {

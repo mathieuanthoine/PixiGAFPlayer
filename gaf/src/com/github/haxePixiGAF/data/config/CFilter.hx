@@ -5,7 +5,7 @@ import com.github.haxePixiGAF.utils.VectorUtility;
 /**
  * AS3 Conversion
  * @author Mathieu Anthoine
- * @private
+ * 
  */
 class CFilter
 {

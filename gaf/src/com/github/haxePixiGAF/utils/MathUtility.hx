@@ -3,7 +3,7 @@ package com.github.haxePixiGAF.utils;
 /**
  * AS3 Conversion
  * @author Mathieu Anthoine
- * @private
+ * 
  */
 class MathUtility
 {

@@ -1,12 +1,15 @@
 package com.github.haxePixiGAF.data.config;
-import com.github.haxePixiGAF.utils.MatrixUtils;
+
+import com.github.haxePixiGAF.utils.MatrixUtility;
 import js.Lib;
 import pixi.core.math.Matrix;
 
+using com.github.haxePixiGAF.utils.MatrixUtility;
+
 /**
- * TODO
+ * AS3 Conversion
  * @author Mathieu Anthoine
- * @private
+ * 
  */
 class CAnimationFrameInstance
 {
@@ -77,7 +80,7 @@ class CAnimationFrameInstance
 		ty=_matrix.ty;
 		_matrix.tx *=scale;
 		_matrix.ty *=scale;
-		MatrixUtils.concat(result,_matrix).copy(result);
+		result.concat(_matrix);
 		_matrix.tx=tx;
 		_matrix.ty=ty;
 
@@ -86,12 +89,12 @@ class CAnimationFrameInstance
 
 	public function applyTransformMatrix(transformationMatrix:Matrix, pivotMatrix:Matrix, scale:Float):Void
 	{
-		pivotMatrix.copy(transformationMatrix);
+		transformationMatrix.copyFrom(pivotMatrix);
 		tx=_matrix.tx;
 		ty=_matrix.ty;
 		_matrix.tx *=scale;
 		_matrix.ty *= scale;
-		MatrixUtils.concat(transformationMatrix, _matrix).copy(transformationMatrix);
+		transformationMatrix.concat(_matrix);
 		_matrix.tx=tx;
 		_matrix.ty=ty;
 	}

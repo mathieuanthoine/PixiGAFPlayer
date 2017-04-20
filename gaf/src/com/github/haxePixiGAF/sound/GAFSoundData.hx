@@ -8,7 +8,7 @@ import com.github.haxePixiGAF.utils.GAFBytesInput;
  * TODO
  * @author Mathieu Anthoine
  *
- * @private
+ * 
  */
 class GAFSoundData
 {

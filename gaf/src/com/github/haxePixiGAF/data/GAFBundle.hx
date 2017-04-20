@@ -33,8 +33,7 @@ import com.github.haxePixiGAF.sound.GAFSoundData;
 	//  CONSTRUCTOR
 	//
 	//--------------------------------------------------------------------------
-
-	/** @private */
+	
 	public function new()
 	{
 		_gafAssets=new Array<GAFAsset>();
@@ -55,7 +54,6 @@ import com.github.haxePixiGAF.sound.GAFSoundData;
 		if(_gafAssets!=null)
 		{
 			//GAFSoundManager.getInstance().stopAll();
-			//_soundData.gaf_internal::dispose();
 			//_soundData.dispose();
 			_soundData=null;
 
@@ -103,7 +101,6 @@ import com.github.haxePixiGAF.sound.GAFSoundData;
 		var gafAsset:GAFAsset=_gafAssetsDictionary[swfName];
 		if(gafAsset!=null)
 		{
-			//gafTexture=gafAsset.gaf_internal::getCustomRegion(linkage, scale, csf);
 			gafTexture=gafAsset.getCustomRegion(linkage, scale, csf);
 		}
 
@@ -117,16 +114,14 @@ import com.github.haxePixiGAF.sound.GAFSoundData;
 	//--------------------------------------------------------------------------
 
 	/**
-	 * @private
+	 * 
 	 */
-	//gaf_private function getGAFTimelineBySWFNameAndID(swfName:String, id:String):GAFTimeline
 	private function getGAFTimelineBySWFNameAndID(swfName:String, id:String):GAFTimeline
 	{
 		var gafTimeline:GAFTimeline=null;
 		var gafAsset:GAFAsset=_gafAssetsDictionary[swfName];
 		if(gafAsset!=null)
 		{
-			//gafTimeline=gafAsset.gaf_internal::getGAFTimelineByID(id);
 			gafTimeline=gafAsset.getGAFTimelineByID(id);
 		}
 
@@ -134,12 +129,9 @@ import com.github.haxePixiGAF.sound.GAFSoundData;
 	}
 
 	/**
-	 * @private
+	 * 
 	 */
-	//gaf_private function addGAFAsset(gafAsset:GAFAsset):Void
 	public function addGAFAsset(gafAsset:GAFAsset):Void
-	{
-		//use namespace gaf_internal;
 
 		if(_gafAssetsDictionary[gafAsset.id]==null)
 		{
@@ -171,7 +163,7 @@ import com.github.haxePixiGAF.sound.GAFSoundData;
 	//--------------------------------------------------------------------------
 
 	/**
-	 * @private
+	 * 
 	 */
 	public var soundData(get_soundData, set_soundData):GAFSoundData;
  	private function get_soundData():GAFSoundData
@@ -180,7 +172,7 @@ import com.github.haxePixiGAF.sound.GAFSoundData;
 	}
 
 	/**
-	 * @private
+	 * 
 	 * @param soundData
 	 */
 	private function set_soundData(soundData:GAFSoundData):GAFSoundData
@@ -188,7 +180,6 @@ import com.github.haxePixiGAF.sound.GAFSoundData;
 		return _soundData=soundData;
 	}
 
-	/** @private */
 	public var gafAssets(get_gafAssets, null):Array<GAFAsset>;
  	private function get_gafAssets():Array<GAFAsset>
 	{
