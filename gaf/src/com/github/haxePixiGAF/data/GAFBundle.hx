@@ -113,9 +113,6 @@ import com.github.haxePixiGAF.sound.GAFSoundData;
 	//
 	//--------------------------------------------------------------------------
 
-	/**
-	 * 
-	 */
 	private function getGAFTimelineBySWFNameAndID(swfName:String, id:String):GAFTimeline
 	{
 		var gafTimeline:GAFTimeline=null;
@@ -128,11 +125,8 @@ import com.github.haxePixiGAF.sound.GAFSoundData;
 		return gafTimeline;
 	}
 
-	/**
-	 * 
-	 */
 	public function addGAFAsset(gafAsset:GAFAsset):Void
-
+	{
 		if(_gafAssetsDictionary[gafAsset.id]==null)
 		{
 			_gafAssetsDictionary[gafAsset.id]=gafAsset;
@@ -162,10 +156,8 @@ import com.github.haxePixiGAF.sound.GAFSoundData;
 	//
 	//--------------------------------------------------------------------------
 
-	/**
-	 * 
-	 */
 	public var soundData(get_soundData, set_soundData):GAFSoundData;
+	
  	private function get_soundData():GAFSoundData
 	{
 		return _soundData;

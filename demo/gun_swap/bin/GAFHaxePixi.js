@@ -908,7 +908,7 @@ com_github_haxePixiGAF_data_GAFGFXData.prototype = $extend(PIXI.utils.EventEmitt
 		return null;
 	}
 	,disposeTextures: function(scale,csf,imageID) {
-		haxe_Log.trace("disposeTextures: TODO",{ fileName : "GAFGFXData.hx", lineNumber : 224, className : "com.github.haxePixiGAF.data.GAFGFXData", methodName : "disposeTextures"});
+		haxe_Log.trace("disposeTextures: TODO",{ fileName : "GAFGFXData.hx", lineNumber : 220, className : "com.github.haxePixiGAF.data.GAFGFXData", methodName : "disposeTextures"});
 	}
 	,addTexture: function(dictionary,tagfx,imageID) {
 		if(com_github_haxePixiGAF_utils_DebugUtility.RENDERING_DEBUG) {
@@ -944,7 +944,7 @@ com_github_haxePixiGAF_data_GAFGFXData.prototype = $extend(PIXI.utils.EventEmitt
 			empty = false;
 			break;
 		}
-		haxe_Log.trace("isTexturesReady",{ fileName : "GAFGFXData.hx", lineNumber : 368, className : "com.github.haxePixiGAF.data.GAFGFXData", methodName : "get_isTexturesReady", customParams : [empty]});
+		haxe_Log.trace("isTexturesReady",{ fileName : "GAFGFXData.hx", lineNumber : 363, className : "com.github.haxePixiGAF.data.GAFGFXData", methodName : "get_isTexturesReady", customParams : [empty]});
 		return empty;
 	}
 	,__class__: com_github_haxePixiGAF_data_GAFGFXData

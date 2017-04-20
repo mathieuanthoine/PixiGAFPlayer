@@ -295,6 +295,7 @@ class GAFTimeline
 		return config.linkage;
 	}
 
+	/**
 	 * Asset identifier(name given at animation's upload or assigned by developer)
 	 */
 	public var assetID(get_assetID, null):String;
