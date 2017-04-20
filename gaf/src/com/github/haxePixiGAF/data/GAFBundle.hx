@@ -98,10 +98,10 @@ import com.github.haxePixiGAF.sound.GAFSoundData;
 	public function getCustomRegion(swfName:String, linkage:String, ?scale:Float, ?csf:Float):IGAFTexture
 	{
 		var gafTexture:IGAFTexture=null;
-		var gafAsset:GAFAsset=_gafAssetsDictionary[swfName];
+		var gafAsset:GAFAsset = _gafAssetsDictionary[swfName];
 		if(gafAsset!=null)
 		{
-			gafTexture=gafAsset.getCustomRegion(linkage, scale, csf);
+			gafTexture = gafAsset.getCustomRegion(linkage, scale, csf);
 		}
 
 		return gafTexture;

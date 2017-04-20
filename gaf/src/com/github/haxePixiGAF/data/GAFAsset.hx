@@ -139,7 +139,7 @@ class GAFAsset
 	public function getCustomRegion(linkage:String, ?scale:Float, ?csf:Float):IGAFTexture
 	{
 		if(scale==null)scale=_scale;
-		if(csf==null)csf=_csf;
+		if(csf==null) csf=_csf;
 
 		var gafTexture:IGAFTexture=null;
 		var atlasScale:CTextureAtlasScale;

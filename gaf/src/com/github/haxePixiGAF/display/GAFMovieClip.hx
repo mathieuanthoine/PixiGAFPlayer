@@ -14,6 +14,7 @@ import com.github.haxePixiGAF.data.config.CTextureAtlas;
 import com.github.haxePixiGAF.events.GAFEvent;
 import com.github.haxePixiGAF.utils.DebugUtility;
 import com.github.mathieuanthoine.gaf.Main;
+import js.Browser;
 import js.Lib;
 import pixi.core.display.Container;
 import pixi.core.display.DisplayObject;
@@ -96,6 +97,8 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	// Hold the current time spent animating
 	private var _lastFrameTime:Float=0;
 	private var _frameDuration:Float;
+	
+	private var _previousTime:Float=-1;
 
 	private var _nextFrame:Int;
 	private var _startFrame:Int;
@@ -153,6 +156,9 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 		}
 
 		draw();
+		
+		//TODO: optimisation requestAnimationFrame a eviter de faire tourner pour rien
+		if (_addToJuggler) Browser.window.requestAnimationFrame(advanceTime);
 	}
 
 	//--------------------------------------------------------------------------
@@ -377,6 +383,9 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	 */
 	public function advanceTime(passedTime:Float):Void
 	{
+		if (_previousTime==-1) _previousTime = passedTime;
+		var lTime:Float = (passedTime - _previousTime) / 1000;
+		_previousTime = passedTime;
 
 		if(_disposed)
 		{
@@ -391,7 +400,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 
 		if(_inPlay && _frameDuration !=Math.POSITIVE_INFINITY)
 		{
-			_currentTime +=passedTime;
+			_currentTime +=lTime;
 
 			var framesToPlay:Int=Std.int((_currentTime - _lastFrameTime)/ _frameDuration);
 			if(_skipFrames)
@@ -425,6 +434,8 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 				_mcVector[i].advanceTime(passedTime);
 			}
 		}
+		
+		if (_addToJuggler) Browser.window.requestAnimationFrame(advanceTime);
 	}
 
 	/** Shows bounds of a whole animation with a pivot point.

@@ -38,8 +38,12 @@ class Main
 	private var stage:Container;
 	
 	private var gafMovieClip: GAFMovieClip;
+	private var gunSlot: GAFImage;
+	private var gun1: IGAFTexture;
+	private var gun2: IGAFTexture;
+	private var currentGun: IGAFTexture;
 	
-	private static inline var FILE_NAME:String = "gun_swap";
+	private static inline var FILE_NAME:String = "Test";// "gun_swap";
 
 	/**
 	 * initialisation générale
@@ -111,34 +115,41 @@ class Main
 		var gafBundle: GAFBundle = cast(pEvent.target,ZipToGAFAssetConverter).gafBundle;
 		//"gun_swap" - the name of the SWF which was converted to GAF
 		var gafTimeline: GAFTimeline = gafBundle.getGAFTimeline(FILE_NAME, "rootTimeline");
-		
-		//var lTexture:IGAFTexture = new GAFTexture("a", gafTimeline.gafgfxData.getTexture(1, 1, "1"), new Matrix());
-//
-		//var lImage:GAFImage = new GAFImage(lTexture);
-		//stage.addChild(lImage);
-		//
-		//var lTexture:IGAFTexture = gafTimeline.getTextureByName("GUN");
-		//trace (lTexture);
-		//
-		//var lImage:GAFImage = new GAFImage(lTexture);
-		//stage.addChild(lImage);
-		//
-		//return;
-		
-		//Lib.debug();
-		gafMovieClip = new GAFMovieClip(gafTimeline);
-		stage.addChild(gafMovieClip);
 
+		gafMovieClip = new GAFMovieClip(gafTimeline);
 		gafMovieClip.play(true);
-		//gafMovieClip.gotoAndStop(2);
-		//renderer.render(stage);
 		
-		//var lGAFTexture:IGAFTexture = new GAFTexture("test", Texture.fromImage("gun_swap/gun_swap.png"), new Matrix());
-		//var lImage:GAFImage = new GAFImage(lGAFTexture);		
-		//stage.addChild(lImage);
+		//gunSlot = cast(gafMovieClip.getChildByName("GUN"),GAFImage);
+		
+		//gun1 = gafBundle.getCustomRegion(FILE_NAME, "gun1");
+		//gun2 = gafBundle.getCustomRegion(FILE_NAME, "gun2");
+		
+		//var lBob:GAFMovieClip = new GAFMovieClip(gafBundle.getGAFTimeline(FILE_NAME, "gun1"));
+		//lBob.position.set(100, 100);
+		//stage.addChild(lBob);
+	//
+		//var lBill:GAFMovieClip = new GAFMovieClip(gafBundle.getGAFTimeline(FILE_NAME, "gun2"));
+		//lBill.position.set(100, 300);
+		//stage.addChild(lBill);
+		
+		//trace (gun1);
+		
+		//"gun2" texture is made from Bitmap
+		//thus we need to adjust its' pivot matrix
+		//gun2.pivotMatrix.translate( -24.2, -41.55);
+		
+		//setGun(gun1);
+		
+		stage.addChild(gafMovieClip);
 		
 		Browser.window.requestAnimationFrame(gameLoop);
 	}
+	
+	private function setGun(gun: IGAFTexture): Void
+	{
+			currentGun = gun;
+			gunSlot.changeTexture(gun);
+		}
 	
 	/**
 	 * game loop
@@ -146,8 +157,6 @@ class Main
 	private function gameLoop(pIdentifier:Float)
 	{
 		Browser.window.requestAnimationFrame(gameLoop);
-		gafMovieClip.advanceTime(0.02/*0.002*/);
-		//gafMovieClip.gotoAndStop((gafMovieClip.currentFrame+1)%gafMovieClip.totalFrames);
 		render();
 	}
 	
