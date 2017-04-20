@@ -1,11 +1,13 @@
 package com.github.haxePixiGAF.data.textures;
 
-import com.github.haxePixiGAF.utils.MatrixUtils;
+import com.github.haxePixiGAF.utils.MatrixUtility;
 import js.Lib;
 import pixi.core.math.Matrix;
 import pixi.core.math.shapes.Rectangle;
 import pixi.core.textures.BaseTexture;
 import pixi.core.textures.Texture;
+
+using com.github.haxePixiGAF.utils.MatrixUtility;
 
 /**
  * TODO: check
@@ -46,9 +48,7 @@ class SubTexture extends TextureWrapper
 	public function new(pParent:TextureWrapper, pRegion:Rectangle=null, pOwnsParent:Bool=false, pFrame:Rectangle=null, pRotated:Bool=false, pScaleModifier:Float=1)
 	{	
 		
-		//starling_internal::setTo(parent, region, ownsParent, frame, rotated, scaleModifier);
 		super(pParent.baseTexture, pRegion,null,null,pRotated);
-		//super(pParent.baseTexture, pFrame, pRegion);
 		setTo(pParent, pRegion, pOwnsParent, pFrame, pRotated, pScaleModifier);
 		
 	}
@@ -119,7 +119,7 @@ class SubTexture extends TextureWrapper
 	 *  the texture is not accessible to the outside, this can be overruled in order to avoid
 	 *  allocations.</p>
 	 */
-	/*starling_private*/ public function setTo(pParent:TextureWrapper, pRegion:Rectangle=null, pOwnsParent:Bool=false, pFrame:Rectangle=null, pRotated:Bool=false, pScaleModifier:Float=1):Void
+	public function setTo(pParent:TextureWrapper, pRegion:Rectangle=null, pOwnsParent:Bool=false, pFrame:Rectangle=null, pRotated:Bool=false, pScaleModifier:Float=1):Void
 	{
 		if(_region==null) _region=new Rectangle(0,0,0,0);
 		if (pRegion!=null) {
@@ -150,8 +150,6 @@ class SubTexture extends TextureWrapper
 		_ownsParent=pOwnsParent;
 		_rotated=pRotated;
 		
-		//width=(pRotated ? _region.height:_region.width)/ pScaleModifier;
-		//height=(pRotated ? _region.width:_region.height)/ pScaleModifier;
 		if (frame!=null) {
 			frame.width=(pRotated ? _region.height:_region.width)/ pScaleModifier;
 			frame.height=(pRotated ? _region.width:_region.height)/ pScaleModifier;
@@ -188,7 +186,7 @@ class SubTexture extends TextureWrapper
 		var texture:SubTexture=this;
 		while(texture!=null)
 		{
-			MatrixUtils.concat(_transformationMatrixToRoot, texture._transformationMatrix).copy(_transformationMatrixToRoot);
+			_transformationMatrixToRoot.concat(texture._transformationMatrix);
 			
 			if (Std.is(texture.parent,SubTexture)) texture=cast(texture.parent,SubTexture);
 			else texture = null;
@@ -196,7 +194,6 @@ class SubTexture extends TextureWrapper
 	}
 	
 	/** Disposes the parent texture if this texture owns it. */
-	//public override function dispose():Void
 	public override function destroy(?destroyBase:Bool):Void
 	{
 		if (_ownsParent) {

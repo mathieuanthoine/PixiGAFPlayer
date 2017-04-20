@@ -19,7 +19,7 @@ import com.github.haxePixiGAF.data.converters.ErrorConstants.ErrorConstants;
 import com.github.haxePixiGAF.events.GAFEvent;
 import com.github.haxePixiGAF.utils.GAFBytesInput;
 import com.github.haxePixiGAF.utils.MathUtility;
-import com.github.haxePixiGAF.utils.MatrixUtils;
+import com.github.haxePixiGAF.utils.MatrixUtility;
 import haxe.Json;
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
@@ -28,6 +28,10 @@ import pixi.core.math.Matrix;
 import pixi.core.math.Point;
 import pixi.core.math.shapes.Rectangle;
 import pixi.interaction.EventEmitter;
+
+using com.github.haxePixiGAF.utils.MatrixUtility;
+using com.github.haxePixiGAF.utils.RectangleUtility;
+using com.github.haxePixiGAF.utils.EventEmitterUtility;
 
 /**
  * TODO
@@ -70,7 +74,7 @@ class BinGAFAssetConfigConverter extends EventEmitter
 	private var _defaultScale:Float;
 	private var _defaultContentScaleFactor:Float;
 	private var _config:GAFAssetConfig;
-	private var _textureElementSizes:Dynamic;// Point by texture element id
+	private var _textureElementSizes:Array<Rectangle>;// Point by texture element id
 
 
 	private var _time:Int;
@@ -90,7 +94,7 @@ class BinGAFAssetConfigConverter extends EventEmitter
 		
 		_bytes=bytes;
 		_assetID=assetID;
-		_textureElementSizes={};
+		_textureElementSizes=[];
 	}
 	
 	public function convert(async:Bool=false):Void
@@ -219,10 +223,16 @@ class BinGAFAssetConfigConverter extends EventEmitter
 			case BinGAFAssetConfigConverter.TAG_DEFINE_NAMED_PARTS:
 				readNamedParts(_bytes, _currentTimeline);
 			case BinGAFAssetConfigConverter.TAG_DEFINE_SEQUENCES:
+				//TODO TAG_DEFINE_SEQUENCES
+				trace ("TODO TAG_DEFINE_SEQUENCES");
 				//readAnimationSequences(_bytes, _currentTimeline);
 			case BinGAFAssetConfigConverter.TAG_DEFINE_TEXT_FIELDS:
+				//TODO TAG_DEFINE_TEXT_FIELDS
+				trace ("TODO TAG_DEFINE_TEXT_FIELDS");
 				//readTextFields(_bytes, _currentTimeline);
 			case BinGAFAssetConfigConverter.TAG_DEFINE_SOUNDS:
+				//TODO TAG_DEFINE_SOUNDS
+				trace ("TODO TAG_DEFINE_SOUNDS");
 				if(!_ignoreSounds)
 				{
 					//readSounds(_bytes, _config);
@@ -439,11 +449,10 @@ class BinGAFAssetConfigConverter extends EventEmitter
 					sHelperRectangle.width = elementWidth;
 					sHelperRectangle.height = elementHeight;
 				}
-				//sHelperMatrix.copyFrom(element.pivotMatrix);
-				element.pivotMatrix.copy(sHelperMatrix);
+				sHelperMatrix.copyFrom(element.pivotMatrix);
 				var invertScale:Float=1 / scale;
 				sHelperMatrix.scale(invertScale, invertScale);
-				// TODO
+				// TODO RectangleUtil.getBounds
 				//RectangleUtil.getBounds(sHelperRectangle, sHelperMatrix, sHelperRectangle);
 
 				if(_textureElementSizes[elementAtlasID]==null)
@@ -689,7 +698,7 @@ class BinGAFAssetConfigConverter extends EventEmitter
 						alpha=_bytes.readFloat();
 						if(alpha==1)
 						{
-							alpha = 1;//TODO : *GAF.gaf_internal::maxAlpha;
+							alpha = GAF.maxAlpha;
 						}
 						matrix = new Matrix(_bytes.readFloat(), _bytes.readFloat(), _bytes.readFloat(),_bytes.readFloat(), _bytes.readFloat(), _bytes.readFloat());
 
@@ -786,13 +795,10 @@ class BinGAFAssetConfigConverter extends EventEmitter
 							_bytes.readBytes(lBytes, 0, paramsLength);
 							var paramsBA:GAFBytesInput = new GAFBytesInput(lBytes);
 							paramsBA.bigEndian = false;
-							//paramsBA.position=0;
-							//while(paramsBA.bytesAvailable>0)
 							while(paramsBA.position<paramsBA.length)
 							{
 								action.params.push(paramsBA.readUTF());
 							}
-							//paramsBA.clear();
 							paramsBA.close();
 							paramsBA = null;
 						}
@@ -864,13 +870,11 @@ class BinGAFAssetConfigConverter extends EventEmitter
 
 						if(animationObject.type==CAnimationObject.TYPE_TEXTURE)
 						{
-							//TODO
-							//sHelperRectangle.copyFrom(_textureElementSizes[animationObject.regionID]);
-							//sHelperRectangle.copyFrom(_textureElementSizes[animationObject.regionID]);
+							sHelperRectangle.copyFrom(_textureElementSizes[Std.parseInt(animationObject.regionID)]);
 						}
 						else if(animationObject.type==CAnimationObject.TYPE_TIMELINE)
 						{
-							var maskTimeline:GAFTimelineConfig;
+							var maskTimeline:GAFTimelineConfig=null;
 							for(maskTimeline in _config.timelines)
 							{
 								if(maskTimeline.id==animationObject.regionID)
@@ -878,8 +882,7 @@ class BinGAFAssetConfigConverter extends EventEmitter
 									break;
 								}
 							}
-							//TODO
-							//sHelperRectangle.copyFrom(maskTimeline.bounds);
+							sHelperRectangle.copyFrom(maskTimeline.bounds);
 						}
 						else if(animationObject.type==CAnimationObject.TYPE_TEXTFIELD)
 						{
@@ -973,14 +976,14 @@ class BinGAFAssetConfigConverter extends EventEmitter
 	
 	private function parseError(message:String):Void
 	{
-		//if(hasEventListener(ErrorEvent.ERROR))
-		//{
-		//	emit(GAFEvent.ERROR, false, false, message));
-		//}
-		//else
-		//{
+		if(hasEventListener(GAFEvent.ERROR))
+		{
+			emit(GAFEvent.ERROR, {bubbles:false, cancelable:false, text:message});
+		}
+		else
+		{
 			throw message;
-		//}
+		}
 	}
 	
 	//--------------------------------------------------------------------------
@@ -1059,7 +1062,6 @@ class BinGAFAssetConfigConverter extends EventEmitter
 
 	private static function readColorMatrixFilter(source:GAFBytesInput, filter:CFilter):String
 	{
-		//var matrix:Array<Float>=new Array<Float>(20, true);
 		var matrix:Array<Float>=new Array<Float>();
 		for(i in 0...20)
 		{

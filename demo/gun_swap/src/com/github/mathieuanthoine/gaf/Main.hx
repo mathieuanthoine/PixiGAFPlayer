@@ -83,17 +83,14 @@ class Main
 
 	private function load():Void
 	{
-		//trace (assetsID, urlsList.length);
 
 		if (assetsID>= urlsList.length)
 		{
-			trace ("END OF LOADING");
 			var converter: ZipToGAFAssetConverter = new ZipToGAFAssetConverter();
 			converter.on(GAFEvent.COMPLETE, onConverted);
 			converter.convert(assetsList);
 		}
 		else {
-			//trace (assetsID);
 			var lLoader:GAFLoader = new GAFLoader();
 			var lOptions:LoaderOptions = {loadType: 1/*LOAD_TYPE.XHR*/,xhrType:'arraybuffer'/*XHR_RESPONSE_TYPE.BUFFER*/};
 			lLoader.add(urlsList[assetsID],lOptions);
@@ -104,17 +101,13 @@ class Main
 
 	private function onLoad (pLoader:GAFLoader):Void
 	{
-		trace ("onLoad");
-		//trace (pLoader.name);
-		//trace (pLoader.content);
 		assetsList.push(pLoader);
 		assetsID++;
 		load();
 	}
 	
 	private function onConverted (pEvent:Dynamic):Void {
-		trace ("YEAH");
-		
+
 		var gafBundle: GAFBundle = cast(pEvent.target,ZipToGAFAssetConverter).gafBundle;
 		//"gun_swap" - the name of the SWF which was converted to GAF
 		var gafTimeline: GAFTimeline = gafBundle.getGAFTimeline(FILE_NAME, "rootTimeline");

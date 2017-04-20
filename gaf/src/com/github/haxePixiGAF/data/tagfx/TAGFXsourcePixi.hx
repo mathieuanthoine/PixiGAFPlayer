@@ -5,7 +5,6 @@ import pixi.core.textures.BaseTexture;
 import pixi.core.textures.Texture;
 
 /**
- * ...
  * @author Mathieu Anthoine
  */
 class TAGFXsourcePixi extends TAGFXBase

@@ -1,6 +1,7 @@
 package com.github.haxePixiGAF.events;
 
 /**
+ * Equivalent to AS3 IEventDispatcher
  * @author Mathieu Anthoine
  */
 interface IEventEmitter 

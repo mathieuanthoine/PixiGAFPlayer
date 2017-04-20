@@ -4,6 +4,8 @@ import com.github.haxePixiGAF.data.textures.TextureWrapper;
 import pixi.core.math.Matrix;
 import pixi.core.math.shapes.Rectangle;
 
+using com.github.haxePixiGAF.utils.MatrixUtility;
+
 /**
  * TODO
  * @author Mathieu Anthoine
@@ -78,8 +80,7 @@ class GAFScale9Texture implements IGAFTexture
 		{
 			_id=newTexture.id;
 			_texture=newTexture.texture;
-			//_pivotMatrix.copyFrom(newTexture.pivotMatrix);
-			newTexture.pivotMatrix.copy(_pivotMatrix);
+			_pivotMatrix.copyFrom(newTexture.pivotMatrix);
 			//_scale9Grid.copyFrom(cast(newTexture,GAFScale9Texture).scale9Grid);
 			//_topLeft=(newTexture as GAFScale9Texture).topLeft;
 			//_topCenter=(newTexture as GAFScale9Texture).topCenter;

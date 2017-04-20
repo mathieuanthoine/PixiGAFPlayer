@@ -4,7 +4,7 @@ import com.github.haxePixiGAF.data.textures.TextureWrapper;
 import pixi.core.math.Matrix;
 
 /**
- * TODO: passer de Starling à Pixi
+ * AS3 Conversion
  * @author Mathieu Anthoine
  * An Interface describes objects that contain all data used to initialize static GAF display objects such as<code>GAFImage</code>.
  */
@@ -35,8 +35,7 @@ interface IGAFTexture
 	 * Returns a new object that is a clone of this object.
 	 * @return object with Interface<code>IGAFTexture</code>
 	 */
-	public function clone():IGAFTexture;
-	
+	public function clone():IGAFTexture;	
 
 	/**
 	 * Copies all of the data from the source object Into the calling<code>IGAFTexture</code>object

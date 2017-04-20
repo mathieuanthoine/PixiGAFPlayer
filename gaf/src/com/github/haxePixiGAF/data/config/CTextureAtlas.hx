@@ -8,7 +8,7 @@ import com.github.haxePixiGAF.display.IGAFTexture;
 import pixi.core.math.Matrix;
 
 /**
- * TODO
+ * AS3 Conversion
  * @author Mathieu Anthoine
  * @private
  */
@@ -82,7 +82,6 @@ class CTextureAtlas
 		var textureAtlasElement:CTextureAtlasElement=_textureAtlasConfig.elements.getElement(id);
 		if(textureAtlasElement!=null)
 		{
-			//var texture:Texture=gaf_internal::getTextureByIDAndAtlasID(id, textureAtlasElement.atlasID);
 			var texture:TextureWrapper=getTextureByIDAndAtlasID(id, textureAtlasElement.atlasID);
 
 			var pivotMatrix:Matrix;
@@ -115,8 +114,7 @@ class CTextureAtlas
 	//
 	//--------------------------------------------------------------------------
 
-	//TODO: 
-	/*gaf _private*/ public function getTextureByIDAndAtlasID(id:String, atlasID:String):TextureWrapper
+	public function getTextureByIDAndAtlasID(id:String, atlasID:String):TextureWrapper
 	{
 		var textureAtlas:TextureAtlas=_textureAtlasesDictionary[atlasID];
 

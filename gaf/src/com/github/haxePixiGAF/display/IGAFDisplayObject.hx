@@ -6,7 +6,7 @@ import pixi.core.math.Matrix;
 import haxe.extern.EitherType;
 
 /**
- * AS3 TODO
+ * AS3 Conversion
  * @author Mathieu Anthoine
  * @private
  */
@@ -18,13 +18,6 @@ interface IGAFDisplayObject
 	function destroy(?options:EitherType<Bool, DestroyOptions>):Void;
 
 	public var alpha:Float;
-
-	//public var parent(get_parent,null):Container;
-	//private function get_parent():Container;
-
-	//public var visible(get_visible,set_visible):Float;
-	//private function get_visible():Float;
-	//private function set_visible(value:Float):Float;
 
 	public var transformationMatrix(get_transformationMatrix,set_transformationMatrix):Matrix;
 	private function get_transformationMatrix():Matrix;

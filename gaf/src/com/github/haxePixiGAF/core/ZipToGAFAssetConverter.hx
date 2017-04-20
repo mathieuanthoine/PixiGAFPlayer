@@ -16,6 +16,8 @@ import com.github.haxePixiGAF.utils.MathUtility;
 import pixi.interaction.EventEmitter;
 import pixi.loaders.Loader;
 
+using com.github.haxePixiGAF.utils.EventEmitterUtility;
+
 /**
  * TODO
  * @author Mathieu Anthoine
@@ -132,6 +134,12 @@ class ZipToGAFAssetConverter extends EventEmitter
 	 */
 	public function convert(data:Dynamic, ?defaultScale:Float, ?defaultContentScaleFactor:Float):Void
 	{
+		//TODO: revoir le format de data
+		/*
+		 * passer un tableau d'url vers des .gaf et gérer le chargement en interne ?
+		 * un gaf plutot un tableau de GAFLoader ?
+		 */
+		
 		/*
 		if(ZipToGAFAssetConverter.actionWithAtlases==ZipToGAFAssetConverter.ACTION_DONT_LOAD_IN_GPU_MEMORY)
 		{
@@ -149,6 +157,7 @@ class ZipToGAFAssetConverter extends EventEmitter
 			_gafBundle.name=_id;
 		}
 		
+		//TODO if (Std.is(data, ZipFile)) ; else
 		if(Std.is(data, AssetsList)) parseVector(data);
 		else
 		{
@@ -364,7 +373,6 @@ class ZipToGAFAssetConverter extends EventEmitter
 				gafAsset.addGAFTimeline(createTimeline(config, gafAsset));
 			}
 
-			//_gafBundle./*gaf_internal::*/addGAFAsset(gafAsset);
 			_gafBundle.addGAFAsset(gafAsset);
 		}
 
@@ -519,14 +527,14 @@ class ZipToGAFAssetConverter extends EventEmitter
 	{
 		throw "ZipToGAFAssetConverter: " + event.type;
 		
-		//if(hasEventListener(ErrorEvent.ERROR))
-		//{
-			//dispatchEvent(event);
-		//}
-		//else
-		//{
-			//throw new Dynamic(event.text);
-		//}
+		if(hasEventListener(GAFEvent.ERROR))
+		{
+			emit(event);
+		}
+		else
+		{
+			throw event.text;
+		}
 	}
 
 	private function onConverted(event:Dynamic):Void

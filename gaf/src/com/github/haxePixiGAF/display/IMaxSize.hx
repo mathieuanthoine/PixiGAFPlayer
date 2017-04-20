@@ -6,7 +6,6 @@ import pixi.core.math.Point;
  * @author Mathieu Anthoine
  * @private
  */
-//internal Interface IMaxSize
 interface IMaxSize
 {	
 	public var maxSize(get_maxSize, set_maxSize):Point;
