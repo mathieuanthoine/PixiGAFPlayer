@@ -70,8 +70,10 @@ Requirements of Pixi GAF Library:
 
   * Click on the configuration button
   <img src="https://github.com/mathieuanthoine/PixiGAFPlayer/blob/dev/imgs/Configuration.PNG">
+  
   * Uncheck the save as *.Zip option
   <img src="https://github.com/mathieuanthoine/PixiGAFPlayer/blob/dev/imgs/saveAsZip.PNG">
+  
   * Uncheck the compress *.gaf option
   <img src="https://github.com/mathieuanthoine/PixiGAFPlayer/blob/dev/imgs/compress.PNG">
 
