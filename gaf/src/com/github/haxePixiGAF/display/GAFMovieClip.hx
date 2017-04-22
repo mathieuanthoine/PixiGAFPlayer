@@ -1,6 +1,5 @@
 package com.github.haxePixiGAF.display;
 
-import com.github.haxePixiGAF.data.GAF;
 import com.github.haxePixiGAF.data.GAFAsset;
 import com.github.haxePixiGAF.data.GAFTimeline;
 import com.github.haxePixiGAF.data.GAFTimelineConfig;
@@ -13,16 +12,13 @@ import com.github.haxePixiGAF.data.config.CFrameAction;
 import com.github.haxePixiGAF.data.config.CTextureAtlas;
 import com.github.haxePixiGAF.events.GAFEvent;
 import com.github.haxePixiGAF.utils.DebugUtility;
-import com.github.mathieuanthoine.gaf.Main;
+import haxe.extern.EitherType;
 import js.Browser;
-import js.Lib;
 import pixi.core.display.Container;
 import pixi.core.display.DisplayObject;
 import pixi.core.math.Matrix;
 import pixi.core.math.Point;
 import pixi.core.math.shapes.Rectangle;
-import pixi.core.sprites.Sprite;
-import haxe.extern.EitherType;
 
 using com.github.haxePixiGAF.utils.MatrixUtility;
 using com.github.haxePixiGAF.utils.EventEmitterUtility;
@@ -131,7 +127,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	 *
 	 * @param gafTimeline<code>GAFTimeline</code>from what<code>GAFMovieClip</code>will be created
 	 * @param fps defines the frame rate of the movie clip. If not set - the stage config frame rate will be used instead.
-	 * @param addToJuggler if<code>true - GAFMovieClip</code>will be added to<code>Starling.juggler</code>
+	 * @param addToJuggler if<code>true - GAFMovieClip</code>will listen<code>requestAnimationFrame</code>
 	 * and removed automatically on<code>dispose</code>
 	 */
 	public function new(gafTimeline:GAFTimeline, pFps:Int=-1, addToJuggler:Bool=true)
@@ -156,9 +152,6 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 		}
 
 		draw();
-		
-		//TODO: optimisation requestAnimationFrame a eviter de faire tourner pour rien
-		if (_addToJuggler) Browser.window.requestAnimationFrame(advanceTime);
 	}
 
 	//--------------------------------------------------------------------------
@@ -389,7 +382,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 
 		if(_disposed)
 		{
-			trace("WARNING:GAFMovieClip is disposed but is not removed from the Juggler");
+			trace("WARNING:GAFMovieClip is disposed but is still listening requestAnimationFrame");
 			return;
 		}
 		else if(_config.disposed)
@@ -469,7 +462,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	public function setFilterConfig(value:CFilter, scale:Float=1):Void
 	{
 		//TODO: setFilterConfig
-		trace ("TODO: setFilterConfig");
+		//trace ("TODO: setFilterConfig");
 		
 		//if(!Starling.current.contextValid)
 		//{
@@ -838,7 +831,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 						if(instance.maskID!="")
 						{
 							//TODO Mask support
-							trace ("TODO Mask support");
+							//trace ("TODO Mask support");
 							
 							renderDebug(mc, instance, true);
 
@@ -1063,10 +1056,11 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 			}
 		}
 
-		//if(_addToJuggler)
-		//{
-			//Starling.juggler.add(this);
-		//}
+		if(_addToJuggler)
+		{
+			//TODO: optimisation requestAnimationFrame a eviter de faire tourner pour rien
+			Browser.window.requestAnimationFrame(advanceTime);
+		}
 	}
 
 	private function addDisplayObject(id:String, displayObject:DisplayObject, asMask:Bool=false):Void
@@ -1270,11 +1264,6 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 			return;
 		}
 		stop();
-
-		//if(_addToJuggler)
-		//{
-			//Starling.juggler.remove(this);
-		//}
 
 		var l:Int=_displayObjectsVector.length;
 		for(i in 0...l)

@@ -125,7 +125,6 @@ com_github_haxePixiGAF_core_ZipToGAFAssetConverter.prototype = $extend(PIXI.util
 		if(this._id != null && this._id.length > 0) {
 			this._gafBundle.set_name(this._id);
 		}
-		debugger;
 		if(typeof(data) == "string") {
 			this.loadUrls([data]);
 		} else if((data instanceof Array) && data.__enum__ == null) {
@@ -135,7 +134,7 @@ com_github_haxePixiGAF_core_ZipToGAFAssetConverter.prototype = $extend(PIXI.util
 		} else if((data instanceof Array) && data.__enum__ == null) {
 			this.parseLoaders(data);
 		} else {
-			haxe_Log.trace("ERROR",{ fileName : "ZipToGAFAssetConverter.hx", lineNumber : 171, className : "com.github.haxePixiGAF.core.ZipToGAFAssetConverter", methodName : "convert"});
+			haxe_Log.trace("ERROR",{ fileName : "ZipToGAFAssetConverter.hx", lineNumber : 162, className : "com.github.haxePixiGAF.core.ZipToGAFAssetConverter", methodName : "convert"});
 		}
 	}
 	,reset: function() {
@@ -242,7 +241,6 @@ com_github_haxePixiGAF_core_ZipToGAFAssetConverter.prototype = $extend(PIXI.util
 		}
 	}
 	,loadUrls: function(pData) {
-		haxe_Log.trace("hey",{ fileName : "ZipToGAFAssetConverter.hx", lineNumber : 287, className : "com.github.haxePixiGAF.core.ZipToGAFAssetConverter", methodName : "loadUrls"});
 		var lLoader = new com_github_haxePixiGAF_core_GAFLoader();
 		var _g1 = 0;
 		var _g = pData.length;
@@ -251,7 +249,6 @@ com_github_haxePixiGAF_core_ZipToGAFAssetConverter.prototype = $extend(PIXI.util
 		lLoader.load();
 	}
 	,onLoadUrls: function(pLoader) {
-		haxe_Log.trace("onLoad",{ fileName : "ZipToGAFAssetConverter.hx", lineNumber : 296, className : "com.github.haxePixiGAF.core.ZipToGAFAssetConverter", methodName : "onLoadUrls"});
 		this.parseLoaders([pLoader]);
 	}
 	,parseLoaders: function(pData) {
@@ -275,7 +272,7 @@ com_github_haxePixiGAF_core_ZipToGAFAssetConverter.prototype = $extend(PIXI.util
 				}
 				break;
 			case ".png":
-				haxe_Log.trace("TODO PNG",{ fileName : "ZipToGAFAssetConverter.hx", lineNumber : 320, className : "com.github.haxePixiGAF.core.ZipToGAFAssetConverter", methodName : "parseLoaders"});
+				haxe_Log.trace("TODO PNG",{ fileName : "ZipToGAFAssetConverter.hx", lineNumber : 307, className : "com.github.haxePixiGAF.core.ZipToGAFAssetConverter", methodName : "parseLoaders"});
 				break;
 			}
 		}
@@ -4750,36 +4747,18 @@ var com_github_mathieuanthoine_gaf_Main = function() {
 };
 com_github_mathieuanthoine_gaf_Main.__name__ = ["com","github","mathieuanthoine","gaf","Main"];
 com_github_mathieuanthoine_gaf_Main.main = function() {
-	com_github_mathieuanthoine_gaf_Main.getInstance();
-};
-com_github_mathieuanthoine_gaf_Main.getInstance = function() {
-	if(com_github_mathieuanthoine_gaf_Main.instance == null) {
-		com_github_mathieuanthoine_gaf_Main.instance = new com_github_mathieuanthoine_gaf_Main();
-	}
-	return com_github_mathieuanthoine_gaf_Main.instance;
+	new com_github_mathieuanthoine_gaf_Main();
 };
 com_github_mathieuanthoine_gaf_Main.prototype = {
-	onLoad: function(pLoader) {
-		var converter = new com_github_haxePixiGAF_core_ZipToGAFAssetConverter();
-		converter.on("complete",$bind(this,this.onConverted));
-		converter.convert(pLoader);
-	}
-	,onConverted: function(pEvent) {
-		this.gafMovieClip = new com_github_haxePixiGAF_display_GAFMovieClip((js_Boot.__cast(pEvent.target , com_github_haxePixiGAF_core_ZipToGAFAssetConverter)).get_gafBundle().getGAFTimeline("first_test","rootTimeline"));
-		this.gafMovieClip.play(true);
-		this.stage.addChild(this.gafMovieClip);
+	onConverted: function(pEvent) {
+		var gafMovieClip = new com_github_haxePixiGAF_display_GAFMovieClip((js_Boot.__cast(pEvent.target , com_github_haxePixiGAF_core_ZipToGAFAssetConverter)).get_gafBundle().getGAFTimeline("first_test","rootTimeline"));
+		gafMovieClip.play(true);
+		this.stage.addChild(gafMovieClip);
 		window.requestAnimationFrame($bind(this,this.gameLoop));
-	}
-	,setGun: function(gun) {
-		this.currentGun = gun;
-		this.gunSlot.changeTexture(gun);
 	}
 	,gameLoop: function(pIdentifier) {
 		window.requestAnimationFrame($bind(this,this.gameLoop));
 		this.renderer.render(this.stage);
-	}
-	,destroy: function() {
-		com_github_mathieuanthoine_gaf_Main.instance = null;
 	}
 	,__class__: com_github_mathieuanthoine_gaf_Main
 };
@@ -5476,5 +5455,3 @@ js_Boot.__toStr = { }.toString;
 js_html_compat_Uint8Array.BYTES_PER_ELEMENT = 1;
 com_github_mathieuanthoine_gaf_Main.main();
 })(typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
-
-//# sourceMappingURL=GAFHaxePixi.js.map

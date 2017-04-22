@@ -126,7 +126,6 @@ class GAFTimeline
 						textures=_gafgfxData.getTextures(scaleConfig.scale, csfConfig.csf);
 						if(csfConfig.atlas==null && textures!=null)
 						{
-							trace ("A");
 							csfConfig.atlas=CTextureAtlas.createFromTextures(textures, csfConfig);
 						}
 					}
@@ -158,7 +157,6 @@ class GAFTimeline
 
 				if(csfConfig.atlas==null && _gafgfxData.createTextures(pScale, csf))
 				{
-					trace ("C");
 					csfConfig.atlas=CTextureAtlas.createFromTextures(_gafgfxData.getTextures(pScale, csf), csfConfig);
 				}
 				return;

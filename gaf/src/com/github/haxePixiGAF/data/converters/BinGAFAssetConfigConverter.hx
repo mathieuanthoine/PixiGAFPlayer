@@ -19,11 +19,8 @@ import com.github.haxePixiGAF.data.converters.ErrorConstants.ErrorConstants;
 import com.github.haxePixiGAF.events.GAFEvent;
 import com.github.haxePixiGAF.utils.GAFBytesInput;
 import com.github.haxePixiGAF.utils.MathUtility;
-import com.github.haxePixiGAF.utils.MatrixUtility;
 import haxe.Json;
 import haxe.io.Bytes;
-import haxe.io.BytesInput;
-import js.Lib;
 import pixi.core.math.Matrix;
 import pixi.core.math.Point;
 import pixi.core.math.shapes.Rectangle;
@@ -77,7 +74,6 @@ class BinGAFAssetConfigConverter extends EventEmitter
 	private var _textureElementSizes:Array<Rectangle>;// Point by texture element id
 
 
-	private var _time:Int;
 	private var _isTimeline:Bool=false;
 	private var _currentTimeline:GAFTimelineConfig;
 	private var _async:Bool=false;
@@ -99,16 +95,14 @@ class BinGAFAssetConfigConverter extends EventEmitter
 	
 	public function convert(async:Bool=false):Void
 	{
-		//_async=async;
-		//_time=getTimer();
-		//if(async)
-		//{
-			//Starling.juggler.delayCall(parseStart, 0.001);
-		//}
-		//else
-		//{
+		if(async)
+		{
+			trace ("TODO asynchrone conversion");
+		}
+		else
+		{
 			parseStart();
-		//}
+		}
 	}
 
 	//--------------------------------------------------------------------------
@@ -264,23 +258,14 @@ class BinGAFAssetConfigConverter extends EventEmitter
 
 	private function delayedReadNextTag():Void
 	{
-		//if(_async)
-		//{
-			//var timer:Int=getTimer();
-			//if(timer - _time>=20)
-			//{
-				//_time=timer;
-				//Starling.juggler.delayCall(readNextTag, 0.001);
-			//}
-			//else
-			//{
-				//readNextTag();
-			//}
-		//}
-		//else
-		//{
+		if(_async)
+		{
+			trace ("TODO asynchrone delayedReadNextTag");
+		}
+		else
+		{
 			readNextTag();
-		//}
+		}
 	}
 	
 	private function readTimeline():GAFTimelineConfig
@@ -358,7 +343,8 @@ class BinGAFAssetConfigConverter extends EventEmitter
 					_config.csfValues.push(csf);
 				}
 
-				contentScaleFactor=getTextureAtlasCSF(scale, csf);
+				contentScaleFactor = getTextureAtlasCSF(scale, csf);
+
 				updateTextureAtlasSources(contentScaleFactor, Std.string(atlasID), source);
 				if(contentScaleFactor.elements==null)
 				{
@@ -633,17 +619,15 @@ class BinGAFAssetConfigConverter extends EventEmitter
 		var blurFilters:Map<String,CBlurFilterData>= new Map<String,CBlurFilterData>();
 		var filter:CFilter;
 
-		//var cycleTime:Int=getTimer();
-
 		if(framesCount!=-1)
 		{
 			for(i in startIndex...framesCount)
 			{
-				//if(_async &&(getTimer()- cycleTime>=20))
-				//{
-					//Starling.juggler.delayCall(readAnimationFrames, 0.001, tagID, i, framesCount, prevFrame);
-					//return;
-				//}
+				if(_async /*&&(getTimer()- cycleTime>=20)*/)
+				{
+					trace ("TODO asynchrone readAnimationFrames");
+					return;
+				}
 
 				frameNumber=_bytes.readUnsignedInt();
 

@@ -38,7 +38,7 @@ class GAFTexture implements IGAFTexture
 	{
 		_id=id;
 		_texture=texture;
-		_pivotMatrix=pivotMatrix;
+		_pivotMatrix = pivotMatrix;
 	}
 
 	//--------------------------------------------------------------------------

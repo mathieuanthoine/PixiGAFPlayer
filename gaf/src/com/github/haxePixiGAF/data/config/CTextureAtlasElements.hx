@@ -1,5 +1,4 @@
 package com.github.haxePixiGAF.data.config;
-import js.Lib;
 
 /**
  * AS3 Conversion

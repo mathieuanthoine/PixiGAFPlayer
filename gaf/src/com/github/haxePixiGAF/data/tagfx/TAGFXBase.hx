@@ -2,7 +2,6 @@ package com.github.haxePixiGAF.data.tagfx;
 
 import com.github.haxePixiGAF.data.textures.TextureWrapper;
 import pixi.core.math.Point;
-import pixi.core.textures.Texture;
 import pixi.interaction.EventEmitter;
 
 /**
@@ -152,16 +151,16 @@ class TAGFXBase extends EventEmitter implements ITAGFX
 		return _source;
 	}
 
-	public var clearSourceAfterTextureCreated(get_clearSourceAfterTextureCreated, set_clearSourceAfterTextureCreated):Bool;
- 	private function get_clearSourceAfterTextureCreated():Bool
-	{
-		return _clearSourceAfterTextureCreated;
-	}
-
-	private function set_clearSourceAfterTextureCreated(value:Bool):Bool
-	{
-		return _clearSourceAfterTextureCreated=value;
-	}
+	//public var clearSourceAfterTextureCreated(get_clearSourceAfterTextureCreated, set_clearSourceAfterTextureCreated):Bool;
+ 	//private function get_clearSourceAfterTextureCreated():Bool
+	//{
+		//return _clearSourceAfterTextureCreated;
+	//}
+//
+	//private function set_clearSourceAfterTextureCreated(value:Bool):Bool
+	//{
+		//return _clearSourceAfterTextureCreated=value;
+	//}
 
 	public var ready(get_ready, null):Bool;
  	private function get_ready():Bool

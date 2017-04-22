@@ -3,6 +3,7 @@ package com.github.haxePixiGAF.core;
 import com.github.haxePixiGAF.utils.GAFBytesInput;
 import haxe.io.Bytes;
 import pixi.loaders.Loader;
+import pixi.loaders.LoaderOptions;
 import pixi.loaders.Resource;
 import pixi.loaders.ResourceLoader;
 
@@ -13,27 +14,33 @@ import pixi.loaders.ResourceLoader;
 class GAFLoader extends Loader
 {
 
-	//TODO: encapsuler tout le chargement y compris les données binaires (LoaderOptions)
-	
 	public var name:String;
 	public var content:GAFBytesInput;
-	
-	public function new() 
+
+
+	public function new()
 	{
 		super();
-		
 	}
-	
-	override public function load (?cb:Dynamic):ResourceLoader {
+
+	public function addGAFFile (pUrl:String):Void
+	{
+		if (pUrl.substring(pUrl.length-4) != ".gaf") throw "GAFLoader supports only .gaf files";
+		add(pUrl,{loadType: 1/*LOAD_TYPE.XHR*/,xhrType:'arraybuffer'/*XHR_RESPONSE_TYPE.BUFFER*/});
+	}
+
+	override public function load (?cb:Dynamic):ResourceLoader
+	{
 		after(parseData);
 		return super.load();
 	}
-	
-	private function parseData (pResource:Resource, pNext:Void->Void): Void {		
-		name = pResource.url;		
+
+	private function parseData (pResource:Resource, pNext:Void->Void): Void
+	{
+		name = pResource.url;
 		var lBytes:Bytes = Bytes.ofData(pResource.data);
 		content = new GAFBytesInput(lBytes, 0, lBytes.length);
 		pNext();
 	}
-	
+
 }

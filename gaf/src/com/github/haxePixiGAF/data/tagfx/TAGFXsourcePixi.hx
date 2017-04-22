@@ -1,8 +1,6 @@
 package com.github.haxePixiGAF.data.tagfx;
-import com.github.haxePixiGAF.data.textures.SubTexture;
 import com.github.haxePixiGAF.data.textures.TextureWrapper;
 import pixi.core.textures.BaseTexture;
-import pixi.core.textures.Texture;
 
 /**
  * @author Mathieu Anthoine
@@ -10,10 +8,13 @@ import pixi.core.textures.Texture;
 class TAGFXsourcePixi extends TAGFXBase
 {
 
+	private var bob:String;
+	
 	public function new(source:String) 
 	{
 		super();
-		_source=source;
+		_source = source;
+		bob = source;
 	}
 	
 	override private function get_sourceType(): String {

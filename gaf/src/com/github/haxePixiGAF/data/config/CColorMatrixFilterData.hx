@@ -1,6 +1,5 @@
 package com.github.haxePixiGAF.data.config;
 import com.github.haxePixiGAF.utils.VectorUtility;
-import haxe.ds.Vector;
 
 /**
  * AS3 Conversion

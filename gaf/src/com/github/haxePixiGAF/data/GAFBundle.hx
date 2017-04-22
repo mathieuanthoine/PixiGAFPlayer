@@ -74,13 +74,15 @@ import com.github.haxePixiGAF.sound.GAFSoundData;
 	 */
 	public function getGAFTimeline(swfName:String, linkage:String="rootTimeline"):GAFTimeline
 	{
+
 		var gafTimeline:GAFTimeline=null;
-		var gafAsset:GAFAsset=_gafAssetsDictionary[swfName];
+		var gafAsset:GAFAsset = _gafAssetsDictionary[swfName];
+		
 		if(gafAsset!=null)
 		{
 			gafTimeline=gafAsset.getGAFTimelineByLinkage(linkage);
 		}
-
+		
 		return gafTimeline;
 	}
 
@@ -97,6 +99,7 @@ import com.github.haxePixiGAF.sound.GAFSoundData;
 	 */
 	public function getCustomRegion(swfName:String, linkage:String, ?scale:Float, ?csf:Float):IGAFTexture
 	{
+		
 		var gafTexture:IGAFTexture=null;
 		var gafAsset:GAFAsset = _gafAssetsDictionary[swfName];
 		if(gafAsset!=null)
@@ -127,6 +130,7 @@ import com.github.haxePixiGAF.sound.GAFSoundData;
 
 	public function addGAFAsset(gafAsset:GAFAsset):Void
 	{
+		
 		if(_gafAssetsDictionary[gafAsset.id]==null)
 		{
 			_gafAssetsDictionary[gafAsset.id]=gafAsset;

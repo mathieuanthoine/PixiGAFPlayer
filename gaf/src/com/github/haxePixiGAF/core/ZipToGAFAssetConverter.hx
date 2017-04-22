@@ -23,7 +23,8 @@ using com.github.haxePixiGAF.utils.EventEmitterUtility;
  * @author Mathieu Anthoine
  */
 
-typedef AssetsList = Array<GAFLoader>; 
+typedef Array_GAFLoader = Array<GAFLoader>; 
+typedef Array_String = Array<String>; 
  
 class ZipToGAFAssetConverter extends EventEmitter
 {
@@ -134,12 +135,6 @@ class ZipToGAFAssetConverter extends EventEmitter
 	 */
 	public function convert(data:Dynamic, ?defaultScale:Float, ?defaultContentScaleFactor:Float):Void
 	{
-		//TODO: revoir le format de data
-		/*
-		 * passer un tableau d'url vers des .gaf et gérer le chargement en interne ?
-		 * un gaf plutot un tableau de GAFLoader ?
-		 */
-		
 		/*
 		if(ZipToGAFAssetConverter.actionWithAtlases==ZipToGAFAssetConverter.ACTION_DONT_LOAD_IN_GPU_MEMORY)
 		{
@@ -149,8 +144,8 @@ class ZipToGAFAssetConverter extends EventEmitter
 
 		reset();
 	
-		_defaultScale=defaultScale;
-		_defaultContentScaleFactor=defaultContentScaleFactor;
+		if (defaultScale!=null) _defaultScale=defaultScale;
+		if (_defaultContentScaleFactor!=null) _defaultContentScaleFactor=defaultContentScaleFactor;
 
 		if(_id!=null && _id.length>0)
 		{
@@ -158,7 +153,10 @@ class ZipToGAFAssetConverter extends EventEmitter
 		}
 		
 		//TODO if (Std.is(data, ZipFile)) ; else
-		if(Std.is(data, AssetsList)) parseVector(data);
+		if (Std.is(data, String)) loadUrls([data]);
+		else if (Std.is(data, Array_String)) loadUrls(data);
+		else if(Std.is(data, GAFLoader)) parseLoaders([data]);
+		else if(Std.is(data, Array_GAFLoader)) parseLoaders(data);
 		else
 		{
 			trace("ERROR");
@@ -247,15 +245,16 @@ class ZipToGAFAssetConverter extends EventEmitter
 			
 			var url:String;
 			var fileName:String;
-			var taGFX:TAGFXBase;
+			//var taGFX:TAGFXBase;
 			
 			for (_atlasSourceIndex in 0..._atlasSourceURLs.length) {
 				url=_atlasSourceURLs[_atlasSourceIndex];
 				fileName = url.substring(url.lastIndexOf("/") + 1);
 				// TODO: verifier s'il ne faut pas plutot le faire à la fin
-				taGFX = new TAGFXsourcePixi(url);
-				_taGFXs[fileName] = taGFX;
+				//taGFX = new TAGFXsourcePixi(url);
+				_taGFXs[fileName] = new TAGFXsourcePixi(url);//; taGFX;
 				_loader.add(url);
+				
 			}
 			_loader.load();
 		}
@@ -272,9 +271,20 @@ class ZipToGAFAssetConverter extends EventEmitter
 		var lastIndex:Int=cutURL.lastIndexOf("/");
 		
 		return cutURL.substring(0, lastIndex + 1);
-	}	
+	}
 	
-	private function parseVector(pData:AssetsList):Void
+	private function loadUrls(pData:Array<String>):Void {
+		var lLoader:GAFLoader = new GAFLoader();
+		for (i in 0...pData.length) lLoader.addGAFFile(pData[i]);
+		lLoader.once("complete", onLoadUrls);
+		lLoader.load();
+	}
+	
+	private function onLoadUrls (pLoader:GAFLoader):Void {
+		parseLoaders([pLoader]);
+	}
+	
+	private function parseLoaders(pData:Array_GAFLoader):Void
 	{
 		
 		var length:Int=pData.length;
@@ -336,19 +346,9 @@ class ZipToGAFAssetConverter extends EventEmitter
 	
 	private function createGAFTimelines(event:Dynamic=null):Void
 	{
-		
 		if (event != null) {
 			_loader.off(GAFEvent.COMPLETE, createGAFTimelines);
 		}
-		
-		//if(event)
-		//{
-			//Starling.current.stage3D.removeEventListener(Event.CONTEXT3D_CREATE, createGAFTimelines);
-		//}
-		//if(!Starling.current.contextValid)
-		//{
-			//Starling.current.stage3D.addEventListener(Event.CONTEXT3D_CREATE, createGAFTimelines);
-		//}
 
 		var gafTimelineConfigs:Array<GAFTimelineConfig>;
 		var gafAssetConfigID:String;
@@ -363,16 +363,17 @@ class ZipToGAFAssetConverter extends EventEmitter
 		
 		for(i in 0..._gafAssetsIDs.length)
 		{
-			gafAssetConfigID=_gafAssetsIDs[i];
+			gafAssetConfigID = _gafAssetsIDs[i];
+			
 			gafAssetConfig=_gafAssetConfigs[gafAssetConfigID];
 			gafTimelineConfigs=gafAssetConfig.timelines;
 
 			gafAsset=new GAFAsset(gafAssetConfig);
 			for(config in gafTimelineConfigs)
-			{
+			{	
 				gafAsset.addGAFTimeline(createTimeline(config, gafAsset));
 			}
-
+			
 			_gafBundle.addGAFAsset(gafAsset);
 		}
 
@@ -458,7 +459,7 @@ class ZipToGAFAssetConverter extends EventEmitter
 							if(_taGFXs[taSource.source]!=null)
 							{
 								var taGFX:TAGFXBase=_taGFXs[taSource.source];
-								taGFX.textureScale=cCSF.csf;
+								taGFX.textureScale = cCSF.csf;							
 								_gfxData.addTAGFX(cScale.scale, cCSF.csf, taSource.id, taGFX);
 							}
 							else

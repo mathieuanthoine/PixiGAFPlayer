@@ -1,9 +1,8 @@
 package com.github.haxePixiGAF.display;
 import com.github.haxePixiGAF.data.config.CFilter;
-import pixi.core.display.Container;
+import haxe.extern.EitherType;
 import pixi.core.display.DisplayObject.DestroyOptions;
 import pixi.core.math.Matrix;
-import haxe.extern.EitherType;
 
 /**
  * AS3 Conversion

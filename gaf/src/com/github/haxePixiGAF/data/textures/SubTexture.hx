@@ -1,11 +1,8 @@
 package com.github.haxePixiGAF.data.textures;
 
-import com.github.haxePixiGAF.utils.MatrixUtility;
-import js.Lib;
 import pixi.core.math.Matrix;
 import pixi.core.math.shapes.Rectangle;
 import pixi.core.textures.BaseTexture;
-import pixi.core.textures.Texture;
 
 using com.github.haxePixiGAF.utils.MatrixUtility;
 
@@ -218,7 +215,7 @@ class SubTexture extends TextureWrapper
 	 *
 	 *<p>CAUTION:not a copy, but the actual object! Do not modify!</p>*/
 	public var region(get_region, null):Rectangle;
- 	private function get_region():Rectangle { 
+ 	private function get_region():Rectangle {
 		return _region;
 	}	
 	

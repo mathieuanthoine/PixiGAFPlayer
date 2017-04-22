@@ -61,6 +61,7 @@ class GAFGFXData extends EventEmitter
 
 	public function addTAGFX(scale:Float, csf:Float, imageID:String, taGFX:ITAGFX):Void
 	{
+		
 		var lScale:String = Std.string(scale);
 		var lCsf:String = Std.string(csf);
 		

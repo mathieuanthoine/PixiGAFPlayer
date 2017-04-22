@@ -1,7 +1,5 @@
 package com.github.haxePixiGAF.data.config;
 
-import com.github.haxePixiGAF.utils.MatrixUtility;
-import js.Lib;
 import pixi.core.math.Matrix;
 
 using com.github.haxePixiGAF.utils.MatrixUtility;

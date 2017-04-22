@@ -1,8 +1,6 @@
 package com.github.haxePixiGAF.data.textures;
 
-import js.Lib;
 import pixi.core.math.shapes.Rectangle;
-import pixi.core.textures.Texture;
 
 /**
  * AS3 Conversion of Starling TextureAtlas class

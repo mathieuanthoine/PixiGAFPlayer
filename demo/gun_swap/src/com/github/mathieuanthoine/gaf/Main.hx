@@ -43,7 +43,7 @@ class Main
 	private var gun2: IGAFTexture;
 	private var currentGun: IGAFTexture;
 	
-	private static inline var FILE_NAME:String = "Test";// "gun_swap";
+	private static inline var FILE_NAME:String = "first_test";
 
 	/**
 	 * initialisation générale
@@ -63,51 +63,36 @@ class Main
 		return instance;
 	}
 
-	private var urlsList:Array<String> = [];
-	private var assetsList:AssetsList = [];
-	private var assetsID:Int = 0;
-
 	/**
 	 * création du jeu
 	*/
 	private function new ()
 	{
-		renderer = Detector.autoDetectRenderer(960, 640, {backgroundColor : 0xCCCCCC});
+		renderer = Detector.autoDetectRenderer(800, 600, {backgroundColor : 0x999999});
 		Browser.document.body.appendChild(renderer.view);
 
 		stage = new Container();
-
-		urlsList.push(FILE_NAME+"/"+FILE_NAME+".gaf");
 		
-
-		load();
-
-		//Browser.window.requestAnimationFrame(gameLoop);
-	}
-
-	private function load():Void
-	{
-
-		if (assetsID>= urlsList.length)
-		{
-			var converter: ZipToGAFAssetConverter = new ZipToGAFAssetConverter();
-			converter.on(GAFEvent.COMPLETE, onConverted);
-			converter.convert(assetsList);
-		}
-		else {
-			var lLoader:GAFLoader = new GAFLoader();
-			var lOptions:LoaderOptions = {loadType: 1/*LOAD_TYPE.XHR*/,xhrType:'arraybuffer'/*XHR_RESPONSE_TYPE.BUFFER*/};
-			lLoader.add(urlsList[assetsID],lOptions);
-			lLoader.once("complete", onLoad);
-			lLoader.load();
-		}
+		//var lLoader:GAFLoader = new GAFLoader();
+		//lLoader.addGAFFile(FILE_NAME+"/" + FILE_NAME+".gaf");
+		//lLoader.addGAFFile("Bundle/"+FILE_NAME+".gaf");
+		//lLoader.addGAFFile("Bundle/Test.gaf");
+		//lLoader.once("complete", onLoad);
+		//lLoader.load();
+		
+		var converter: ZipToGAFAssetConverter = new ZipToGAFAssetConverter();
+		converter.on(GAFEvent.COMPLETE, onConverted);		
+		converter.convert(FILE_NAME+"/" + FILE_NAME+".gaf");
+		
 	}
 
 	private function onLoad (pLoader:GAFLoader):Void
 	{
-		assetsList.push(pLoader);
-		assetsID++;
-		load();
+		//var assetsList:Array<GAFLoader> = [];
+		//assetsList.push(pLoader);
+		var converter: ZipToGAFAssetConverter = new ZipToGAFAssetConverter();
+		converter.on(GAFEvent.COMPLETE, onConverted);		
+		converter.convert(pLoader);
 	}
 	
 	private function onConverted (pEvent:Dynamic):Void {
@@ -118,6 +103,13 @@ class Main
 
 		gafMovieClip = new GAFMovieClip(gafTimeline);
 		gafMovieClip.play(true);
+		stage.addChild(gafMovieClip);
+
+		//var lTestTimeline:GAFTimeline = gafBundle.getGAFTimeline("Test", "rootTimeline");
+		//
+		//var lTest:GAFMovieClip = new GAFMovieClip(lTestTimeline);
+		//lTest.play(true);
+		//stage.addChild(lTest);
 		
 		//gunSlot = cast(gafMovieClip.getChildByName("GUN"),GAFImage);
 		
@@ -140,7 +132,6 @@ class Main
 		
 		//setGun(gun1);
 		
-		stage.addChild(gafMovieClip);
 		
 		Browser.window.requestAnimationFrame(gameLoop);
 	}
@@ -157,10 +148,6 @@ class Main
 	private function gameLoop(pIdentifier:Float)
 	{
 		Browser.window.requestAnimationFrame(gameLoop);
-		render();
-	}
-	
-	public function render ():Void {
 		renderer.render(stage);
 	}
 
