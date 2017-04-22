@@ -382,7 +382,6 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 
 		if(_disposed)
 		{
-			trace("WARNING:GAFMovieClip is disposed but is still listening requestAnimationFrame");
 			return;
 		}
 		else if(_config.disposed)
@@ -1253,8 +1252,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	 * To delete texture atlases from GPU memory use<code>unloadFromVideoMemory()</code>method for<code>GAFTimeline</code>instance
 	 * from what<code>GAFMovieClip</code>was instantiated.
 	 * Call this method every time before delete no longer required instance! Otherwise GPU memory leak may occur!
-	 */
-	//override public function dispose():Void	
+	 */	
 	override public function destroy(?options:EitherType<Bool, DestroyOptions>):Void
 	{
 		//TODO destroy
@@ -1292,7 +1290,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 
 		if(parent!=null)
 		{
-			//removeFromParent();
+			parent.removeChild(this);
 		}
 		super.destroy(options);
 
