@@ -4,11 +4,11 @@ Pixi GAF Player
 What is Pixi GAF Player?
 -----------------
 
-Pixi GAF Player is a Javascript library that allows developer easily to play back animations in GAF format using PixiJs[1] HTML5 engine.
+Pixi GAF Player is a Javascript library that allows developer easily to play back animations in GAF format using [PixiJs][1] HTML5 engine.
 
 Pixi GAF player is developed with [Haxe Toolkit][15]. The code is an adaptation of the [Starling GAF Player][12] code wrote in ActionScript 3.
 
-At the moment, Pixi GAF Player is avalaible for the Haxe version of PixiJs[14].
+At the moment, Pixi GAF Player is avalaible for the [Haxe version of PixiJs][14].
 A pure js library will be available soon for Javascript developers.
 
 Pixi GAF Player is still at a early stage of development, supported features match with the [availables demos][17]. Also read Requirements of GAF Pixi Player below.
