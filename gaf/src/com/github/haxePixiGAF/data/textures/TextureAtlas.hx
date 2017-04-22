@@ -80,7 +80,6 @@ class TextureAtlas
 	/** Disposes the atlas texture. */
 	public function dispose():Void
 	{
-		//_atlasTexture.dispose();
 		_atlasTexture.destroy();
 	}
 	

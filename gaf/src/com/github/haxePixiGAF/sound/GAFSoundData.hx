@@ -77,7 +77,7 @@ class GAFSoundData
 		//loadSound();
 	//}
 //
-	//gaf_private function dispose():Void
+	//function dispose():Void
 	//{
 		//for(var sound:Sound in _sounds)
 		//{
