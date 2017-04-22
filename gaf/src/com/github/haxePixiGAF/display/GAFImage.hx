@@ -261,7 +261,6 @@ class GAFImage extends Sprite implements IGAFImage implements IMaxSize implement
 		_assetTexture=null;
 		//_filterConfig=null;
 
-		//super.dispose();
 		super.destroy(options);
 	}
 
