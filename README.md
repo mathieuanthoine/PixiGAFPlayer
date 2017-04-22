@@ -66,7 +66,7 @@ Requirements of Pixi GAF Library:
 -----------------
 
 * You need to use Haxe-Pixi and PixiJS v4
-* Configure the [GAF Converter] as you see on screenshots below 
+* Configure the [GAF Converter][17] as you see on screenshots below 
 
   * [Click on the configuration button](https://github.com/mathieuanthoine/PixiGAFPlayer/blob/dev/imgs/Configuration.PNG)
   * [Uncheck the save as *.Zip option](https://github.com/mathieuanthoine/PixiGAFPlayer/blob/dev/imgs/saveAsZip.PNG)
