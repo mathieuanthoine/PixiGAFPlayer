@@ -4,6 +4,7 @@ import com.github.haxePixiGAF.data.GAFAssetConfig;
 import com.github.haxePixiGAF.data.config.CAnimationFrame;
 import com.github.haxePixiGAF.data.config.CAnimationFrameInstance;
 import com.github.haxePixiGAF.data.config.CAnimationObject;
+import com.github.haxePixiGAF.data.config.CAnimationSequence;
 import com.github.haxePixiGAF.data.config.CBlurFilterData;
 import com.github.haxePixiGAF.data.config.CFilter;
 import com.github.haxePixiGAF.data.config.CFrameAction;
@@ -17,6 +18,7 @@ import com.github.haxePixiGAF.data.config.CTextureAtlasScale;
 import com.github.haxePixiGAF.data.config.CTextureAtlasSource;
 import com.github.haxePixiGAF.data.converters.ErrorConstants.ErrorConstants;
 import com.github.haxePixiGAF.events.GAFEvent;
+import com.github.haxePixiGAF.text.TextFormatAlign;
 import com.github.haxePixiGAF.utils.GAFBytesInput;
 import com.github.haxePixiGAF.utils.MathUtility;
 import haxe.Json;
@@ -24,6 +26,7 @@ import haxe.io.Bytes;
 import pixi.core.math.Matrix;
 import pixi.core.math.Point;
 import pixi.core.math.shapes.Rectangle;
+import pixi.core.text.TextStyle;
 import pixi.interaction.EventEmitter;
 
 using com.github.haxePixiGAF.utils.MatrixUtility;
@@ -217,13 +220,9 @@ class BinGAFAssetConfigConverter extends EventEmitter
 			case BinGAFAssetConfigConverter.TAG_DEFINE_NAMED_PARTS:
 				readNamedParts(_bytes, _currentTimeline);
 			case BinGAFAssetConfigConverter.TAG_DEFINE_SEQUENCES:
-				//TODO TAG_DEFINE_SEQUENCES
-				trace ("TODO TAG_DEFINE_SEQUENCES");
-				//readAnimationSequences(_bytes, _currentTimeline);
+				readAnimationSequences(_bytes, _currentTimeline);
 			case BinGAFAssetConfigConverter.TAG_DEFINE_TEXT_FIELDS:
-				//TODO TAG_DEFINE_TEXT_FIELDS
-				trace ("TODO TAG_DEFINE_TEXT_FIELDS");
-				//readTextFields(_bytes, _currentTimeline);
+				readTextFields(_bytes, _currentTimeline);
 			case BinGAFAssetConfigConverter.TAG_DEFINE_SOUNDS:
 				//TODO TAG_DEFINE_SOUNDS
 				trace ("TODO TAG_DEFINE_SOUNDS");
@@ -577,6 +576,22 @@ class BinGAFAssetConfigConverter extends EventEmitter
 		}
 	}
 	
+	private static function readAnimationSequences(tagContent:GAFBytesInput, timelineConfig:GAFTimelineConfig):Void
+	{
+		var length:Int=tagContent.readUnsignedInt();
+		var sequenceID:String;
+		var startFrameNo:Int;
+		var endFrameNo:Int;
+
+		for(i in 0...length)
+		{
+			sequenceID=tagContent.readUTF();
+			startFrameNo=tagContent.readShort();
+			endFrameNo=tagContent.readShort();
+			timelineConfig.animationSequences.addSequence(new CAnimationSequence(sequenceID, startFrameNo, endFrameNo));
+		}
+	}
+	
 	private static function readNamedParts(tagContent:GAFBytesInput, timelineConfig:GAFTimelineConfig):Void
 	{
 		timelineConfig.namedParts=new Map<String,String>();
@@ -587,6 +602,135 @@ class BinGAFAssetConfigConverter extends EventEmitter
 		{
 			partID=tagContent.readUnsignedInt();
 			timelineConfig.namedParts[Std.string(partID)]=tagContent.readUTF();
+		}
+	}
+	
+	private static function readTextFields(tagContent:GAFBytesInput, timelineConfig:GAFTimelineConfig):Void
+	{
+		var length:Int=tagContent.readUnsignedInt();
+		var pivotX:Float;
+		var pivotY:Float;
+		var textFieldID:Int=0;
+		var width:Float;
+		var height:Float;
+		var text:String;
+		var embedFonts:Bool;
+		var multiline:Bool;
+		var wordWrap:Bool;
+		var restrict:String=null;
+		var editable:Bool;
+		var selectable:Bool;
+		var displayAsPassword:Bool;
+		var maxChars:Int=0;
+
+		var textFormat:TextStyle;
+
+		for(i in 0...length)
+		{
+			textFieldID=tagContent.readUnsignedInt();
+			pivotX=tagContent.readFloat();
+			pivotY=tagContent.readFloat();
+			width=tagContent.readFloat();
+			height=tagContent.readFloat();
+
+			text=tagContent.readUTF();
+
+			embedFonts=tagContent.readBoolean();
+			multiline=tagContent.readBoolean();
+			wordWrap=tagContent.readBoolean();
+
+			var hasRestrict:Bool=tagContent.readBoolean();
+			if(hasRestrict)
+			{
+				restrict=tagContent.readUTF();
+			}
+
+			editable=tagContent.readBoolean();
+			selectable=tagContent.readBoolean();
+			displayAsPassword=tagContent.readBoolean();
+			maxChars=tagContent.readUnsignedInt();
+
+			// read textFormat
+			var alignFlag:Int=tagContent.readUnsignedInt();
+			var align:String=null;
+			switch(alignFlag)
+			{
+				case 0:
+					align=TextFormatAlign.LEFT;
+				case 1:
+					align=TextFormatAlign.RIGHT;
+				case 2:
+					align=TextFormatAlign.CENTER;
+				case 3:
+					align=TextFormatAlign.JUSTIFY;
+				case 4:
+					align=TextFormatAlign.START;
+				case 5:
+					align=TextFormatAlign.END;
+			}
+
+			var blockIndent:Float=tagContent.readUnsignedInt();
+			var bold:Bool=tagContent.readBoolean();
+			var bullet:Bool=tagContent.readBoolean();
+			var color:Int=tagContent.readUnsignedInt();
+
+			var font:String=tagContent.readUTF();
+			var indent:Int=tagContent.readUnsignedInt();
+			var italic:Bool=tagContent.readBoolean();
+			var kerning:Bool=tagContent.readBoolean();
+			var leading:Int=tagContent.readUnsignedInt();
+			var leftMargin:Float=tagContent.readUnsignedInt();
+			var letterSpacing:Float=tagContent.readFloat();
+			var rightMargin:Float=tagContent.readUnsignedInt();
+			var size:Int=tagContent.readUnsignedInt();
+
+			var l:Int=tagContent.readUnsignedInt();
+			var tabStops:Array<Dynamic>=[];
+			for(j in 0...l)
+			{
+				tabStops.push(tagContent.readUnsignedInt());
+			}
+
+			var target:String=tagContent.readUTF();
+			var underline:Bool=tagContent.readBoolean();
+			var url:String=tagContent.readUTF();
+
+			/* var display:String=tagContent.readUTF();*/
+
+			textFormat = new TextStyle();
+			textFormat.fontFamily = font;
+			textFormat.fontSize = size;
+			textFormat.fill = color;
+			textFormat.fontWeight = bold ? "bold" : "normal";
+			textFormat.fontStyle = italic ? "italic" : "normal";
+			//textFormat. = underline;
+			//textFormat. = url;
+			//textFormat. = target;
+			textFormat.align = align;
+			//textFormat. = leftMargin;
+			//textFormat. = rightMargin;
+			//textFormat. = blockIndent;
+			//textFormat. = leading;
+
+			//textFormat.=bullet;
+			//textFormat.=kerning;
+			//textFormat.=display;
+			textFormat.letterSpacing=letterSpacing;
+			//textFormat.=tabStops;
+			//textFormat.=indent;
+
+			var textFieldObject:CTextFieldObject=new CTextFieldObject(Std.string(textFieldID), text, textFormat,width, height);
+			textFieldObject.pivotPoint.x=-pivotX;
+			textFieldObject.pivotPoint.y=-pivotY;
+			textFieldObject.embedFonts=embedFonts;
+			textFieldObject.multiline=multiline;
+			textFieldObject.wordWrap=wordWrap;
+			textFieldObject.restrict=restrict;
+			textFieldObject.editable=editable;
+			textFieldObject.selectable=selectable;
+			textFieldObject.displayAsPassword=displayAsPassword;
+			textFieldObject.maxChars=maxChars;
+			timelineConfig.textFields.addTextFieldObject(textFieldObject);
 		}
 	}
 	
