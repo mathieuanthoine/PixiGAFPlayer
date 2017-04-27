@@ -652,7 +652,7 @@ class GAFMovieClip extends GAFContainer implements IAnimatable
 
 	private function checkAndSetCurrentFrame(frame:Dynamic):Void
 	{
-		if (cast(frame,UInt) > 0)
+		if (Std.is(frame,Int) && cast(frame,Int) > 0)
 		{
 			if(frame>_totalFrames)
 			{
