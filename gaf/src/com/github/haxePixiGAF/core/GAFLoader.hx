@@ -14,8 +14,8 @@ import pixi.loaders.ResourceLoader;
 class GAFLoader extends Loader
 {
 
-	public var name:String;
-	public var content:GAFBytesInput;
+	public var names:Array<String>=[];
+	public var contents:Array<GAFBytesInput>=[];
 
 
 	public function new()
@@ -31,15 +31,15 @@ class GAFLoader extends Loader
 
 	override public function load (?cb:Dynamic):ResourceLoader
 	{
-		after(parseData);
+		use(parseData);
 		return super.load();
 	}
 
 	private function parseData (pResource:Resource, pNext:Void->Void): Void
 	{
-		name = pResource.url;
+		names.push(pResource.url);
 		var lBytes:Bytes = Bytes.ofData(pResource.data);
-		content = new GAFBytesInput(lBytes, 0, lBytes.length);
+		contents.push(new GAFBytesInput(lBytes, 0, lBytes.length));
 		pNext();
 	}
 

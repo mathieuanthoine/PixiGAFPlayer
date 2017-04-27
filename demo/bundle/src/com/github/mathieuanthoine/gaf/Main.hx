@@ -11,18 +11,21 @@ import com.github.haxePixiGAF.display.GAFTexture;
 import com.github.haxePixiGAF.display.IGAFTexture;
 import com.github.haxePixiGAF.events.GAFEvent;
 import haxe.Timer;
+import haxe.ds.ObjectMap;
 import js.Browser;
 import js.Lib;
+import js.html.CanvasElement;
+import js.html.MouseEvent;
 import pixi.core.display.Container;
 import pixi.core.math.Matrix;
 import pixi.core.renderers.Detector;
 import pixi.core.renderers.webgl.WebGLRenderer;
 import pixi.core.sprites.Sprite;
 import pixi.core.textures.Texture;
+import pixi.interaction.InteractionEvent;
 import pixi.loaders.LoaderOptions;
 
 /**
- * Simple Example of GAF Animation in PixiJs v4
  * @author Mathieu Anthoine
  */
 
@@ -32,7 +35,9 @@ class Main
 	private var renderer:WebGLRenderer;
 	private var stage:Container;
 	
-	private static inline var FILE_NAME:String = "first_test";
+	private var gafBundle: GAFBundle;
+	private var gafMovieClip: GAFMovieClip;
+	private var currentAsset: String;
 
 	private static function main ():Void
 	{
@@ -44,7 +49,7 @@ class Main
 	*/
 	private function new ()
 	{
-		renderer = Detector.autoDetectRenderer(800, 600, {backgroundColor : 0x999999});
+		renderer = Detector.autoDetectRenderer(400, 400, {backgroundColor : 0x8F8B83});
 		Browser.document.body.appendChild(renderer.view);
 
 		stage = new Container();
@@ -52,21 +57,50 @@ class Main
 		new Perf("TL");
 		
 		var converter: ZipToGAFAssetConverter = new ZipToGAFAssetConverter();
-		converter.once(GAFEvent.COMPLETE, onConverted);		
-		converter.convert(FILE_NAME+"/" + FILE_NAME+".gaf");
+		converter.on(GAFEvent.COMPLETE, onConverted);		
+		converter.convert(["bundle/skeleton.gaf","bundle/ufo-monster.gaf"]);
 		
 	}
 	
 	private function onConverted (pEvent:Dynamic):Void {
 
-		var gafBundle: GAFBundle = cast(pEvent.target,ZipToGAFAssetConverter).gafBundle;
-		var gafTimeline: GAFTimeline = gafBundle.getGAFTimeline(FILE_NAME, "rootTimeline");
-
-		var gafMovieClip:GAFMovieClip = new GAFMovieClip(gafTimeline);
-		gafMovieClip.play(true);
-		stage.addChild(gafMovieClip);
-
+		gafBundle = cast(pEvent.target,ZipToGAFAssetConverter).gafBundle;
+		initGAFMovieClip("skeleton");
+		
+		Browser.window.addEventListener("click", onClick);		
 		Browser.window.requestAnimationFrame(gameLoop);
+		
+	}
+	
+	private function onClick(pEvent: MouseEvent): Void
+	{
+		if (!Std.is(pEvent.target,CanvasElement)) return;
+		
+		if (currentAsset == "skeleton")
+		{
+			initGAFMovieClip("ufo-monster");
+		}
+		else
+		{
+			initGAFMovieClip("skeleton");
+		}
+	}
+	
+	private function initGAFMovieClip(swfName: String): Void
+	{
+		currentAsset = swfName;
+
+		gafMovieClip!=null ? gafMovieClip.destroy() : null;
+
+		stage.removeChildren();
+
+		var timeline: GAFTimeline = gafBundle.getGAFTimeline(swfName, "rootTimeline");
+
+		gafMovieClip = new GAFMovieClip(timeline);
+		//TODO: check why true is needed here and not with Starling
+		gafMovieClip.play(true);
+		
+		stage.addChild(gafMovieClip);
 	}
 	
 	private function gameLoop(pIdentifier:Float)
