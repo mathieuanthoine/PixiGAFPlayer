@@ -2,6 +2,7 @@ package com.github.haxePixiGAF.display;
 
 import com.github.haxePixiGAF.data.config.CFilter;
 import haxe.extern.EitherType;
+import js.Lib;
 import pixi.core.display.DisplayObject.DestroyOptions;
 import pixi.core.math.Matrix;
 import pixi.core.math.Point;
@@ -404,7 +405,6 @@ class GAFImage extends Sprite implements IGAFImage implements IMaxSize implement
  	private function get_pivotMatrix():Matrix
 	{
 		HELPER_MATRIX.copyFrom(_assetTexture.pivotMatrix);
-
 		//if(_pivotChanged)
 		//{
 			//HELPER_MATRIX.tx=pivotX;
@@ -416,66 +416,6 @@ class GAFImage extends Sprite implements IGAFImage implements IMaxSize implement
 	
 	public var transformationMatrix(get_transformationMatrix,set_transformationMatrix):Matrix;
 	private function get_transformationMatrix():Matrix {
-		
-		//if(_orientationChanged)
-		//{
-			//_orientationChanged=false;
-			//
-			//if(skew.x==0.0 && skew.y==0.0)
-			//{
-				//// optimization:no skewing / rotation simplifies the matrix math
-				//
-				//if(rotation==0.0)
-				//{
-					//worldTransform.a = scale.x;
-					//worldTransform.b = 0;
-					//worldTransform.c = 0;
-					//worldTransform.d = scale.y;
-					//worldTransform.tx = x - pivot.x * scale.x;
-					//worldTransform.ty = y - pivot.y * scale.y;
-					////.setTo(scale.x, 0.0, 0.0, scale.y,x - pivot.x * scale.x, y - pivot.y * scale.y);
-				//}
-				//else
-				//{
-					//var cos:Float=Math.cos(rotation);
-					//var sin:Float=Math.sin(rotation);
-					//var a:Float=scale.x *  cos;
-					//var b:Float=scale.x *  sin;
-					//var c:Float=scale.y * -sin;
-					//var d:Float=scale.y *  cos;
-					//var tx:Float=x - pivot.x * a - pivot.y * c;
-					//var ty:Float=y - pivot.x * b - pivot.y * d;
-					//
-					////worldTransform.setTo(a, b, c, d, tx, ty);
-					//
-					//worldTransform.a = a;
-					//worldTransform.b = b;
-					//worldTransform.c = c;
-					//worldTransform.d = d;
-					//worldTransform.tx = tx;
-					//worldTransform.ty = ty;
-//
-				//}
-			//}
-			//else
-			//{
-				//worldTransform.identity();
-				//worldTransform.scale(scale.x, scale.y);
-				////TODO : MatrixUtil.skew(worldTransform, skew.x, skew.y);
-				//worldTransform.rotate(rotation);
-				//worldTransform.translate(x, y);
-				//
-				//if(pivot.x !=0.0 || pivot.y !=0.0)
-				//{
-					//// prepend pivot transformation
-					//worldTransform.tx=x - worldTransform.a * pivot.x
-												  //- worldTransform.c * pivot.y;
-					//worldTransform.ty=y - worldTransform.b * pivot.x
-												  //- worldTransform.d * pivot.y;
-				//}
-			//}
-		//}
-		
 		return localTransform;
 		
 	}

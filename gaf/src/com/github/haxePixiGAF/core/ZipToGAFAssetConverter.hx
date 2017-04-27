@@ -13,6 +13,7 @@ import com.github.haxePixiGAF.events.GAFEvent;
 import com.github.haxePixiGAF.sound.GAFSoundData;
 import com.github.haxePixiGAF.utils.GAFBytesInput;
 import com.github.haxePixiGAF.utils.MathUtility;
+import js.Lib;
 import pixi.interaction.EventEmitter;
 import pixi.loaders.Loader;
 
@@ -23,7 +24,6 @@ using com.github.haxePixiGAF.utils.EventEmitterUtility;
  * @author Mathieu Anthoine
  */
 
-typedef Array_GAFLoader = Array<GAFLoader>; 
 typedef Array_String = Array<String>; 
  
 class ZipToGAFAssetConverter extends EventEmitter
@@ -155,8 +155,7 @@ class ZipToGAFAssetConverter extends EventEmitter
 		//TODO if (Std.is(data, ZipFile)) ; else
 		if (Std.is(data, String)) loadUrls([data]);
 		else if (Std.is(data, Array_String)) loadUrls(data);
-		else if(Std.is(data, GAFLoader)) parseLoaders([data]);
-		else if(Std.is(data, Array_GAFLoader)) parseLoaders(data);
+		else if(Std.is(data, GAFLoader)) parseLoader(data);
 		else
 		{
 			trace("ERROR");
@@ -281,14 +280,13 @@ class ZipToGAFAssetConverter extends EventEmitter
 	}
 	
 	private function onLoadUrls (pLoader:GAFLoader):Void {
-		parseLoaders([pLoader]);
+		parseLoader(pLoader);
 	}
 	
-	private function parseLoaders(pData:Array_GAFLoader):Void
+	private function parseLoader(pData:GAFLoader):Void
 	{
+		var length:Int = pData.contents.length;
 		
-		var length:Int=pData.length;
-
 		var fileName:String;
 		//var taGFX:TAGFXBase;
 
@@ -299,21 +297,9 @@ class ZipToGAFAssetConverter extends EventEmitter
 
 		for(i in 0...length)
 		{
-			fileName=pData[i].name;
-
-			switch(fileName.substr(fileName.toLowerCase().lastIndexOf(".")))
-			{
-				case ".png":
-					trace ("TODO PNG");
-					//fileName=fileName.substring(fileName.lastIndexOf("/")+ 1);
-					//var pngBA:Bytes=pData[i].content;
-					//var pngSize:Point=FileUtils.getPNGBASize(pngBA);
-					//taGFX=new TAGFXSourcePNGBA(pngBA, pngSize, textureFormat);
-					//_taGFXs[fileName]=taGFX;	
-				case ".gaf":									
-					_gafAssetsIDs.push(fileName);
-					_gafAssetConfigSources[fileName]=pData[i].content;
-			}
+			fileName=pData.names[i];
+			_gafAssetsIDs.push(fileName);
+			_gafAssetConfigSources[fileName]=pData.contents[i];
 		}
 
 		convertConfig();

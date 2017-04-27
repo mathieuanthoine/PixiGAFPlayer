@@ -113,9 +113,6 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 
 	//private var _orientationChanged:Bool=false;
 
-	//TODO GAFStencilMaskStyle
-	//private var _stencilMaskStyle:GAFStencilMaskStyle;
-
 	// --------------------------------------------------------------------------
 	//
 	//  CONSTRUCTOR
@@ -829,28 +826,22 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 						//if display object is under mask
 						if(instance.maskID!="")
 						{
-							//TODO Mask support
-							//trace ("TODO Mask support");
 							
 							renderDebug(mc, instance, true);
-
+							
 							stencilMaskObject=_stencilMasksDictionary[instance.maskID];
-
-							//if(stencilMaskObject)
-							//{
-								//_stencilMaskStyle=new GAFStencilMaskStyle();
-								//cast(stencilMaskObject,GAFImage).style=_stencilMaskStyle;
-//
-								//instance.applyTransformMatrix(displayObject.transformationMatrix, objectPivotMatrix, _scale);
-								//displayObject.invalidateOrientation();
-//
-								//cast(displayObjec,DisplayObject).mask=stencilMaskObject;
-//
-								//addChild(stencilMaskObject);
-								//addChild(cast(displayObject,DisplayObject));
-//
-								//_stencilMaskStyle.threshold=1;
-							//}
+							
+							if(stencilMaskObject!=null)
+							{
+								instance.applyTransformMatrix(displayObject.transformationMatrix, objectPivotMatrix, _scale);
+								displayObject.invalidateOrientation();
+								
+								cast(displayObject, DisplayObject).mask = stencilMaskObject;
+								
+								addChild(stencilMaskObject);
+								addChild(cast(displayObject, DisplayObject));
+								
+							}
 						}
 						else //if display object is not masked
 						{
@@ -875,6 +866,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 					}
 					else
 					{
+					
 						var maskObject:IGAFDisplayObject=_displayObjectsDictionary[instance.id];
 						if(maskObject!=null)
 						{
@@ -892,6 +884,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 
 							if (Std.is(maskObject, GAFMovieClip)) mc = cast(maskObject, GAFMovieClip);
 							else mc = null;
+							
 							
 							if(mc!=null && mc._started)
 							{
@@ -986,7 +979,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 			_mcVector[i].reset();
 		}
 	}
-
+	
 	private function initialize(textureAtlas:CTextureAtlas, gafAsset:GAFAsset):Void
 	{
 		_displayObjectsDictionary=new Map<String,IGAFDisplayObject>();
@@ -1002,13 +995,16 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 		var animationObjectsDictionary:Map<String,CAnimationObject>=_config.animationObjects.animationObjectsDictionary;
 
 		var displayObject:DisplayObject=null;
+		
 		for (animationObjectConfig in animationObjectsDictionary)
 		{
+			
 			switch(animationObjectConfig.type)
 			{
 				case CAnimationObject.TYPE_TEXTURE:
 					
-					var texture:IGAFTexture=textureAtlas.getTexture(animationObjectConfig.regionID);
+					var texture:IGAFTexture = textureAtlas.getTexture(animationObjectConfig.regionID);
+					
 					if(Std.is(texture, GAFScale9Texture) && !animationObjectConfig.mask)// GAFScale9Image doesn't work as mask
 					{
 						//TODO initialize GAFScale9Texture
@@ -1057,7 +1053,6 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 
 		if(_addToJuggler)
 		{
-			//TODO: optimisation requestAnimationFrame a eviter de faire tourner pour rien
 			Browser.window.requestAnimationFrame(advanceTime);
 		}
 	}
@@ -1066,7 +1061,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	{
 		if(asMask)
 		{
-			_stencilMasksDictionary[id]=displayObject;
+			_stencilMasksDictionary[id] = displayObject;
 		}
 		else
 		{
@@ -1269,10 +1264,10 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 			_displayObjectsVector[i].destroy();
 		}
 
-		//for(key in _stencilMasksDictionary)
-		//{
-			//_stencilMasksDictionary[key].dispose();
-		//}
+		for(lMask in _stencilMasksDictionary)
+		{
+			lMask.destroy();
+		}
 //
 		//if(_boundsAndPivot)
 		//{

@@ -4979,13 +4979,13 @@ com_github_haxePixiGAF_utils_VectorUtility.copyMatrix = function(source,dest) {
 	}
 };
 var com_github_mathieuanthoine_gaf_Main = function() {
-	this.renderer = PIXI.autoDetectRenderer(800,600,{ backgroundColor : 10066329});
+	this.renderer = PIXI.autoDetectRenderer(400,400,{ backgroundColor : 9407363});
 	window.document.body.appendChild(this.renderer.view);
 	this.stage = new PIXI.Container();
 	new Perf("TL");
 	var converter = new com_github_haxePixiGAF_core_ZipToGAFAssetConverter();
-	converter.once("complete",$bind(this,this.onConverted));
-	converter.convert("first_test" + "/" + "first_test" + ".gaf");
+	converter.on("complete",$bind(this,this.onConverted));
+	converter.convert(["bundle/skeleton.gaf","bundle/ufo-monster.gaf"]);
 };
 com_github_mathieuanthoine_gaf_Main.__name__ = ["com","github","mathieuanthoine","gaf","Main"];
 com_github_mathieuanthoine_gaf_Main.main = function() {
@@ -4993,10 +4993,30 @@ com_github_mathieuanthoine_gaf_Main.main = function() {
 };
 com_github_mathieuanthoine_gaf_Main.prototype = {
 	onConverted: function(pEvent) {
-		var gafMovieClip = new com_github_haxePixiGAF_display_GAFMovieClip((js_Boot.__cast(pEvent.target , com_github_haxePixiGAF_core_ZipToGAFAssetConverter)).get_gafBundle().getGAFTimeline("first_test","rootTimeline"));
-		gafMovieClip.play(true);
-		this.stage.addChild(gafMovieClip);
+		this.gafBundle = (js_Boot.__cast(pEvent.target , com_github_haxePixiGAF_core_ZipToGAFAssetConverter)).get_gafBundle();
+		this.initGAFMovieClip("skeleton");
+		window.addEventListener("click",$bind(this,this.onClick));
 		window.requestAnimationFrame($bind(this,this.gameLoop));
+	}
+	,onClick: function(pEvent) {
+		if(!js_Boot.__instanceof(pEvent.target,HTMLCanvasElement)) {
+			return;
+		}
+		if(this.currentAsset == "skeleton") {
+			this.initGAFMovieClip("ufo-monster");
+		} else {
+			this.initGAFMovieClip("skeleton");
+		}
+	}
+	,initGAFMovieClip: function(swfName) {
+		this.currentAsset = swfName;
+		if(this.gafMovieClip != null) {
+			this.gafMovieClip.destroy();
+		}
+		this.stage.removeChildren();
+		this.gafMovieClip = new com_github_haxePixiGAF_display_GAFMovieClip(this.gafBundle.getGAFTimeline(swfName,"rootTimeline"));
+		this.gafMovieClip.play(true);
+		this.stage.addChild(this.gafMovieClip);
 	}
 	,gameLoop: function(pIdentifier) {
 		window.requestAnimationFrame($bind(this,this.gameLoop));
@@ -5710,7 +5730,6 @@ com_github_haxePixiGAF_utils_DebugUtility.cHB = [0,0,0,255,255,255,0];
 com_github_haxePixiGAF_utils_DebugUtility.aryRGB = [com_github_haxePixiGAF_utils_DebugUtility.cHR,com_github_haxePixiGAF_utils_DebugUtility.cHG,com_github_haxePixiGAF_utils_DebugUtility.cHB];
 com_github_haxePixiGAF_utils_MathUtility.epsilon = 0.00001;
 com_github_haxePixiGAF_utils_MathUtility.PI_Q = Math.PI / 4.0;
-com_github_mathieuanthoine_gaf_Main.FILE_NAME = "first_test";
 haxe_ds_ObjectMap.count = 0;
 js_Boot.__toStr = { }.toString;
 js_html_compat_Uint8Array.BYTES_PER_ELEMENT = 1;
