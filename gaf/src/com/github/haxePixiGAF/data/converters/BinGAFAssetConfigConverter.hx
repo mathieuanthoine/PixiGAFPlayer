@@ -151,7 +151,7 @@ class BinGAFAssetConfigConverter extends EventEmitter
 		else
 		{
 		
-			var i:Int;
+			var i:Int=0;
 			var l:UInt = _bytes.readUnsignedInt();
 			for(i in 0...l)
 			{
@@ -293,8 +293,8 @@ class BinGAFAssetConfigConverter extends EventEmitter
 	
 	private function readTextureAtlasConfig(tagID:Int):Void
 	{
-		var i:Int;
-		var j:Int;
+		var i:Int=0;
+		var j:Int=0;
 
 		var scale:Float = _bytes.readFloat();
 		
@@ -310,8 +310,8 @@ class BinGAFAssetConfigConverter extends EventEmitter
 		var contentScaleFactor:CTextureAtlasCSF=null;
 		var atlasLength:Int = _bytes.readSByte();
 		
-		var atlasID:Int;
-		var sourceLength:Int;
+		var atlasID:Int=0;
+		var sourceLength:Int=0;
 		var csf:Float;
 		var source:String;
 
@@ -366,7 +366,7 @@ class BinGAFAssetConfigConverter extends EventEmitter
 		var elementScaleY:Float=0;
 		var elementWidth:Float;
 		var elementHeight:Float;
-		var elementAtlasID:Int;
+		var elementAtlasID:Int=0;
 		var rotation:Bool=false;
 		var linkageName:String="";
 
@@ -518,8 +518,8 @@ class BinGAFAssetConfigConverter extends EventEmitter
 	private static function readAnimationMasks(tagID:Int, tagContent:GAFBytesInput, timelineConfig:GAFTimelineConfig):Void
 	{
 		var length:Int=tagContent.readUnsignedInt();
-		var objectID:Int;
-		var regionID:Int;
+		var objectID:Int=0;
+		var regionID:Int=0;
 		var type:String;
 
 		for(i in 0...length)
@@ -557,8 +557,8 @@ class BinGAFAssetConfigConverter extends EventEmitter
 	private static function readAnimationObjects(tagID:Int, tagContent:GAFBytesInput, timelineConfig:GAFTimelineConfig):Void
 	{
 		var length:Int=tagContent.readUnsignedInt();
-		var objectID:Int;
-		var regionID:Int;
+		var objectID:Int=0;
+		var regionID:Int=0;
 		var type:String;
 
 		for(i in 0...length)
@@ -582,7 +582,7 @@ class BinGAFAssetConfigConverter extends EventEmitter
 		timelineConfig.namedParts=new Map<String,String>();
 
 		var length:Int=tagContent.readUnsignedInt();
-		var partID:Int;
+		var partID:Int=0;
 		for(i in 0...length)
 		{
 			partID=tagContent.readUnsignedInt();
@@ -596,13 +596,13 @@ class BinGAFAssetConfigConverter extends EventEmitter
 		{
 			framesCount=_bytes.readUnsignedInt();
 		}
-		var missedFrameNumber:Int;
-		var filterLength:Int;
-		var frameNumber:Int;
-		var statesCount:Int;
-		var filterType:Int;
-		var stateID:Int;
-		var zIndex:Int;
+		var missedFrameNumber:Int=0;
+		var filterLength:Int=0;
+		var frameNumber:Int=0;
+		var statesCount:Int=0;
+		var filterType:Int=0;
+		var stateID:Int=0;
+		var zIndex:Int=0;
 		var alpha:Float;
 		var matrix:Matrix;
 		var maskID:String;

@@ -21,7 +21,7 @@ class CAnimationFrame
 	private var _instances:Array<CAnimationFrameInstance>;
 	private var _actions:Array<CFrameAction>;
 
-	private var _frameNumber:Int;
+	private var _frameNumber:Int=0;
 
 	// --------------------------------------------------------------------------
 	//

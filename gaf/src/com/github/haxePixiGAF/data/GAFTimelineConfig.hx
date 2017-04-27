@@ -47,7 +47,7 @@ class GAFTimelineConfig
 	private var _debugRegions:Array<GAFDebugInformation>;
 
 	private var _warnings:Array<String>;
-	private var _framesCount:Int;
+	private var _framesCount:Int=0;
 	private var _bounds:Rectangle;
 	private var _pivot:Point;
 	//private var _sounds:Dictionary;

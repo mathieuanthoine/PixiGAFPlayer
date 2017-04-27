@@ -115,7 +115,7 @@ class CFilter
 
 	public function addColorMatrixFilter(params:Array<Float>):String
 	{
-		var i:Int;
+		var i:Int=0;
 
 		for(i in 0...params.length)
 		{

@@ -21,8 +21,8 @@ class CAnimationSequence
 	//--------------------------------------------------------------------------
 
 	private var _id:String;
-	private var _startFrameNo:Int;
-	private var _endFrameNo:Int;
+	private var _startFrameNo:Int=0;
+	private var _endFrameNo:Int=0;
 
 	//--------------------------------------------------------------------------
 	//

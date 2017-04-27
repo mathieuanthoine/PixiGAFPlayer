@@ -68,7 +68,7 @@ class ZipToGAFAssetConverter extends EventEmitter
 	//private var _zip:FZip;
 	//private var _zipLoader:FZipLibrary;
 
-	private var _currentConfigIndex:Int;
+	private var _currentConfigIndex:Int=0;
 	private var _configConvertTimeout:Float;
 
 	private var _gafAssetsIDs:Array<String>;
@@ -93,7 +93,7 @@ class ZipToGAFAssetConverter extends EventEmitter
 	///////////////////////////////////
 
 	private var _gafAssetsConfigURLs:Array<Dynamic>;
-	private var _gafAssetsConfigIndex:Int;
+	private var _gafAssetsConfigIndex:Int=0;
 
 	private var _atlasSourceURLs:Array<Dynamic>;
 	//private var _atlasSourceIndex:Int;
@@ -340,7 +340,7 @@ class ZipToGAFAssetConverter extends EventEmitter
 		var gafAssetConfigID:String;
 		var gafAssetConfig:GAFAssetConfig=null;
 		var gafAsset:GAFAsset=null;
-		var i:Int;
+		var i:Int=0;
 
 		//for(taGFX in _taGFXs)
 		//{

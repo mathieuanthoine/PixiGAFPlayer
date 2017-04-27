@@ -96,11 +96,11 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	
 	private var _previousTime:Float=-1;
 
-	private var _nextFrame:Int;
-	private var _startFrame:Int;
-	private var _finalFrame:Int;
-	private var _currentFrame:Int;
-	private var _totalFrames:Int;
+	private var _nextFrame:Int=0;
+	private var _startFrame:Int=0;
+	private var _finalFrame:Int=0;
+	private var _currentFrame:Int=0;
+	private var _totalFrames:Int=0;
 
 	//TODO _filterChain
 	//private var _filterChain:GAFFilterChain;
@@ -533,7 +533,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 			return;
 		}
 
-		var i:Int, l:Int;
+		var i:Int=0, l:Int=0;
 
 		if(_totalFrames>1)
 		{
@@ -650,7 +650,7 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 			return;
 		}
 
-		var i:Int, l:Int;
+		var i:Int=0, l:Int=0;
 		var actions:Array<CFrameAction> = _config.animationConfigFrames.frames[_currentFrame].actions;
 		if(actions!=null)
 		{
@@ -748,8 +748,8 @@ class GAFMovieClip extends Container implements IAnimatable implements IGAFDispl
 	private function draw():Void
 	{
 		
-		var i:Int;
-		var l:Int;
+		var i:Int=0;
+		var l:Int=0;
 
 		if(_config.debugRegions!=null)
 		{

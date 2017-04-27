@@ -7,11 +7,11 @@ package com.github.haxePixiGAF.data.config;
  */
 class CStage
 {
-	public var fps:Int;
-	//public var color:Int;
-	public var color:Float;
-	public var width:Int;
-	public var height:Int;
+	public var fps:Int=0;
+	//public var color:Int=0;
+	public var color:Float=0;
+	public var width:Int=0;
+	public var height:Int=0;
 	
 	public function new() {}
 	

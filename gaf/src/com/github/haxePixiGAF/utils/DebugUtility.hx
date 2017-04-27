@@ -71,7 +71,7 @@ class DebugUtility
 	private static function getRGB(rot:Int):Array<Int>
 	{
 		var retVal:Array<Int>=[];
-		var aryNum:Int;
+		var aryNum:Int=0;
 		// 0 ~ 360
 		while(rot<0 || rot>360)
 		{
@@ -97,10 +97,10 @@ class DebugUtility
 
 	private static function getHP(_P:Array<Int>, rot:Int, aryNum:Int, nextNum:Int):Int
 	{
-		var retVal:Int;
-		var aryC:Int;
-		var nextC:Int;
-		var rH:Int;
+		var retVal:Int=0;
+		var aryC:Int=0;
+		var nextC:Int=0;
+		var rH:Int=0;
 		var rotR:Float;
 		aryC=_P[aryNum];
 		nextC=_P[nextNum];

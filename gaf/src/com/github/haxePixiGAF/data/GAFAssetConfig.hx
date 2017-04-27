@@ -14,10 +14,10 @@ class GAFAssetConfig
 	public static inline var MAX_VERSION:Int=5;
 
 	private var _id:String;
-	private var _compression:Int;
-	private var _versionMajor:Int;
-	private var _versionMinor:Int;
-	private var _fileLength:Int;
+	private var _compression:Int=0;
+	private var _versionMajor:Int=0;
+	private var _versionMinor:Int=0;
+	private var _fileLength:Int=0;
 	private var _scaleValues:Array<Float>;
 	private var _csfValues:Array<Float>;
 	private var _defaultScale:Float;

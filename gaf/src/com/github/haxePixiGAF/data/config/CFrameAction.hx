@@ -7,7 +7,7 @@ package com.github.haxePixiGAF.data.config;
  */
 class CFrameAction
 {
-	public var type:Int;
+	public var type:Int=0;
 	public var scope:String;
 	public var params:Array<String>=new Array<String>();
 	
