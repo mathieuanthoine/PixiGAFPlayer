@@ -1,8 +1,10 @@
 package com.github.haxePixiGAF.data.config;
+
 import pixi.core.math.Point;
+import pixi.core.text.TextStyle;
 
 /**
- * TODO
+ * AS3 Conversion
  * @author Mathieu Anthoine
  * 
  */
@@ -32,7 +34,7 @@ class CTextFieldObject
 	private var _selectable:Bool=false;
 	private var _displayAsPassword:Bool=false;
 	private var _maxChars:Int=0;
-	//private var _textFormat:TextFormat;
+	private var _textFormat:TextStyle;
 	private var _pivotPoint:Point;
 
 	//--------------------------------------------------------------------------
@@ -41,12 +43,11 @@ class CTextFieldObject
 	//
 	//--------------------------------------------------------------------------
 
-	public function new(id:String, text:String, textFormat/*:TextFormat*/, width:Float,
-									 height:Float)
+	public function new(id:String, text:String, textFormat:TextStyle, width:Float, height:Float)
 	{
 		_id=id;
 		_text=text;
-		//_textFormat=textFormat;
+		_textFormat=textFormat;
 
 		_width=width;
 		_height=height;
@@ -106,16 +107,16 @@ class CTextFieldObject
 		return _text=value;
 	}
 
-	//public var textFormat(get_text, set_text):String;
- 	//private function get_textFormat():TextFormat
-	//{
-		//return _textFormat;
-	//}
-//
-	//private function set_textFormat(value:TextFormat):TextFormat
-	//{
-		//return _textFormat=value;
-	//}
+	public var textFormat(get_textFormat, set_textFormat):TextStyle;
+ 	private function get_textFormat():TextStyle
+	{
+		return _textFormat;
+	}
+
+	private function set_textFormat(value:TextStyle):TextStyle
+	{
+		return _textFormat=value;
+	}
 
 	public var width(get_width, set_width):Float;
  	private function get_width():Float
