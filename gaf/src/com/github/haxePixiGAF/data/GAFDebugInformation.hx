@@ -12,9 +12,9 @@ class GAFDebugInformation
 	public static inline var TYPE_POINT:Int=0;
 	public static inline var TYPE_RECT:Int=1;
 
-	public var type:Int;
+	public var type:Int=0;
 	public var point:Point;
 	public var rect:Rectangle;
-	public var color:Int;
+	public var color:Int=0;
 	public var alpha:Float;
 }

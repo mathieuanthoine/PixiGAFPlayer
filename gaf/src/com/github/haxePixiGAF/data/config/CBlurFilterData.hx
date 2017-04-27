@@ -9,7 +9,7 @@ class CBlurFilterData implements ICFilterData
 {
 	public var blurX:Float;
 	public var blurY:Float;
-	public var color:Int;
+	public var color:Int=0;
 	public var angle:Float=0;
 	public var distance:Float=0;
 	public var strength:Float=0;

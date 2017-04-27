@@ -31,7 +31,7 @@ class CTextFieldObject
 	private var _editable:Bool=false;
 	private var _selectable:Bool=false;
 	private var _displayAsPassword:Bool=false;
-	private var _maxChars:Int;
+	private var _maxChars:Int=0;
 	//private var _textFormat:TextFormat;
 	private var _pivotPoint:Point;
 

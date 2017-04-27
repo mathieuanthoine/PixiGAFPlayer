@@ -22,7 +22,7 @@ class CAnimationFrameInstance
 	//
 	// --------------------------------------------------------------------------
 	private var _id:String;
-	private var _zIndex:Int;
+	private var _zIndex:Int=0;
 	private var _matrix:Matrix;
 	private var _alpha:Float;
 	private var _maskID:String;
