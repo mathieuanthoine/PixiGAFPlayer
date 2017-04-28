@@ -8,6 +8,7 @@ import pixi.core.display.DisplayObject.DestroyOptions;
 import pixi.core.graphics.Graphics;
 import pixi.core.math.Matrix;
 import pixi.core.math.Point;
+import pixi.core.text.DefaultStyle;
 import pixi.core.text.Text;
 import haxe.extern.EitherType;
 import pixi.core.text.TextStyle;
@@ -361,6 +362,12 @@ class GAFTextField extends GAFContainer implements IGAFDebug
 	
 	private function set_text (pText:String):String {
 		return textField.text = pText;
+	}
+	
+	public var style (get_style, null):TextStyle;
+	
+	private function get_style ():TextStyle {
+		return cast(textField.style,TextStyle);
 	}
 
 	//--------------------------------------------------------------------------
