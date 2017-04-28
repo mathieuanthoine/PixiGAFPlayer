@@ -33,6 +33,7 @@ using com.github.haxePixiGAF.utils.EventEmitterUtility;
  * TODO
  * @author Mathieu Anthoine
  */
+@:expose("GAF.GAFMovieClip")
 class GAFMovieClip extends GAFContainer implements IAnimatable
 {
 	/** Dispatched when playhead reached first frame of sequence */

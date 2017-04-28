@@ -17,6 +17,7 @@ using com.github.haxePixiGAF.utils.MatrixUtility;
 /**
  * GAFImage represents static GAF display object that is part of the<code>GAFMovieClip</code>.
  */
+@:expose("GAF.GAFImage")
 class GAFImage extends Sprite implements IGAFImage implements IMaxSize implements IGAFDebug
 {
 	//--------------------------------------------------------------------------

@@ -1,0 +1,4 @@
+-cp ../gaf/src
+-lib pixijs
+com.github.haxePixiGAF
+-js PixiGAFPlayer.js

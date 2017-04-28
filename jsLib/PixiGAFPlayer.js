@@ -29,239 +29,6 @@ HxOverrides.iter = function(a) {
 	}};
 };
 Math.__name__ = ["Math"];
-var Perf = $hx_exports["Perf"] = function(pos,offset) {
-	if(offset == null) {
-		offset = 0;
-	}
-	if(pos == null) {
-		pos = "TR";
-	}
-	this._perfObj = window.performance;
-	if(Reflect.field(this._perfObj,"memory") != null) {
-		this._memoryObj = Reflect.field(this._perfObj,"memory");
-	}
-	this._memCheck = this._perfObj != null && this._memoryObj != null && this._memoryObj.totalJSHeapSize > 0;
-	this._pos = pos;
-	this._offset = offset;
-	this.currentFps = 60;
-	this.currentMs = 0;
-	this.currentMem = "0";
-	this.lowFps = 60;
-	this.avgFps = 60;
-	this._measureCount = 0;
-	this._totalFps = 0;
-	this._time = 0;
-	this._ticks = 0;
-	this._fpsMin = 60;
-	this._fpsMax = 60;
-	this._startTime = this._perfObj != null && ($_=this._perfObj,$bind($_,$_.now)) != null?this._perfObj.now():new Date().getTime();
-	this._prevTime = -Perf.MEASUREMENT_INTERVAL;
-	this._createFpsDom();
-	this._createMsDom();
-	if(this._memCheck) {
-		this._createMemoryDom();
-	}
-	if(($_=window,$bind($_,$_.requestAnimationFrame)) != null) {
-		this.RAF = ($_=window,$bind($_,$_.requestAnimationFrame));
-	} else if(window.mozRequestAnimationFrame != null) {
-		this.RAF = window.mozRequestAnimationFrame;
-	} else if(window.webkitRequestAnimationFrame != null) {
-		this.RAF = window.webkitRequestAnimationFrame;
-	} else if(window.msRequestAnimationFrame != null) {
-		this.RAF = window.msRequestAnimationFrame;
-	}
-	if(($_=window,$bind($_,$_.cancelAnimationFrame)) != null) {
-		this.CAF = ($_=window,$bind($_,$_.cancelAnimationFrame));
-	} else if(window.mozCancelAnimationFrame != null) {
-		this.CAF = window.mozCancelAnimationFrame;
-	} else if(window.webkitCancelAnimationFrame != null) {
-		this.CAF = window.webkitCancelAnimationFrame;
-	} else if(window.msCancelAnimationFrame != null) {
-		this.CAF = window.msCancelAnimationFrame;
-	}
-	if(this.RAF != null) {
-		this._raf = this.RAF.apply(window,[$bind(this,this._tick)]);
-	}
-};
-Perf.__name__ = ["Perf"];
-Perf.prototype = {
-	_init: function() {
-		this.currentFps = 60;
-		this.currentMs = 0;
-		this.currentMem = "0";
-		this.lowFps = 60;
-		this.avgFps = 60;
-		this._measureCount = 0;
-		this._totalFps = 0;
-		this._time = 0;
-		this._ticks = 0;
-		this._fpsMin = 60;
-		this._fpsMax = 60;
-		this._startTime = this._perfObj != null && ($_=this._perfObj,$bind($_,$_.now)) != null?this._perfObj.now():new Date().getTime();
-		this._prevTime = -Perf.MEASUREMENT_INTERVAL;
-	}
-	,_now: function() {
-		if(this._perfObj != null && ($_=this._perfObj,$bind($_,$_.now)) != null) {
-			return this._perfObj.now();
-		} else {
-			return new Date().getTime();
-		}
-	}
-	,_tick: function(val) {
-		var time = this._perfObj != null && ($_=this._perfObj,$bind($_,$_.now)) != null?this._perfObj.now():new Date().getTime();
-		this._ticks++;
-		if(this._raf != null && time > this._prevTime + Perf.MEASUREMENT_INTERVAL) {
-			this.currentMs = Math.round(time - this._startTime);
-			this.ms.innerHTML = "MS: " + this.currentMs;
-			this.currentFps = Math.round(this._ticks * 1000 / (time - this._prevTime));
-			if(this.currentFps > 0 && val > Perf.DELAY_TIME) {
-				this._measureCount++;
-				this._totalFps += this.currentFps;
-				this.lowFps = this._fpsMin = Math.min(this._fpsMin,this.currentFps);
-				this._fpsMax = Math.max(this._fpsMax,this.currentFps);
-				this.avgFps = Math.round(this._totalFps / this._measureCount);
-			}
-			this.fps.innerHTML = "FPS: " + this.currentFps + " (" + this._fpsMin + "-" + this._fpsMax + ")";
-			if(this.currentFps >= 30) {
-				this.fps.style.backgroundColor = Perf.FPS_BG_CLR;
-			} else if(this.currentFps >= 15) {
-				this.fps.style.backgroundColor = Perf.FPS_WARN_BG_CLR;
-			} else {
-				this.fps.style.backgroundColor = Perf.FPS_PROB_BG_CLR;
-			}
-			this._prevTime = time;
-			this._ticks = 0;
-			if(this._memCheck) {
-				this.currentMem = this._getFormattedSize(this._memoryObj.usedJSHeapSize,2);
-				this.memory.innerHTML = "MEM: " + this.currentMem;
-			}
-		}
-		this._startTime = time;
-		if(this._raf != null) {
-			this._raf = this.RAF.apply(window,[$bind(this,this._tick)]);
-		}
-	}
-	,_createDiv: function(id,top) {
-		if(top == null) {
-			top = 0;
-		}
-		var div = window.document.createElement("div");
-		div.id = id;
-		div.className = id;
-		div.style.position = "absolute";
-		switch(this._pos) {
-		case "BL":
-			div.style.left = this._offset + "px";
-			div.style.bottom = (this._memCheck?48:32) - top + "px";
-			break;
-		case "BR":
-			div.style.right = this._offset + "px";
-			div.style.bottom = (this._memCheck?48:32) - top + "px";
-			break;
-		case "TL":
-			div.style.left = this._offset + "px";
-			div.style.top = top + "px";
-			break;
-		case "TR":
-			div.style.right = this._offset + "px";
-			div.style.top = top + "px";
-			break;
-		}
-		div.style.width = "80px";
-		div.style.height = "12px";
-		div.style.lineHeight = "12px";
-		div.style.padding = "2px";
-		div.style.fontFamily = Perf.FONT_FAMILY;
-		div.style.fontSize = "9px";
-		div.style.fontWeight = "bold";
-		div.style.textAlign = "center";
-		window.document.body.appendChild(div);
-		return div;
-	}
-	,_createFpsDom: function() {
-		this.fps = this._createDiv("fps");
-		this.fps.style.backgroundColor = Perf.FPS_BG_CLR;
-		this.fps.style.zIndex = "995";
-		this.fps.style.color = Perf.FPS_TXT_CLR;
-		this.fps.innerHTML = "FPS: 0";
-	}
-	,_createMsDom: function() {
-		this.ms = this._createDiv("ms",16);
-		this.ms.style.backgroundColor = Perf.MS_BG_CLR;
-		this.ms.style.zIndex = "996";
-		this.ms.style.color = Perf.MS_TXT_CLR;
-		this.ms.innerHTML = "MS: 0";
-	}
-	,_createMemoryDom: function() {
-		this.memory = this._createDiv("memory",32);
-		this.memory.style.backgroundColor = Perf.MEM_BG_CLR;
-		this.memory.style.color = Perf.MEM_TXT_CLR;
-		this.memory.style.zIndex = "997";
-		this.memory.innerHTML = "MEM: 0";
-	}
-	,_getFormattedSize: function(bytes,frac) {
-		if(frac == null) {
-			frac = 0;
-		}
-		var sizes = ["Bytes","KB","MB","GB","TB"];
-		if(bytes == 0) {
-			return "0";
-		}
-		var precision = Math.pow(10,frac);
-		var i = Math.floor(Math.log(bytes) / Math.log(1024));
-		return Math.round(bytes * precision / Math.pow(1024,i)) / precision + " " + sizes[i];
-	}
-	,addInfo: function(val) {
-		this.info = this._createDiv("info",this._memCheck?48:32);
-		this.info.style.backgroundColor = Perf.INFO_BG_CLR;
-		this.info.style.color = Perf.INFO_TXT_CLR;
-		this.info.style.zIndex = "998";
-		this.info.innerHTML = val;
-	}
-	,clearInfo: function() {
-		if(this.info != null) {
-			window.document.body.removeChild(this.info);
-			this.info = null;
-		}
-	}
-	,destroy: function() {
-		this.CAF.apply(window,[this._raf]);
-		this._raf = null;
-		this._perfObj = null;
-		this._memoryObj = null;
-		if(this.fps != null) {
-			window.document.body.removeChild(this.fps);
-			this.fps = null;
-		}
-		if(this.ms != null) {
-			window.document.body.removeChild(this.ms);
-			this.ms = null;
-		}
-		if(this.memory != null) {
-			window.document.body.removeChild(this.memory);
-			this.memory = null;
-		}
-		this.clearInfo();
-		this.currentFps = 60;
-		this.currentMs = 0;
-		this.currentMem = "0";
-		this.lowFps = 60;
-		this.avgFps = 60;
-		this._measureCount = 0;
-		this._totalFps = 0;
-		this._time = 0;
-		this._ticks = 0;
-		this._fpsMin = 60;
-		this._fpsMax = 60;
-		this._startTime = this._perfObj != null && ($_=this._perfObj,$bind($_,$_.now)) != null?this._perfObj.now():new Date().getTime();
-		this._prevTime = -Perf.MEASUREMENT_INTERVAL;
-	}
-	,_cancelRAF: function() {
-		this.CAF.apply(window,[this._raf]);
-		this._raf = null;
-	}
-	,__class__: Perf
-};
 var Reflect = function() { };
 Reflect.__name__ = ["Reflect"];
 Reflect.field = function(o,field) {
@@ -304,7 +71,7 @@ _$UInt_UInt_$Impl_$.toFloat = function(this1) {
 		return this1 + 0.0;
 	}
 };
-var com_github_haxePixiGAF_core_GAFLoader = function() {
+var com_github_haxePixiGAF_core_GAFLoader = $hx_exports["GAF"]["GAFLoader"] = function() {
 	this.contents = [];
 	this.names = [];
 	PIXI.loaders.Loader.call(this);
@@ -913,7 +680,7 @@ com_github_haxePixiGAF_data_GAFAssetConfig.prototype = {
 	}
 	,__class__: com_github_haxePixiGAF_data_GAFAssetConfig
 };
-var com_github_haxePixiGAF_data_GAFBundle = function() {
+var com_github_haxePixiGAF_data_GAFBundle = $hx_exports["GAF"]["GAFBundle"] = function() {
 	this._gafAssets = [];
 	this._gafAssetsDictionary = new haxe_ds_StringMap();
 };
@@ -1204,7 +971,7 @@ com_github_haxePixiGAF_data_GAFGFXData.prototype = $extend(PIXI.utils.EventEmitt
 	}
 	,__class__: com_github_haxePixiGAF_data_GAFGFXData
 });
-var com_github_haxePixiGAF_data_GAFTimeline = function(timelineConfig) {
+var com_github_haxePixiGAF_data_GAFTimeline = $hx_exports["GAF"]["GAFTimeline"] = function(timelineConfig) {
 	this._config = timelineConfig;
 };
 com_github_haxePixiGAF_data_GAFTimeline.__name__ = ["com","github","haxePixiGAF","data","GAFTimeline"];
@@ -3871,7 +3638,7 @@ com_github_haxePixiGAF_display_IGAFImage.__interfaces__ = [com_github_haxePixiGA
 com_github_haxePixiGAF_display_IGAFImage.prototype = {
 	__class__: com_github_haxePixiGAF_display_IGAFImage
 };
-var com_github_haxePixiGAF_display_GAFImage = function(assetTexture) {
+var com_github_haxePixiGAF_display_GAFImage = $hx_exports["GAF"]["GAFImage"] = function(assetTexture) {
 	this.__debugOriginalAlpha = null;
 	this._assetTexture = assetTexture.clone();
 	PIXI.Sprite.call(this,this._assetTexture.get_texture());
@@ -3981,7 +3748,7 @@ com_github_haxePixiGAF_display_IAnimatable.__name__ = ["com","github","haxePixiG
 com_github_haxePixiGAF_display_IAnimatable.prototype = {
 	__class__: com_github_haxePixiGAF_display_IAnimatable
 };
-var com_github_haxePixiGAF_display_GAFMovieClip = function(gafTimeline,pFps,addToJuggler) {
+var com_github_haxePixiGAF_display_GAFMovieClip = $hx_exports["GAF"]["GAFMovieClip"] = function(gafTimeline,pFps,addToJuggler) {
 	if(addToJuggler == null) {
 		addToJuggler = true;
 	}
@@ -4053,7 +3820,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(com_github_haxeP
 			this.addChild(stencilMaskObject);
 			this.addChild(maskAsDisplayObject);
 		} else {
-			haxe_Log.trace("WARNING:mask object is missing. It might be disposed.",{ fileName : "GAFMovieClip.hx", lineNumber : 191, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "showMaskByID"});
+			haxe_Log.trace("WARNING:mask object is missing. It might be disposed.",{ fileName : "GAFMovieClip.hx", lineNumber : 192, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "showMaskByID"});
 		}
 	}
 	,hideMaskByID: function(id) {
@@ -4068,7 +3835,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(com_github_haxeP
 				this.removeChild(maskAsDisplayObject);
 			}
 		} else {
-			haxe_Log.trace("WARNING:mask object is missing. It might be disposed.",{ fileName : "GAFMovieClip.hx", lineNumber : 217, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "hideMaskByID"});
+			haxe_Log.trace("WARNING:mask object is missing. It might be disposed.",{ fileName : "GAFMovieClip.hx", lineNumber : 218, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "hideMaskByID"});
 		}
 	}
 	,clearSequence: function() {
@@ -4174,7 +3941,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(com_github_haxeP
 	}
 	,showBounds: function(value) {
 		if(this._config.get_bounds() != null) {
-			haxe_Log.trace("TODO showBounds",{ fileName : "GAFMovieClip.hx", lineNumber : 429, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "showBounds"});
+			haxe_Log.trace("TODO showBounds",{ fileName : "GAFMovieClip.hx", lineNumber : 430, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "showBounds"});
 		}
 	}
 	,copy: function() {
@@ -4314,7 +4081,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(com_github_haxeP
 					this.gotoAndPlay(action.params[0]);
 					break;
 				case 4:
-					haxe_Log.trace("CFrameAction.DISPATCH_EVENT",{ fileName : "GAFMovieClip.hx", lineNumber : 625, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "runActions"});
+					haxe_Log.trace("CFrameAction.DISPATCH_EVENT",{ fileName : "GAFMovieClip.hx", lineNumber : 626, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "runActions"});
 					var actionType = action.params[0];
 					if(com_github_haxePixiGAF_utils_EventEmitterUtility.hasEventListener(this,actionType)) {
 						var bubbles = false;
@@ -4484,11 +4251,11 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(com_github_haxeP
 	}
 	,renderDebug: function(mc,instance,masked) {
 		if(com_github_haxePixiGAF_utils_DebugUtility.RENDERING_DEBUG && mc != null) {
-			haxe_Log.trace("TODO renderDebug",{ fileName : "GAFMovieClip.hx", lineNumber : 864, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "renderDebug"});
+			haxe_Log.trace("TODO renderDebug",{ fileName : "GAFMovieClip.hx", lineNumber : 865, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "renderDebug"});
 		}
 	}
 	,addDebugRegions: function() {
-		haxe_Log.trace("TODO addDebugRegions",{ fileName : "GAFMovieClip.hx", lineNumber : 895, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "addDebugRegions"});
+		haxe_Log.trace("TODO addDebugRegions",{ fileName : "GAFMovieClip.hx", lineNumber : 896, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "addDebugRegions"});
 	}
 	,reset: function() {
 		this._gotoAndStop((this._reverse?this._finalFrame:this._startFrame) + 1);
@@ -4519,7 +4286,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(com_github_haxeP
 			case "texture":
 				var texture = textureAtlas.getTexture(animationObjectConfig.get_regionID());
 				if(js_Boot.__instanceof(texture,com_github_haxePixiGAF_display_GAFScale9Texture) && !animationObjectConfig.get_mask()) {
-					haxe_Log.trace("TODO initialize GAFScale9Texture",{ fileName : "GAFMovieClip.hx", lineNumber : 962, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "initialize"});
+					haxe_Log.trace("TODO initialize GAFScale9Texture",{ fileName : "GAFMovieClip.hx", lineNumber : 963, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "initialize"});
 				} else {
 					displayObject = new com_github_haxePixiGAF_display_GAFImage(texture);
 					(js_Boot.__cast(displayObject , com_github_haxePixiGAF_display_GAFImage)).set_textureSmoothing(this._smoothing);
@@ -4576,7 +4343,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(com_github_haxeP
 		}
 	}
 	,updateBounds: function(bounds) {
-		haxe_Log.trace("TODO updateBounds",{ fileName : "GAFMovieClip.hx", lineNumber : 1033, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "updateBounds"});
+		haxe_Log.trace("TODO updateBounds",{ fileName : "GAFMovieClip.hx", lineNumber : 1034, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "updateBounds"});
 	}
 	,__debugHighlight: function() {
 		if(isNaN(this.__debugOriginalAlpha)) {
@@ -4597,7 +4364,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(com_github_haxeP
 		}
 	}
 	,removeChildAt: function(index) {
-		haxe_Log.trace("TODO: removeChildAt",{ fileName : "GAFMovieClip.hx", lineNumber : 1103, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "removeChildAt"});
+		haxe_Log.trace("TODO: removeChildAt",{ fileName : "GAFMovieClip.hx", lineNumber : 1104, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "removeChildAt"});
 		this.getChildAt(index).destroy();
 		return com_github_haxePixiGAF_display_GAFContainer.prototype.removeChildAt.call(this,index);
 	}
@@ -4771,7 +4538,7 @@ com_github_haxePixiGAF_display_GAFScale9Texture.prototype = {
 	}
 	,__class__: com_github_haxePixiGAF_display_GAFScale9Texture
 };
-var com_github_haxePixiGAF_display_GAFTextField = function(config,scale,csf,debug) {
+var com_github_haxePixiGAF_display_GAFTextField = $hx_exports["GAF"]["GAFTextField"] = function(config,scale,csf,debug) {
 	if(debug == null) {
 		debug = false;
 	}
@@ -4930,7 +4697,7 @@ com_github_haxePixiGAF_display_GAFTexture.prototype = {
 	}
 	,__class__: com_github_haxePixiGAF_display_GAFTexture
 };
-var com_github_haxePixiGAF_events_GAFEvent = function() { };
+var com_github_haxePixiGAF_events_GAFEvent = $hx_exports["GAF"]["GAFEvent"] = function() { };
 com_github_haxePixiGAF_events_GAFEvent.__name__ = ["com","github","haxePixiGAF","events","GAFEvent"];
 var com_github_haxePixiGAF_sound_GAFSoundData = function() { };
 com_github_haxePixiGAF_sound_GAFSoundData.__name__ = ["com","github","haxePixiGAF","sound","GAFSoundData"];
@@ -5276,32 +5043,6 @@ com_github_haxePixiGAF_utils_VectorUtility.copyMatrix = function(source,dest) {
 		var i = _g1++;
 		source[i] = dest[i];
 	}
-};
-var com_github_mathieuanthoine_gaf_Main = function() {
-	this.renderer = PIXI.autoDetectRenderer(800,600,{ backgroundColor : 10066329});
-	window.document.body.appendChild(this.renderer.view);
-	this.stage = new PIXI.Container();
-	new Perf("TL");
-	var converter = new com_github_haxePixiGAF_core_ZipToGAFAssetConverter();
-	converter.once("complete",$bind(this,this.onConverted));
-	converter.convert("first_test" + "/" + "first_test" + ".gaf");
-};
-com_github_mathieuanthoine_gaf_Main.__name__ = ["com","github","mathieuanthoine","gaf","Main"];
-com_github_mathieuanthoine_gaf_Main.main = function() {
-	new com_github_mathieuanthoine_gaf_Main();
-};
-com_github_mathieuanthoine_gaf_Main.prototype = {
-	onConverted: function(pEvent) {
-		var gafMovieClip = new com_github_haxePixiGAF_display_GAFMovieClip((js_Boot.__cast(pEvent.target , com_github_haxePixiGAF_core_ZipToGAFAssetConverter)).get_gafBundle().getGAFTimeline("first_test","rootTimeline"));
-		gafMovieClip.play();
-		this.stage.addChild(gafMovieClip);
-		window.requestAnimationFrame($bind(this,this.gameLoop));
-	}
-	,gameLoop: function(pIdentifier) {
-		window.requestAnimationFrame($bind(this,this.gameLoop));
-		this.renderer.render(this.stage);
-	}
-	,__class__: com_github_mathieuanthoine_gaf_Main
 };
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = ["haxe","IMap"];
@@ -5884,8 +5625,6 @@ function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id
 String.prototype.__class__ = String;
 String.__name__ = ["String"];
 Array.__name__ = ["Array"];
-Date.prototype.__class__ = Date;
-Date.__name__ = ["Date"];
 var Int = { __name__ : ["Int"]};
 var Dynamic = { __name__ : ["Dynamic"]};
 var Float = Number;
@@ -5900,23 +5639,6 @@ if(ArrayBuffer.prototype.slice == null) {
 	ArrayBuffer.prototype.slice = js_html_compat_ArrayBuffer.sliceImpl;
 }
 var Uint8Array = $global.Uint8Array || js_html_compat_Uint8Array._new;
-Perf.MEASUREMENT_INTERVAL = 1000;
-Perf.FONT_FAMILY = "Helvetica,Arial";
-Perf.FPS_BG_CLR = "#00FF00";
-Perf.FPS_WARN_BG_CLR = "#FF8000";
-Perf.FPS_PROB_BG_CLR = "#FF0000";
-Perf.MS_BG_CLR = "#FFFF00";
-Perf.MEM_BG_CLR = "#086A87";
-Perf.INFO_BG_CLR = "#00FFFF";
-Perf.FPS_TXT_CLR = "#000000";
-Perf.MS_TXT_CLR = "#000000";
-Perf.MEM_TXT_CLR = "#FFFFFF";
-Perf.INFO_TXT_CLR = "#000000";
-Perf.TOP_LEFT = "TL";
-Perf.TOP_RIGHT = "TR";
-Perf.BOTTOM_LEFT = "BL";
-Perf.BOTTOM_RIGHT = "BR";
-Perf.DELAY_TIME = 4000;
 com_github_haxePixiGAF_core_ZipToGAFAssetConverter.ACTION_DONT_LOAD_IN_GPU_MEMORY = "actionDontLoadInGPUMemory";
 com_github_haxePixiGAF_core_ZipToGAFAssetConverter.ACTION_LOAD_ALL_IN_GPU_MEMORY = "actionLoadAllInGPUMemory";
 com_github_haxePixiGAF_core_ZipToGAFAssetConverter.ACTION_LOAD_IN_GPU_MEMORY_ONLY_DEFAULT = "actionLoadInGPUMemoryOnlyDefault";
@@ -6016,9 +5738,7 @@ com_github_haxePixiGAF_utils_DebugUtility.cHB = [0,0,0,255,255,255,0];
 com_github_haxePixiGAF_utils_DebugUtility.aryRGB = [com_github_haxePixiGAF_utils_DebugUtility.cHR,com_github_haxePixiGAF_utils_DebugUtility.cHG,com_github_haxePixiGAF_utils_DebugUtility.cHB];
 com_github_haxePixiGAF_utils_MathUtility.epsilon = 0.00001;
 com_github_haxePixiGAF_utils_MathUtility.PI_Q = Math.PI / 4.0;
-com_github_mathieuanthoine_gaf_Main.FILE_NAME = "first_test";
 haxe_ds_ObjectMap.count = 0;
 js_Boot.__toStr = { }.toString;
 js_html_compat_Uint8Array.BYTES_PER_ELEMENT = 1;
-com_github_mathieuanthoine_gaf_Main.main();
 })(typeof exports != "undefined" ? exports : typeof window != "undefined" ? window : typeof self != "undefined" ? self : this, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);

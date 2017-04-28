@@ -9,6 +9,7 @@ import com.github.haxePixiGAF.sound.GAFSoundData;
  * TODO
  * @author Mathieu Anthoine
  */
+@:expose("GAF.GAFBundle")
  class GAFBundle
 {
 	//--------------------------------------------------------------------------

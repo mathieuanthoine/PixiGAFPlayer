@@ -63,7 +63,7 @@ class Main
 		var gafTimeline: GAFTimeline = gafBundle.getGAFTimeline(FILE_NAME, "rootTimeline");
 
 		var gafMovieClip:GAFMovieClip = new GAFMovieClip(gafTimeline);
-		gafMovieClip.play(true);
+		gafMovieClip.play();
 		stage.addChild(gafMovieClip);
 
 		Browser.window.requestAnimationFrame(gameLoop);

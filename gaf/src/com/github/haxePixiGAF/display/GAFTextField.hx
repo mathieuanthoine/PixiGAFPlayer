@@ -24,6 +24,7 @@ using com.github.haxePixiGAF.utils.MatrixUtility;
  * TODO
  * @author Mathieu Anthoine
  */
+@:expose("GAF.GAFTextField")
 class GAFTextField extends GAFContainer implements IGAFDebug
 {
 	//--------------------------------------------------------------------------
