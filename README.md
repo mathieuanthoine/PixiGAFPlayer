@@ -8,8 +8,7 @@ Pixi GAF Player is a Javascript library that allows developer easily to play bac
 
 Pixi GAF player is developed with [Haxe Toolkit][15]. The code is an adaptation of the [Starling GAF Player][12] code wrote in ActionScript 3.
 
-At the moment, Pixi GAF Player is avalaible for the [Haxe version of PixiJs][14].
-A pure js library will be available soon for Javascript developers.
+Pixi GAF Player is avalaible for the [Haxe version of PixiJs][14] and for [the original version in Javascript][18].
 
 Pixi GAF Player is still at a early stage of development, supported features match with the [availables demos][17]. Also read Requirements of GAF Pixi Player below.
 
@@ -102,5 +101,6 @@ Links and resources:
 [15]: http://haxe.org/
 [16]: https://gafmedia.com/downloads
 [17]: https://github.com/mathieuanthoine/PixiGAFPlayer/tree/master/demo
+[18]: https://github.com/mathieuanthoine/PixiGAFPlayer/tree/master/demo/js
 
 

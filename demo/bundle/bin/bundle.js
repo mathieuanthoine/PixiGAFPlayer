@@ -292,14 +292,6 @@ Type.getClassName = function(c) {
 };
 var _$UInt_UInt_$Impl_$ = {};
 _$UInt_UInt_$Impl_$.__name__ = ["_UInt","UInt_Impl_"];
-_$UInt_UInt_$Impl_$.gt = function(a,b) {
-	var aNeg = a < 0;
-	if(aNeg != b < 0) {
-		return aNeg;
-	} else {
-		return a > b;
-	}
-};
 _$UInt_UInt_$Impl_$.toFloat = function(this1) {
 	if(this1 < 0) {
 		return 4294967296.0 + this1;
@@ -334,8 +326,10 @@ com_github_haxePixiGAF_core_GAFLoader.prototype = $extend(PIXI.loaders.Loader.pr
 	,__class__: com_github_haxePixiGAF_core_GAFLoader
 });
 var com_github_haxePixiGAF_core_ZipToGAFAssetConverter = function(id) {
+	this._gafAssetsConfigIndex = 0;
 	this._ignoreSounds = false;
 	this._parseConfigAsync = false;
+	this._currentConfigIndex = 0;
 	PIXI.utils.EventEmitter.call(this);
 	this._id = id;
 };
@@ -826,6 +820,10 @@ com_github_haxePixiGAF_data_GAFAsset.prototype = {
 	,__class__: com_github_haxePixiGAF_data_GAFAsset
 };
 var com_github_haxePixiGAF_data_GAFAssetConfig = function(id) {
+	this._fileLength = 0;
+	this._versionMinor = 0;
+	this._versionMajor = 0;
+	this._compression = 0;
 	this._id = id;
 	this._scaleValues = [];
 	this._csfValues = [];
@@ -993,7 +991,10 @@ com_github_haxePixiGAF_data_GAFBundle.prototype = {
 	}
 	,__class__: com_github_haxePixiGAF_data_GAFBundle
 };
-var com_github_haxePixiGAF_data_GAFDebugInformation = function() { };
+var com_github_haxePixiGAF_data_GAFDebugInformation = function() {
+	this.color = 0;
+	this.type = 0;
+};
 com_github_haxePixiGAF_data_GAFDebugInformation.__name__ = ["com","github","haxePixiGAF","data","GAFDebugInformation"];
 com_github_haxePixiGAF_data_GAFDebugInformation.prototype = {
 	__class__: com_github_haxePixiGAF_data_GAFDebugInformation
@@ -1398,6 +1399,7 @@ com_github_haxePixiGAF_data_GAFTimeline.prototype = {
 };
 var com_github_haxePixiGAF_data_GAFTimelineConfig = function(version) {
 	this._disposed = false;
+	this._framesCount = 0;
 	this._version = version;
 	this._animationConfigFrames = new com_github_haxePixiGAF_data_config_CAnimationFrames();
 	this._animationObjects = new com_github_haxePixiGAF_data_config_CAnimationObjects();
@@ -1565,6 +1567,7 @@ com_github_haxePixiGAF_data_GAFTimelineConfig.prototype = {
 	,__class__: com_github_haxePixiGAF_data_GAFTimelineConfig
 };
 var com_github_haxePixiGAF_data_config_CAnimationFrame = function(frameNumber) {
+	this._frameNumber = 0;
 	this._frameNumber = frameNumber;
 	this._instancesDictionary = new haxe_ds_StringMap();
 	this._instances = [];
@@ -1653,6 +1656,7 @@ com_github_haxePixiGAF_data_config_CAnimationFrame.prototype = {
 	,__class__: com_github_haxePixiGAF_data_config_CAnimationFrame
 };
 var com_github_haxePixiGAF_data_config_CAnimationFrameInstance = function(id) {
+	this._zIndex = 0;
 	this._id = id;
 };
 com_github_haxePixiGAF_data_config_CAnimationFrameInstance.__name__ = ["com","github","haxePixiGAF","data","config","CAnimationFrameInstance"];
@@ -1793,6 +1797,8 @@ com_github_haxePixiGAF_data_config_CAnimationObjects.prototype = {
 	,__class__: com_github_haxePixiGAF_data_config_CAnimationObjects
 };
 var com_github_haxePixiGAF_data_config_CAnimationSequence = function(id,startFrameNo,endFrameNo) {
+	this._endFrameNo = 0;
+	this._startFrameNo = 0;
 	this._id = id;
 	this._startFrameNo = startFrameNo;
 	this._endFrameNo = endFrameNo;
@@ -1892,6 +1898,7 @@ var com_github_haxePixiGAF_data_config_CBlurFilterData = function() {
 	this.strength = 0;
 	this.distance = 0;
 	this.angle = 0;
+	this.color = 0;
 };
 com_github_haxePixiGAF_data_config_CBlurFilterData.__name__ = ["com","github","haxePixiGAF","data","config","CBlurFilterData"];
 com_github_haxePixiGAF_data_config_CBlurFilterData.__interfaces__ = [com_github_haxePixiGAF_data_config_ICFilterData];
@@ -2080,6 +2087,7 @@ com_github_haxePixiGAF_data_config_CFilter.prototype = {
 };
 var com_github_haxePixiGAF_data_config_CFrameAction = function() {
 	this.params = [];
+	this.type = 0;
 };
 com_github_haxePixiGAF_data_config_CFrameAction.__name__ = ["com","github","haxePixiGAF","data","config","CFrameAction"];
 com_github_haxePixiGAF_data_config_CFrameAction.prototype = {
@@ -2087,12 +2095,21 @@ com_github_haxePixiGAF_data_config_CFrameAction.prototype = {
 };
 var com_github_haxePixiGAF_data_config_CSound = function() {
 	this.stereo = false;
+	this.sampleCount = 0;
+	this.sampleSize = 0;
+	this.rate = 0;
+	this.format = 0;
+	this.soundID = 0;
 };
 com_github_haxePixiGAF_data_config_CSound.__name__ = ["com","github","haxePixiGAF","data","config","CSound"];
 com_github_haxePixiGAF_data_config_CSound.prototype = {
 	__class__: com_github_haxePixiGAF_data_config_CSound
 };
 var com_github_haxePixiGAF_data_config_CStage = function() {
+	this.height = 0;
+	this.width = 0;
+	this.color = 0;
+	this.fps = 0;
 };
 com_github_haxePixiGAF_data_config_CStage.__name__ = ["com","github","haxePixiGAF","data","config","CStage"];
 com_github_haxePixiGAF_data_config_CStage.prototype = {
@@ -2106,6 +2123,7 @@ com_github_haxePixiGAF_data_config_CStage.prototype = {
 	,__class__: com_github_haxePixiGAF_data_config_CStage
 };
 var com_github_haxePixiGAF_data_config_CTextFieldObject = function(id,text,textFormat,width,height) {
+	this._maxChars = 0;
 	this._displayAsPassword = false;
 	this._selectable = false;
 	this._editable = false;
@@ -2114,6 +2132,7 @@ var com_github_haxePixiGAF_data_config_CTextFieldObject = function(id,text,textF
 	this._embedFonts = false;
 	this._id = id;
 	this._text = text;
+	this._textFormat = textFormat;
 	this._width = width;
 	this._height = height;
 	this._pivotPoint = new PIXI.Point();
@@ -2131,6 +2150,12 @@ com_github_haxePixiGAF_data_config_CTextFieldObject.prototype = {
 	}
 	,set_text: function(value) {
 		return this._text = value;
+	}
+	,get_textFormat: function() {
+		return this._textFormat;
+	}
+	,set_textFormat: function(value) {
+		return this._textFormat = value;
 	}
 	,get_width: function() {
 		return this._width;
@@ -2494,8 +2519,8 @@ var com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter = function
 com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.__name__ = ["com","github","haxePixiGAF","data","converters","BinGAFAssetConfigConverter"];
 com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.readAnimationMasks = function(tagID,tagContent,timelineConfig) {
 	var length = tagContent.readUnsignedInt();
-	var objectID;
-	var regionID;
+	var objectID = 0;
+	var regionID = 0;
 	var type;
 	var _g1 = 0;
 	while(_g1 < length) {
@@ -2527,8 +2552,8 @@ com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.getAnimationOb
 };
 com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.readAnimationObjects = function(tagID,tagContent,timelineConfig) {
 	var length = tagContent.readUnsignedInt();
-	var objectID;
-	var regionID;
+	var objectID = 0;
+	var regionID = 0;
 	var type;
 	var _g1 = 0;
 	while(_g1 < length) {
@@ -2543,15 +2568,132 @@ com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.readAnimationO
 		timelineConfig.get_animationObjects().addAnimationObject(new com_github_haxePixiGAF_data_config_CAnimationObject(objectID + "",regionID + "",type,false));
 	}
 };
+com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.readAnimationSequences = function(tagContent,timelineConfig) {
+	var length = tagContent.readUnsignedInt();
+	var sequenceID;
+	var startFrameNo;
+	var endFrameNo;
+	var _g1 = 0;
+	while(_g1 < length) {
+		++_g1;
+		sequenceID = tagContent.readUTF();
+		startFrameNo = tagContent.readShort();
+		endFrameNo = tagContent.readShort();
+		timelineConfig.get_animationSequences().addSequence(new com_github_haxePixiGAF_data_config_CAnimationSequence(sequenceID,startFrameNo,endFrameNo));
+	}
+};
 com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.readNamedParts = function(tagContent,timelineConfig) {
 	timelineConfig.set_namedParts(new haxe_ds_StringMap());
 	var length = tagContent.readUnsignedInt();
-	var partID;
+	var partID = 0;
 	var _g1 = 0;
 	while(_g1 < length) {
 		++_g1;
 		partID = tagContent.readUnsignedInt();
 		timelineConfig.get_namedParts().set(partID == null?"null":"" + partID,tagContent.readUTF());
+	}
+};
+com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.readTextFields = function(tagContent,timelineConfig) {
+	var length = tagContent.readUnsignedInt();
+	var pivotX;
+	var pivotY;
+	var textFieldID = 0;
+	var width;
+	var height;
+	var text;
+	var embedFonts;
+	var multiline;
+	var wordWrap;
+	var restrict = null;
+	var editable;
+	var selectable;
+	var displayAsPassword;
+	var maxChars = 0;
+	var textFormat;
+	var _g1 = 0;
+	while(_g1 < length) {
+		++_g1;
+		textFieldID = tagContent.readUnsignedInt();
+		pivotX = haxe_io_FPHelper.i32ToFloat(tagContent.readInt32());
+		pivotY = haxe_io_FPHelper.i32ToFloat(tagContent.readInt32());
+		width = haxe_io_FPHelper.i32ToFloat(tagContent.readInt32());
+		height = haxe_io_FPHelper.i32ToFloat(tagContent.readInt32());
+		text = tagContent.readUTF();
+		embedFonts = tagContent.readBoolean();
+		multiline = tagContent.readBoolean();
+		wordWrap = tagContent.readBoolean();
+		if(tagContent.readBoolean()) {
+			restrict = tagContent.readUTF();
+		}
+		editable = tagContent.readBoolean();
+		selectable = tagContent.readBoolean();
+		displayAsPassword = tagContent.readBoolean();
+		maxChars = tagContent.readUnsignedInt();
+		var alignFlag = tagContent.readUnsignedInt();
+		var align = null;
+		switch(alignFlag) {
+		case 0:
+			align = "left";
+			break;
+		case 1:
+			align = "right";
+			break;
+		case 2:
+			align = "center";
+			break;
+		case 3:
+			align = "justify";
+			break;
+		case 4:
+			align = "start";
+			break;
+		case 5:
+			align = "end";
+			break;
+		}
+		tagContent.readUnsignedInt();
+		var bold = tagContent.readBoolean();
+		tagContent.readBoolean();
+		var color = tagContent.readUnsignedInt();
+		var font = tagContent.readUTF();
+		tagContent.readUnsignedInt();
+		var italic = tagContent.readBoolean();
+		tagContent.readBoolean();
+		tagContent.readUnsignedInt();
+		tagContent.readUnsignedInt();
+		var letterSpacing = haxe_io_FPHelper.i32ToFloat(tagContent.readInt32());
+		tagContent.readUnsignedInt();
+		var size = tagContent.readUnsignedInt();
+		var l = tagContent.readUnsignedInt();
+		var tabStops = [];
+		var _g3 = 0;
+		while(_g3 < l) {
+			++_g3;
+			tabStops.push(tagContent.readUnsignedInt());
+		}
+		tagContent.readUTF();
+		tagContent.readBoolean();
+		tagContent.readUTF();
+		textFormat = new PIXI.TextStyle();
+		textFormat.fontFamily = font;
+		textFormat.fontSize = size;
+		textFormat.fill = color;
+		textFormat.fontWeight = bold?"bold":"normal";
+		textFormat.fontStyle = italic?"italic":"normal";
+		textFormat.align = align;
+		textFormat.letterSpacing = letterSpacing;
+		var textFieldObject = new com_github_haxePixiGAF_data_config_CTextFieldObject(textFieldID == null?"null":"" + textFieldID,text,textFormat,width,height);
+		textFieldObject.get_pivotPoint().x = -pivotX;
+		textFieldObject.get_pivotPoint().y = -pivotY;
+		textFieldObject.set_embedFonts(embedFonts);
+		textFieldObject.set_multiline(multiline);
+		textFieldObject.set_wordWrap(wordWrap);
+		textFieldObject.set_restrict(restrict);
+		textFieldObject.set_editable(editable);
+		textFieldObject.set_selectable(selectable);
+		textFieldObject.set_displayAsPassword(displayAsPassword);
+		textFieldObject.set_maxChars(maxChars);
+		timelineConfig.get_textFields().addTextFieldObject(textFieldObject);
 	}
 };
 com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.readStageConfig = function(tagContent,config) {
@@ -2602,7 +2744,7 @@ com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.prototype = $e
 			async = false;
 		}
 		if(async) {
-			haxe_Log.trace("TODO asynchrone conversion",{ fileName : "BinGAFAssetConfigConverter.hx", lineNumber : 100, className : "com.github.haxePixiGAF.data.converters.BinGAFAssetConfigConverter", methodName : "convert"});
+			haxe_Log.trace("TODO asynchrone conversion",{ fileName : "BinGAFAssetConfigConverter.hx", lineNumber : 103, className : "com.github.haxePixiGAF.data.converters.BinGAFAssetConfigConverter", methodName : "convert"});
 		} else {
 			this.parseStart();
 		}
@@ -2697,10 +2839,10 @@ com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.prototype = $e
 			com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.readNamedParts(this._bytes,this._currentTimeline);
 			break;
 		case 6:
-			haxe_Log.trace("TODO TAG_DEFINE_SEQUENCES",{ fileName : "BinGAFAssetConfigConverter.hx", lineNumber : 221, className : "com.github.haxePixiGAF.data.converters.BinGAFAssetConfigConverter", methodName : "readNextTag"});
+			com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.readAnimationSequences(this._bytes,this._currentTimeline);
 			break;
 		case 7:
-			haxe_Log.trace("TODO TAG_DEFINE_TEXT_FIELDS",{ fileName : "BinGAFAssetConfigConverter.hx", lineNumber : 225, className : "com.github.haxePixiGAF.data.converters.BinGAFAssetConfigConverter", methodName : "readNextTag"});
+			com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.readTextFields(this._bytes,this._currentTimeline);
 			break;
 		case 8:
 			this.readTextureAtlasConfig(tagID);
@@ -2721,7 +2863,7 @@ com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.prototype = $e
 			this._currentTimeline = this.readTimeline();
 			break;
 		case 14:
-			haxe_Log.trace("TODO TAG_DEFINE_SOUNDS",{ fileName : "BinGAFAssetConfigConverter.hx", lineNumber : 229, className : "com.github.haxePixiGAF.data.converters.BinGAFAssetConfigConverter", methodName : "readNextTag"});
+			haxe_Log.trace("TODO TAG_DEFINE_SOUNDS",{ fileName : "BinGAFAssetConfigConverter.hx", lineNumber : 228, className : "com.github.haxePixiGAF.data.converters.BinGAFAssetConfigConverter", methodName : "readNextTag"});
 			if(!(!this._ignoreSounds)) {
 				var _g = this._bytes;
 				_g.set_position(_g.pos + tagLength);
@@ -2731,7 +2873,7 @@ com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.prototype = $e
 			this.readTextureAtlasConfig(tagID);
 			break;
 		default:
-			haxe_Log.trace("Unsupported tag found, check for playback library updates",{ fileName : "BinGAFAssetConfigConverter.hx", lineNumber : 252, className : "com.github.haxePixiGAF.data.converters.BinGAFAssetConfigConverter", methodName : "readNextTag"});
+			haxe_Log.trace("Unsupported tag found, check for playback library updates",{ fileName : "BinGAFAssetConfigConverter.hx", lineNumber : 251, className : "com.github.haxePixiGAF.data.converters.BinGAFAssetConfigConverter", methodName : "readNextTag"});
 			var _g1 = this._bytes;
 			_g1.set_position(_g1.pos + tagLength);
 		}
@@ -2739,7 +2881,7 @@ com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.prototype = $e
 	}
 	,delayedReadNextTag: function() {
 		if(this._async) {
-			haxe_Log.trace("TODO asynchrone delayedReadNextTag",{ fileName : "BinGAFAssetConfigConverter.hx", lineNumber : 263, className : "com.github.haxePixiGAF.data.converters.BinGAFAssetConfigConverter", methodName : "delayedReadNextTag"});
+			haxe_Log.trace("TODO asynchrone delayedReadNextTag",{ fileName : "BinGAFAssetConfigConverter.hx", lineNumber : 262, className : "com.github.haxePixiGAF.data.converters.BinGAFAssetConfigConverter", methodName : "delayedReadNextTag"});
 		} else {
 			this.readNextTag();
 		}
@@ -2766,8 +2908,8 @@ com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.prototype = $e
 		var textureAtlas = this.getTextureAtlasScale(scale);
 		var contentScaleFactor = null;
 		var atlasLength = this._bytes.readSByte();
-		var atlasID;
-		var sourceLength;
+		var atlasID = 0;
+		var sourceLength = 0;
 		var csf;
 		var source;
 		var elements = null;
@@ -2783,7 +2925,8 @@ com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.prototype = $e
 			atlasID = this._bytes.readUnsignedInt();
 			sourceLength = this._bytes.readSByte();
 			var _g3 = 0;
-			while(_g3 < sourceLength) {
+			var _g2 = sourceLength;
+			while(_g3 < _g2) {
 				++_g3;
 				source = this._bytes.readUTF();
 				csf = haxe_io_FPHelper.i32ToFloat(this._bytes.readInt32());
@@ -2807,7 +2950,7 @@ com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.prototype = $e
 		var elementScaleY = 0;
 		var elementWidth;
 		var elementHeight;
-		var elementAtlasID;
+		var elementAtlasID = 0;
 		var rotation = false;
 		var linkageName = "";
 		var _g11 = 0;
@@ -2923,13 +3066,13 @@ com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.prototype = $e
 		if(framesCount == -1) {
 			framesCount = this._bytes.readUnsignedInt();
 		}
-		var missedFrameNumber;
-		var filterLength;
-		var frameNumber;
-		var statesCount;
-		var filterType;
-		var stateID;
-		var zIndex;
+		var missedFrameNumber = 0;
+		var filterLength = 0;
+		var frameNumber = 0;
+		var statesCount = 0;
+		var filterType = 0;
+		var stateID = 0;
+		var zIndex = 0;
 		var alpha;
 		var matrix;
 		var maskID;
@@ -2950,7 +3093,7 @@ com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.prototype = $e
 			while(_g1 < _g) {
 				++_g1;
 				if(this._async) {
-					haxe_Log.trace("TODO asynchrone readAnimationFrames",{ fileName : "BinGAFAssetConfigConverter.hx", lineNumber : 628, className : "com.github.haxePixiGAF.data.converters.BinGAFAssetConfigConverter", methodName : "readAnimationFrames"});
+					haxe_Log.trace("TODO asynchrone readAnimationFrames",{ fileName : "BinGAFAssetConfigConverter.hx", lineNumber : 772, className : "com.github.haxePixiGAF.data.converters.BinGAFAssetConfigConverter", methodName : "readAnimationFrames"});
 					return;
 				}
 				frameNumber = this._bytes.readUnsignedInt();
@@ -2982,7 +3125,8 @@ com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.prototype = $e
 				if(hasChangesInDisplayList) {
 					statesCount = this._bytes.readUnsignedInt();
 					var _g3 = 0;
-					while(_g3 < statesCount) {
+					var _g2 = statesCount;
+					while(_g3 < _g2) {
 						++_g3;
 						hasColorTransform = this._bytes.readBoolean();
 						hasMask = this._bytes.readBoolean();
@@ -3008,7 +3152,8 @@ com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.prototype = $e
 							}
 							filterLength = this._bytes.readSByte();
 							var _g5 = 0;
-							while(_g5 < filterLength) {
+							var _g4 = filterLength;
+							while(_g5 < _g4) {
 								++_g5;
 								filterType = this._bytes.readUnsignedInt();
 								var warning = null;
@@ -3045,7 +3190,7 @@ com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.prototype = $e
 									warning = com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.readColorMatrixFilter(this._bytes,filter);
 									break;
 								default:
-									haxe_Log.trace("Unsupported filter in animation",{ fileName : "BinGAFAssetConfigConverter.hx", lineNumber : 734, className : "com.github.haxePixiGAF.data.converters.BinGAFAssetConfigConverter", methodName : "readAnimationFrames"});
+									haxe_Log.trace("Unsupported filter in animation",{ fileName : "BinGAFAssetConfigConverter.hx", lineNumber : 878, className : "com.github.haxePixiGAF.data.converters.BinGAFAssetConfigConverter", methodName : "readAnimationFrames"});
 								}
 								timelineConfig.addWarning(warning);
 							}
@@ -3100,11 +3245,11 @@ com_github_haxePixiGAF_data_converters_BinGAFAssetConfigConverter.prototype = $e
 				timelineConfig.get_animationConfigFrames().addFrame(tmp1);
 				++missedFrameNumber;
 			}
-			var _g2 = 0;
+			var _g6 = 0;
 			var _g11 = timelineConfig.get_animationConfigFrames().get_frames();
-			while(_g2 < _g11.length) {
-				var currentFrame1 = _g11[_g2];
-				++_g2;
+			while(_g6 < _g11.length) {
+				var currentFrame1 = _g11[_g6];
+				++_g6;
 				var _g21 = 0;
 				var _g32 = currentFrame1.get_instances();
 				while(_g21 < _g32.length) {
@@ -3668,11 +3813,6 @@ com_github_haxePixiGAF_data_textures_TextureAtlas.prototype = {
 	}
 	,__class__: com_github_haxePixiGAF_data_textures_TextureAtlas
 };
-var com_github_haxePixiGAF_display_IGAFDebug = function() { };
-com_github_haxePixiGAF_display_IGAFDebug.__name__ = ["com","github","haxePixiGAF","display","IGAFDebug"];
-com_github_haxePixiGAF_display_IGAFDebug.prototype = {
-	__class__: com_github_haxePixiGAF_display_IGAFDebug
-};
 var com_github_haxePixiGAF_display_IMaxSize = function() { };
 com_github_haxePixiGAF_display_IMaxSize.__name__ = ["com","github","haxePixiGAF","display","IMaxSize"];
 com_github_haxePixiGAF_display_IMaxSize.prototype = {
@@ -3682,6 +3822,43 @@ var com_github_haxePixiGAF_display_IGAFDisplayObject = function() { };
 com_github_haxePixiGAF_display_IGAFDisplayObject.__name__ = ["com","github","haxePixiGAF","display","IGAFDisplayObject"];
 com_github_haxePixiGAF_display_IGAFDisplayObject.prototype = {
 	__class__: com_github_haxePixiGAF_display_IGAFDisplayObject
+};
+var com_github_haxePixiGAF_display_GAFContainer = function() {
+	PIXI.Container.call(this);
+};
+com_github_haxePixiGAF_display_GAFContainer.__name__ = ["com","github","haxePixiGAF","display","GAFContainer"];
+com_github_haxePixiGAF_display_GAFContainer.__interfaces__ = [com_github_haxePixiGAF_display_IMaxSize,com_github_haxePixiGAF_display_IGAFDisplayObject];
+com_github_haxePixiGAF_display_GAFContainer.__super__ = PIXI.Container;
+com_github_haxePixiGAF_display_GAFContainer.prototype = $extend(PIXI.Container.prototype,{
+	get_transformationMatrix: function() {
+		return this.localTransform;
+	}
+	,set_transformationMatrix: function(matrix) {
+		return this.localTransform = matrix;
+	}
+	,get_maxSize: function() {
+		return this._maxSize;
+	}
+	,set_maxSize: function(value) {
+		return this._maxSize = value;
+	}
+	,setFilterConfig: function(value,scale) {
+		if(scale == null) {
+			scale = 1;
+		}
+	}
+	,invalidateOrientation: function() {
+	}
+	,get_pivotMatrix: function() {
+		com_github_haxePixiGAF_display_GAFContainer.HELPER_MATRIX.identity();
+		return com_github_haxePixiGAF_display_GAFContainer.HELPER_MATRIX;
+	}
+	,__class__: com_github_haxePixiGAF_display_GAFContainer
+});
+var com_github_haxePixiGAF_display_IGAFDebug = function() { };
+com_github_haxePixiGAF_display_IGAFDebug.__name__ = ["com","github","haxePixiGAF","display","IGAFDebug"];
+com_github_haxePixiGAF_display_IGAFDebug.prototype = {
+	__class__: com_github_haxePixiGAF_display_IGAFDebug
 };
 var com_github_haxePixiGAF_display_IGAFImage = function() { };
 com_github_haxePixiGAF_display_IGAFImage.__name__ = ["com","github","haxePixiGAF","display","IGAFImage"];
@@ -3807,6 +3984,11 @@ var com_github_haxePixiGAF_display_GAFMovieClip = function(gafTimeline,pFps,addT
 		pFps = -1;
 	}
 	this.__debugOriginalAlpha = null;
+	this._totalFrames = 0;
+	this._currentFrame = 0;
+	this._finalFrame = 0;
+	this._startFrame = 0;
+	this._nextFrame = 0;
 	this._previousTime = -1;
 	this._lastFrameTime = 0;
 	this._currentTime = 0;
@@ -3824,7 +4006,7 @@ var com_github_haxePixiGAF_display_GAFMovieClip = function(gafTimeline,pFps,addT
 	this._skipFrames = true;
 	this._loop = true;
 	this._smoothing = "";
-	PIXI.Container.call(this);
+	com_github_haxePixiGAF_display_GAFContainer.call(this);
 	this._gafTimeline = gafTimeline;
 	this._config = gafTimeline.get_config();
 	this._scale = gafTimeline.get_scale();
@@ -3840,13 +4022,13 @@ var com_github_haxePixiGAF_display_GAFMovieClip = function(gafTimeline,pFps,addT
 	this.draw();
 };
 com_github_haxePixiGAF_display_GAFMovieClip.__name__ = ["com","github","haxePixiGAF","display","GAFMovieClip"];
-com_github_haxePixiGAF_display_GAFMovieClip.__interfaces__ = [com_github_haxePixiGAF_display_IMaxSize,com_github_haxePixiGAF_display_IGAFDisplayObject,com_github_haxePixiGAF_display_IAnimatable];
+com_github_haxePixiGAF_display_GAFMovieClip.__interfaces__ = [com_github_haxePixiGAF_display_IAnimatable];
 com_github_haxePixiGAF_display_GAFMovieClip.getTransformMatrix = function(displayObject,matrix) {
 	com_github_haxePixiGAF_utils_MatrixUtility.copyFrom(matrix,displayObject.get_pivotMatrix());
 	return matrix;
 };
-com_github_haxePixiGAF_display_GAFMovieClip.__super__ = PIXI.Container;
-com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.prototype,{
+com_github_haxePixiGAF_display_GAFMovieClip.__super__ = com_github_haxePixiGAF_display_GAFContainer;
+com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(com_github_haxePixiGAF_display_GAFContainer.prototype,{
 	getChildByID: function(id) {
 		var _this = this._displayObjectsDictionary;
 		return __map_reserved[id] != null?_this.getReserved(id):_this.h[id];
@@ -3866,7 +4048,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 			this.addChild(stencilMaskObject);
 			this.addChild(maskAsDisplayObject);
 		} else {
-			haxe_Log.trace("WARNING:mask object is missing. It might be disposed.",{ fileName : "GAFMovieClip.hx", lineNumber : 200, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "showMaskByID"});
+			haxe_Log.trace("WARNING:mask object is missing. It might be disposed.",{ fileName : "GAFMovieClip.hx", lineNumber : 191, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "showMaskByID"});
 		}
 	}
 	,hideMaskByID: function(id) {
@@ -3881,7 +4063,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 				this.removeChild(maskAsDisplayObject);
 			}
 		} else {
-			haxe_Log.trace("WARNING:mask object is missing. It might be disposed.",{ fileName : "GAFMovieClip.hx", lineNumber : 226, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "hideMaskByID"});
+			haxe_Log.trace("WARNING:mask object is missing. It might be disposed.",{ fileName : "GAFMovieClip.hx", lineNumber : 217, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "hideMaskByID"});
 		}
 	}
 	,clearSequence: function() {
@@ -3987,18 +4169,17 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 	}
 	,showBounds: function(value) {
 		if(this._config.get_bounds() != null) {
-			haxe_Log.trace("TODO showBounds",{ fileName : "GAFMovieClip.hx", lineNumber : 438, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "showBounds"});
+			haxe_Log.trace("TODO showBounds",{ fileName : "GAFMovieClip.hx", lineNumber : 429, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "showBounds"});
 		}
-	}
-	,setFilterConfig: function(value,scale) {
-		if(scale == null) {
-			scale = 1;
-		}
-	}
-	,invalidateOrientation: function() {
 	}
 	,copy: function() {
 		return new com_github_haxePixiGAF_display_GAFMovieClip(this._gafTimeline,this.get_fps() | 0,this._addToJuggler);
+	}
+	,getField: function(pName) {
+		if(!Object.prototype.hasOwnProperty.call(this,pName)) {
+			throw new js__$Boot_HaxeError("Field " + pName + " does not exist.");
+		}
+		return Reflect.field(this,pName);
 	}
 	,_gotoAndStop: function(frame) {
 		this.checkAndSetCurrentFrame(frame);
@@ -4014,7 +4195,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 		if(this._inPlay && !applyToAllChildren) {
 			return;
 		}
-		var l;
+		var l = 0;
 		if(this._totalFrames > 1) {
 			this._inPlay = true;
 		}
@@ -4038,7 +4219,8 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 			var childMC;
 			l = this.children.length;
 			var _g11 = 0;
-			while(_g11 < l) {
+			var _g2 = l;
+			while(_g11 < _g2) {
 				child = js_Boot.__cast(this.getChildAt(_g11++) , PIXI.Container);
 				if(js_Boot.__instanceof(child,com_github_haxePixiGAF_display_GAFMovieClip)) {
 					childMC = js_Boot.__cast(child , com_github_haxePixiGAF_display_GAFMovieClip);
@@ -4127,7 +4309,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 					this.gotoAndPlay(action.params[0]);
 					break;
 				case 4:
-					haxe_Log.trace("CFrameAction.DISPATCH_EVENT",{ fileName : "GAFMovieClip.hx", lineNumber : 674, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "runActions"});
+					haxe_Log.trace("CFrameAction.DISPATCH_EVENT",{ fileName : "GAFMovieClip.hx", lineNumber : 625, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "runActions"});
 					var actionType = action.params[0];
 					if(com_github_haxePixiGAF_utils_EventEmitterUtility.hasEventListener(this,actionType)) {
 						var bubbles = false;
@@ -4151,7 +4333,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 		}
 	}
 	,checkAndSetCurrentFrame: function(frame) {
-		if(_$UInt_UInt_$Impl_$.gt(js_Boot.__cast(frame , Int),0)) {
+		if(typeof(frame) == "number" && ((frame | 0) === frame) && js_Boot.__cast(frame , Int) > 0) {
 			if(frame > this._totalFrames) {
 				frame = this._totalFrames;
 			}
@@ -4179,8 +4361,8 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 		this.removeChildren();
 	}
 	,draw: function() {
-		var i;
-		var l;
+		var i = 0;
+		var l = 0;
 		if(this._config.get_debugRegions() != null) {
 			this.clearDisplayList();
 		} else {
@@ -4215,7 +4397,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 					displayObject = _this.h[key];
 				}
 				if(displayObject != null) {
-					objectPivotMatrix = com_github_haxePixiGAF_display_GAFMovieClip.getTransformMatrix(displayObject,com_github_haxePixiGAF_display_GAFMovieClip.HELPER_MATRIX);
+					objectPivotMatrix = com_github_haxePixiGAF_display_GAFMovieClip.getTransformMatrix(displayObject,com_github_haxePixiGAF_display_GAFContainer.HELPER_MATRIX);
 					if(js_Boot.__instanceof(displayObject,com_github_haxePixiGAF_display_GAFMovieClip)) {
 						mc = js_Boot.__cast(displayObject , com_github_haxePixiGAF_display_GAFMovieClip);
 					} else {
@@ -4271,8 +4453,8 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 						if(maskObject != null) {
 							var maskInstance = frameConfig.getInstanceByID(instance.get_id());
 							if(maskInstance != null) {
-								com_github_haxePixiGAF_display_GAFMovieClip.getTransformMatrix(maskObject,com_github_haxePixiGAF_display_GAFMovieClip.HELPER_MATRIX);
-								maskInstance.applyTransformMatrix(maskObject.get_transformationMatrix(),com_github_haxePixiGAF_display_GAFMovieClip.HELPER_MATRIX,this._scale);
+								com_github_haxePixiGAF_display_GAFMovieClip.getTransformMatrix(maskObject,com_github_haxePixiGAF_display_GAFContainer.HELPER_MATRIX);
+								maskInstance.applyTransformMatrix(maskObject.get_transformationMatrix(),com_github_haxePixiGAF_display_GAFContainer.HELPER_MATRIX,this._scale);
 								maskObject.invalidateOrientation();
 							} else {
 								throw new js__$Boot_HaxeError("Unable to find mask with ID " + instance.get_id());
@@ -4297,11 +4479,11 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 	}
 	,renderDebug: function(mc,instance,masked) {
 		if(com_github_haxePixiGAF_utils_DebugUtility.RENDERING_DEBUG && mc != null) {
-			haxe_Log.trace("TODO renderDebug",{ fileName : "GAFMovieClip.hx", lineNumber : 913, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "renderDebug"});
+			haxe_Log.trace("TODO renderDebug",{ fileName : "GAFMovieClip.hx", lineNumber : 864, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "renderDebug"});
 		}
 	}
 	,addDebugRegions: function() {
-		haxe_Log.trace("TODO addDebugRegions",{ fileName : "GAFMovieClip.hx", lineNumber : 944, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "addDebugRegions"});
+		haxe_Log.trace("TODO addDebugRegions",{ fileName : "GAFMovieClip.hx", lineNumber : 895, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "addDebugRegions"});
 	}
 	,reset: function() {
 		this._gotoAndStop((this._reverse?this._finalFrame:this._startFrame) + 1);
@@ -4327,12 +4509,12 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 			var animationObjectConfig = tmp.next();
 			switch(animationObjectConfig.get_type()) {
 			case "textField":
-				haxe_Log.trace("TODO initialize GAFTextField",{ fileName : "GAFMovieClip.hx", lineNumber : 1021, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "initialize"});
+				displayObject = new com_github_haxePixiGAF_display_GAFTextField(this._config.get_textFields().get_textFieldObjectsDictionary().get(animationObjectConfig.get_regionID()),this._scale,this._contentScaleFactor);
 				break;
 			case "texture":
 				var texture = textureAtlas.getTexture(animationObjectConfig.get_regionID());
 				if(js_Boot.__instanceof(texture,com_github_haxePixiGAF_display_GAFScale9Texture) && !animationObjectConfig.get_mask()) {
-					haxe_Log.trace("TODO initialize GAFScale9Texture",{ fileName : "GAFMovieClip.hx", lineNumber : 1011, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "initialize"});
+					haxe_Log.trace("TODO initialize GAFScale9Texture",{ fileName : "GAFMovieClip.hx", lineNumber : 962, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "initialize"});
 				} else {
 					displayObject = new com_github_haxePixiGAF_display_GAFImage(texture);
 					(js_Boot.__cast(displayObject , com_github_haxePixiGAF_display_GAFImage)).set_textureSmoothing(this._smoothing);
@@ -4389,7 +4571,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 		}
 	}
 	,updateBounds: function(bounds) {
-		haxe_Log.trace("TODO updateBounds",{ fileName : "GAFMovieClip.hx", lineNumber : 1084, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "updateBounds"});
+		haxe_Log.trace("TODO updateBounds",{ fileName : "GAFMovieClip.hx", lineNumber : 1033, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "updateBounds"});
 	}
 	,__debugHighlight: function() {
 		if(isNaN(this.__debugOriginalAlpha)) {
@@ -4409,12 +4591,10 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 			this.__debugOriginalAlpha = null;
 		}
 	}
-	,updateTransformMatrix: function() {
-	}
 	,removeChildAt: function(index) {
-		haxe_Log.trace("TODO: removeChildAt",{ fileName : "GAFMovieClip.hx", lineNumber : 1163, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "removeChildAt"});
+		haxe_Log.trace("TODO: removeChildAt",{ fileName : "GAFMovieClip.hx", lineNumber : 1103, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "removeChildAt"});
 		this.getChildAt(index).destroy();
-		return PIXI.Container.prototype.removeChildAt.call(this,index);
+		return com_github_haxePixiGAF_display_GAFContainer.prototype.removeChildAt.call(this,index);
 	}
 	,getChildByName: function(name) {
 		var numChildren = this._displayObjectsVector.length;
@@ -4425,7 +4605,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 				return js_Boot.__cast(this._displayObjectsVector[i] , PIXI.DisplayObject);
 			}
 		}
-		return PIXI.Container.prototype.getChildByName.call(this,name);
+		return com_github_haxePixiGAF_display_GAFContainer.prototype.getChildByName.call(this,name);
 	}
 	,destroy: function(options) {
 		if(this._disposed) {
@@ -4448,7 +4628,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 		if(this.parent != null) {
 			this.parent.removeChild(this);
 		}
-		PIXI.Container.prototype.destroy.call(this,options);
+		com_github_haxePixiGAF_display_GAFContainer.prototype.destroy.call(this,options);
 		this._disposed = true;
 	}
 	,changeCurrentFrame: function(isSkipping) {
@@ -4501,12 +4681,6 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 	,get_useClipping: function() {
 		return this._useClipping;
 	}
-	,get_maxSize: function() {
-		return this._maxSize;
-	}
-	,set_maxSize: function(value) {
-		return this._maxSize = value;
-	}
 	,set_useClipping: function(value) {
 		this._useClipping = value;
 		if(!(this._useClipping && this._config.get_stageConfig() != null)) {
@@ -4547,16 +4721,6 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(PIXI.Container.p
 		var i = this._mcVector.length;
 		while(i-- > 0) this._mcVector[i]._skipFrames = value;
 		return this._skipFrames;
-	}
-	,get_pivotMatrix: function() {
-		com_github_haxePixiGAF_display_GAFMovieClip.HELPER_MATRIX.identity();
-		return com_github_haxePixiGAF_display_GAFMovieClip.HELPER_MATRIX;
-	}
-	,get_transformationMatrix: function() {
-		return this.localTransform;
-	}
-	,set_transformationMatrix: function(matrix) {
-		return this.localTransform = matrix;
 	}
 	,__class__: com_github_haxePixiGAF_display_GAFMovieClip
 });
@@ -4602,6 +4766,134 @@ com_github_haxePixiGAF_display_GAFScale9Texture.prototype = {
 	}
 	,__class__: com_github_haxePixiGAF_display_GAFScale9Texture
 };
+var com_github_haxePixiGAF_display_GAFTextField = function(config,scale,csf,debug) {
+	if(debug == null) {
+		debug = false;
+	}
+	if(csf == null) {
+		csf = 1;
+	}
+	if(scale == null) {
+		scale = 1;
+	}
+	this.__debugOriginalAlpha = null;
+	com_github_haxePixiGAF_display_GAFContainer.call(this);
+	config.get_textFormat().wordWrap = true;
+	config.get_textFormat().wordWrapWidth = config.get_width();
+	this.textField = new PIXI.Text(config.get_text(),config.get_textFormat());
+	if(isNaN(scale)) {
+		scale = 1;
+	}
+	if(isNaN(csf)) {
+		csf = 1;
+	}
+	this._scale = scale;
+	this._csf = csf;
+	if(config.get_textFormat().align == "center") {
+		this.textField.anchor.x = 0.5;
+		this.textField.x = config.get_width() / 2;
+	} else if(config.get_textFormat().align == "right") {
+		this.textField.anchor.x = 1;
+		this.textField.x = config.get_width();
+	}
+	if(debug) {
+		var lGraph = new PIXI.Graphics();
+		lGraph.beginFill(65535);
+		lGraph.drawRect(0,0,config.get_width(),config.get_height());
+		lGraph.endFill();
+		lGraph.alpha = 0.5;
+		this.addChild(lGraph);
+	}
+	this.addChild(this.textField);
+	this.invalidateSize();
+	this._config = config;
+};
+com_github_haxePixiGAF_display_GAFTextField.__name__ = ["com","github","haxePixiGAF","display","GAFTextField"];
+com_github_haxePixiGAF_display_GAFTextField.__interfaces__ = [com_github_haxePixiGAF_display_IGAFDebug];
+com_github_haxePixiGAF_display_GAFTextField.__super__ = com_github_haxePixiGAF_display_GAFContainer;
+com_github_haxePixiGAF_display_GAFTextField.prototype = $extend(com_github_haxePixiGAF_display_GAFContainer.prototype,{
+	copy: function() {
+		var clone = new com_github_haxePixiGAF_display_GAFTextField(this._config,this._scale,this._csf);
+		clone.alpha = this.alpha;
+		clone.visible = this.visible;
+		clone.set_transformationMatrix(this.get_transformationMatrix());
+		clone.setFilterConfig(this._filterConfig,this._filterScale);
+		return clone;
+	}
+	,invalidateSize: function() {
+	}
+	,set_debugColors: function(value) {
+		return null;
+	}
+	,setFilterConfig: function(value,scale) {
+		if(scale == null) {
+			scale = 1;
+		}
+		if(this._filterConfig != value || this._filterScale != scale) {
+			if(value != null) {
+				this._filterConfig = value;
+				this._filterScale = scale;
+			} else {
+				this._filterConfig = null;
+				this._filterScale = null;
+			}
+			this.applyFilter();
+		}
+	}
+	,applyFilter: function() {
+	}
+	,__debugHighlight: function() {
+		if(isNaN(this.__debugOriginalAlpha)) {
+			this.__debugOriginalAlpha = this.alpha;
+		}
+		this.alpha = 1;
+	}
+	,__debugLowlight: function() {
+		if(isNaN(this.__debugOriginalAlpha)) {
+			this.__debugOriginalAlpha = this.alpha;
+		}
+		this.alpha = .05;
+	}
+	,__debugResetLight: function() {
+		if(!isNaN(this.__debugOriginalAlpha)) {
+			this.alpha = this.__debugOriginalAlpha;
+			this.__debugOriginalAlpha = null;
+		}
+	}
+	,destroy: function(options) {
+		com_github_haxePixiGAF_display_GAFContainer.prototype.destroy.call(this,options);
+		this._config = null;
+	}
+	,get_textWidth: function() {
+		return com_github_haxePixiGAF_display_GAFTextField.HELPER_POINT.x;
+	}
+	,get_textHeight: function() {
+		return com_github_haxePixiGAF_display_GAFTextField.HELPER_POINT.y;
+	}
+	,get_text: function() {
+		return this.textField.text;
+	}
+	,set_text: function(pText) {
+		return this.textField.text = pText;
+	}
+	,get_style: function() {
+		return js_Boot.__cast(this.textField.style , PIXI.TextStyle);
+	}
+	,cloneTextFormat: function(textFormat) {
+		if(textFormat == null) {
+			throw new js__$Boot_HaxeError("Argument \"textFormat\" must be not null.");
+		}
+		var result = new PIXI.TextStyle();
+		result.fontFamily = textFormat.fontFamily;
+		result.fontSize = textFormat.fontSize;
+		result.fill = textFormat.fill;
+		result.fontWeight = textFormat.fontWeight;
+		result.fontStyle = textFormat.fontStyle;
+		result.align = textFormat.align;
+		return result;
+	}
+	,__class__: com_github_haxePixiGAF_display_GAFTextField
+});
 var com_github_haxePixiGAF_display_GAFTexture = function(id,texture,pivotMatrix) {
 	this._id = id;
 	this._texture = texture;
@@ -4642,6 +4934,8 @@ com_github_haxePixiGAF_sound_GAFSoundData.prototype = {
 	}
 	,__class__: com_github_haxePixiGAF_sound_GAFSoundData
 };
+var com_github_haxePixiGAF_text_TextFormatAlign = function() { };
+com_github_haxePixiGAF_text_TextFormatAlign.__name__ = ["com","github","haxePixiGAF","text","TextFormatAlign"];
 var com_github_haxePixiGAF_utils_DebugUtility = function() { };
 com_github_haxePixiGAF_utils_DebugUtility.__name__ = ["com","github","haxePixiGAF","utils","DebugUtility"];
 com_github_haxePixiGAF_utils_DebugUtility.getRenderingDifficultyColor = function(instance,alphaLess1,masked,hasFilter) {
@@ -4678,7 +4972,7 @@ com_github_haxePixiGAF_utils_DebugUtility.getColor = function(difficulty) {
 };
 com_github_haxePixiGAF_utils_DebugUtility.getRGB = function(rot) {
 	var retVal = [];
-	var aryNum;
+	var aryNum = 0;
 	while(rot < 0 || rot > 360) rot += rot < 0?360:-360;
 	aryNum = Math.floor(rot / 60);
 	retVal = com_github_haxePixiGAF_utils_DebugUtility.getH(rot,aryNum);
@@ -4695,10 +4989,10 @@ com_github_haxePixiGAF_utils_DebugUtility.getH = function(rot,aryNum) {
 	return retVal;
 };
 com_github_haxePixiGAF_utils_DebugUtility.getHP = function(_P,rot,aryNum,nextNum) {
-	var retVal;
-	var aryC;
-	var nextC;
-	var rH;
+	var retVal = 0;
+	var aryC = 0;
+	var nextC = 0;
+	var rH = 0;
 	var rotR;
 	aryC = _P[aryNum];
 	nextC = _P[nextNum];
@@ -4984,7 +5278,7 @@ var com_github_mathieuanthoine_gaf_Main = function() {
 	this.stage = new PIXI.Container();
 	new Perf("TL");
 	var converter = new com_github_haxePixiGAF_core_ZipToGAFAssetConverter();
-	converter.on("complete",$bind(this,this.onConverted));
+	converter.once("complete",$bind(this,this.onConverted));
 	converter.convert(["bundle/skeleton.gaf","bundle/ufo-monster.gaf"]);
 };
 com_github_mathieuanthoine_gaf_Main.__name__ = ["com","github","mathieuanthoine","gaf","Main"];
@@ -5015,7 +5309,7 @@ com_github_mathieuanthoine_gaf_Main.prototype = {
 		}
 		this.stage.removeChildren();
 		this.gafMovieClip = new com_github_haxePixiGAF_display_GAFMovieClip(this.gafBundle.getGAFTimeline(swfName,"rootTimeline"));
-		this.gafMovieClip.play(true);
+		this.gafMovieClip.play();
 		this.stage.addChild(this.gafMovieClip);
 	}
 	,gameLoop: function(pIdentifier) {
@@ -5711,14 +6005,21 @@ com_github_haxePixiGAF_data_tagfx_TAGFXBase.SOURCE_TYPE_ATF_BA = "sourceTypeATFB
 com_github_haxePixiGAF_data_tagfx_TAGFXBase.SOURCE_TYPE_PNG_URL = "sourceTypePNGURL";
 com_github_haxePixiGAF_data_tagfx_TAGFXBase.SOURCE_TYPE_ATF_URL = "sourceTypeATFURL";
 com_github_haxePixiGAF_data_textures_TextureAtlas.sNames = [];
+com_github_haxePixiGAF_display_GAFContainer.HELPER_MATRIX = new PIXI.Matrix();
 com_github_haxePixiGAF_display_GAFImage.HELPER_MATRIX = new PIXI.Matrix();
 com_github_haxePixiGAF_display_GAFMovieClip.EVENT_TYPE_SEQUENCE_START = "typeSequenceStart";
 com_github_haxePixiGAF_display_GAFMovieClip.EVENT_TYPE_SEQUENCE_END = "typeSequenceEnd";
-com_github_haxePixiGAF_display_GAFMovieClip.HELPER_MATRIX = new PIXI.Matrix();
 com_github_haxePixiGAF_display_GAFScale9Texture.DIMENSIONS_ERROR = "The width and height of the scale9Grid must be greater than zero.";
 com_github_haxePixiGAF_display_GAFScale9Texture.HELPER_RECTANGLE = new PIXI.Rectangle(0,0,0,0);
+com_github_haxePixiGAF_display_GAFTextField.HELPER_POINT = new PIXI.Point();
 com_github_haxePixiGAF_events_GAFEvent.COMPLETE = "complete";
 com_github_haxePixiGAF_events_GAFEvent.ERROR = "error";
+com_github_haxePixiGAF_text_TextFormatAlign.CENTER = "center";
+com_github_haxePixiGAF_text_TextFormatAlign.END = "end";
+com_github_haxePixiGAF_text_TextFormatAlign.JUSTIFY = "justify";
+com_github_haxePixiGAF_text_TextFormatAlign.LEFT = "left";
+com_github_haxePixiGAF_text_TextFormatAlign.RIGHT = "right";
+com_github_haxePixiGAF_text_TextFormatAlign.START = "start";
 com_github_haxePixiGAF_utils_DebugUtility.RENDERING_DEBUG = false;
 com_github_haxePixiGAF_utils_DebugUtility.RENDERING_NEUTRAL_COLOR = -858993460;
 com_github_haxePixiGAF_utils_DebugUtility.RENDERING_FILTER_COLOR = -16711681;

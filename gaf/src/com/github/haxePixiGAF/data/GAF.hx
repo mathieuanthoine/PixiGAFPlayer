@@ -5,6 +5,7 @@ package com.github.haxePixiGAF.data;
  * @author Mathieu Anthoine
  * The GAF class defines global GAF library settings
  */
+@:expose
 class GAF
 {
 	/**

@@ -18,6 +18,7 @@ import com.github.haxePixiGAF.sound.GAFSoundData;
  * TODO
  * @author Mathieu Anthoine
  */
+@:expose("GAF.GAFTimeline")
 class GAFTimeline
 {
 	//--------------------------------------------------------------------------

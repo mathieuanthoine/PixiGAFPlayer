@@ -25,7 +25,8 @@ using com.github.haxePixiGAF.utils.EventEmitterUtility;
  */
 
 typedef Array_String = Array<String>; 
- 
+
+@:expose("GAF.ZipToGAFAssetConverter")
 class ZipToGAFAssetConverter extends EventEmitter
 {
 	
@@ -591,6 +592,7 @@ class ZipToGAFAssetConverter extends EventEmitter
 	/**
 	 * Return converted<code>GAFBundle</code>. If GAF asset file created as single animation - returns null.
 	 */
+	@:keep
 	public var gafBundle(get_gafBundle, null):GAFBundle;
  	private function get_gafBundle():GAFBundle
 	{

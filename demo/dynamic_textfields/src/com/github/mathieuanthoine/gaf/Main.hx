@@ -57,7 +57,7 @@ class Main
 		new Perf("TL");
 		
 		var converter: ZipToGAFAssetConverter = new ZipToGAFAssetConverter();
-		converter.on(GAFEvent.COMPLETE, onConverted);		
+		converter.once(GAFEvent.COMPLETE, onConverted);		
 		converter.convert("text_field_demo/text_field_demo.gaf");
 		
 	}

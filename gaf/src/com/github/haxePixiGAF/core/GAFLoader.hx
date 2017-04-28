@@ -11,6 +11,7 @@ import pixi.loaders.ResourceLoader;
  * Loader of GAF resources
  * @author Mathieu Anthoine
  */
+@:expose("GAF.GAFLoader")
 class GAFLoader extends Loader
 {
 

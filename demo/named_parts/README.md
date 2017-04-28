@@ -5,11 +5,15 @@ SWF source file was converted into GAF format by Standalone GAF Converter versio
 GAF Converter conversion settings:
 
 Conversion mode: plain (for robot_plain.gaf)<br>
+Conversion mode: nesting (for robot_nesting.gaf)<br><br>
+
+☑ Limit max bake scale = 1 <br>
 ☑ Allow region rotation<br><br>
 
 Atlas max size: 2048x2048
 
-* Allow region rotation is used to decrease texture atlas size.
+* Conversion mode "nesting" is used to save timelines structure in converted GAF asset.
+* "Allow region rotation" and "Limit max bake scale = 1" is used to decrease texture atlas size.
 
 Warning
 -----------------

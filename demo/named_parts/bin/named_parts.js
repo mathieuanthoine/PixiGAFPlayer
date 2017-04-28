@@ -4,7 +4,7 @@ $hx_exports["com"] = $hx_exports["com"] || {};
 $hx_exports["com"]["github"] = $hx_exports["com"]["github"] || {};
 $hx_exports["com"]["github"]["haxePixiGAF"] = $hx_exports["com"]["github"]["haxePixiGAF"] || {};
 $hx_exports["com"]["github"]["haxePixiGAF"]["data"] = $hx_exports["com"]["github"]["haxePixiGAF"]["data"] || {};
-$hx_exports["GAF"] = $hx_exports["GAF"] || {};
+;$hx_exports["com"]["github"]["haxePixiGAF"]["core"] = $hx_exports["com"]["github"]["haxePixiGAF"]["core"] || {};
 var $estr = function() { return js_Boot.__string_rec(this,''); };
 function $extend(from, fields) {
 	function Inherit() {} Inherit.prototype = from; var proto = new Inherit();
@@ -330,7 +330,7 @@ com_github_haxePixiGAF_core_GAFLoader.prototype = $extend(PIXI.loaders.Loader.pr
 	}
 	,__class__: com_github_haxePixiGAF_core_GAFLoader
 });
-var com_github_haxePixiGAF_core_ZipToGAFAssetConverter = $hx_exports["GAF"]["ZipToGAFAssetConverter"] = function(id) {
+var com_github_haxePixiGAF_core_ZipToGAFAssetConverter = $hx_exports["com"]["github"]["haxePixiGAF"]["core"]["ZipToGAFAssetConverter"] = function(id) {
 	this._gafAssetsConfigIndex = 0;
 	this._ignoreSounds = false;
 	this._parseConfigAsync = false;
@@ -4930,7 +4930,7 @@ com_github_haxePixiGAF_display_GAFTexture.prototype = {
 	}
 	,__class__: com_github_haxePixiGAF_display_GAFTexture
 };
-var com_github_haxePixiGAF_events_GAFEvent = function() { };
+var com_github_haxePixiGAF_events_GAFEvent = $hx_exports["GAF"] = function() { };
 com_github_haxePixiGAF_events_GAFEvent.__name__ = ["com","github","haxePixiGAF","events","GAFEvent"];
 var com_github_haxePixiGAF_sound_GAFSoundData = function() { };
 com_github_haxePixiGAF_sound_GAFSoundData.__name__ = ["com","github","haxePixiGAF","sound","GAFSoundData"];
@@ -5278,24 +5278,66 @@ com_github_haxePixiGAF_utils_VectorUtility.copyMatrix = function(source,dest) {
 	}
 };
 var com_github_mathieuanthoine_gaf_Main = function() {
-	this.renderer = PIXI.autoDetectRenderer(800,600,{ backgroundColor : 10066329});
+	this.renderer = PIXI.autoDetectRenderer(1024,600,{ backgroundColor : 10066329});
 	window.document.body.appendChild(this.renderer.view);
 	this.stage = new PIXI.Container();
 	new Perf("TL");
-	var converter = new com_github_haxePixiGAF_core_ZipToGAFAssetConverter();
-	converter.once("complete",$bind(this,this.onConverted));
-	converter.convert("first_test" + "/" + "first_test" + ".gaf");
+	this.convertPlain();
 };
 com_github_mathieuanthoine_gaf_Main.__name__ = ["com","github","mathieuanthoine","gaf","Main"];
 com_github_mathieuanthoine_gaf_Main.main = function() {
 	new com_github_mathieuanthoine_gaf_Main();
 };
 com_github_mathieuanthoine_gaf_Main.prototype = {
-	onConverted: function(pEvent) {
-		var gafMovieClip = new com_github_haxePixiGAF_display_GAFMovieClip((js_Boot.__cast(pEvent.target , com_github_haxePixiGAF_core_ZipToGAFAssetConverter)).get_gafBundle().getGAFTimeline("first_test","rootTimeline"));
-		gafMovieClip.play();
-		this.stage.addChild(gafMovieClip);
+	convertPlain: function() {
+		var converter = new com_github_haxePixiGAF_core_ZipToGAFAssetConverter();
+		converter.once("complete",$bind(this,this.onPlainConverted));
+		converter.convert("robot_plain/robot.gaf");
+	}
+	,onPlainConverted: function(pEvent) {
+		this.robotPlain = new com_github_haxePixiGAF_display_GAFMovieClip((js_Boot.__cast(pEvent.target , com_github_haxePixiGAF_core_ZipToGAFAssetConverter)).get_gafBundle().getGAFTimeline("robot"));
+		this.robotPlain.play();
+		this.stage.addChild(this.robotPlain);
+		this.convertNesting();
+	}
+	,convertNesting: function() {
+		var converter = new com_github_haxePixiGAF_core_ZipToGAFAssetConverter();
+		converter.once("complete",$bind(this,this.onNestingConverted));
+		converter.convert("robot_nesting/robot.gaf");
+	}
+	,onNestingConverted: function(pEvent) {
+		this.robotNesting = new com_github_haxePixiGAF_display_GAFMovieClip((js_Boot.__cast(pEvent.target , com_github_haxePixiGAF_core_ZipToGAFAssetConverter)).get_gafBundle().getGAFTimeline("robot"));
+		this.robotNesting.x = this.robotNesting.width;
+		this.robotNesting.play(true);
+		this.stage.addChild(this.robotNesting);
+		this.initTextFields();
+		this.robotPlain.interactive = true;
+		this.robotNesting.interactive = true;
+		this.robotPlain.on("click",$bind(this,this.onClick));
+		this.robotNesting.on("click",$bind(this,this.onClick));
 		window.requestAnimationFrame($bind(this,this.gameLoop));
+	}
+	,onClick: function(pEvent) {
+		this.robotPlain.getChildByName("body_gun").visible = !this.robotPlain.getChildByName("body_gun").visible;
+		(js_Boot.__cast(this.robotNesting.getChildByName("body") , PIXI.Container)).getChildByName("gun").visible = !(js_Boot.__cast(this.robotNesting.getChildByName("body") , PIXI.Container)).getChildByName("gun").visible;
+	}
+	,initTextFields: function() {
+		var textFormat = new PIXI.TextStyle({ fontFamily : "Arial", fontSize : 24, align : "center"});
+		var title = new PIXI.Text("Click the robots to show/hide guns",textFormat);
+		title.anchor.set(0.5,0.5);
+		title.y = 50;
+		title.x = this.renderer.width / 2;
+		var plain = new PIXI.Text("Plain",textFormat);
+		plain.x = this.robotPlain.width / 2;
+		plain.anchor.set(0.5,0.5);
+		var nesting = new PIXI.Text("Nesting",textFormat);
+		nesting.anchor.set(0.5,0.5);
+		nesting.x = this.robotNesting.x + this.robotNesting.width / 2;
+		nesting.y = this.renderer.height - 100;
+		plain.y = this.renderer.height - 100;
+		this.stage.addChild(title);
+		this.stage.addChild(plain);
+		this.stage.addChild(nesting);
 	}
 	,gameLoop: function(pIdentifier) {
 		window.requestAnimationFrame($bind(this,this.gameLoop));
@@ -6016,9 +6058,10 @@ com_github_haxePixiGAF_utils_DebugUtility.cHB = [0,0,0,255,255,255,0];
 com_github_haxePixiGAF_utils_DebugUtility.aryRGB = [com_github_haxePixiGAF_utils_DebugUtility.cHR,com_github_haxePixiGAF_utils_DebugUtility.cHG,com_github_haxePixiGAF_utils_DebugUtility.cHB];
 com_github_haxePixiGAF_utils_MathUtility.epsilon = 0.00001;
 com_github_haxePixiGAF_utils_MathUtility.PI_Q = Math.PI / 4.0;
-com_github_mathieuanthoine_gaf_Main.FILE_NAME = "first_test";
 haxe_ds_ObjectMap.count = 0;
 js_Boot.__toStr = { }.toString;
 js_html_compat_Uint8Array.BYTES_PER_ELEMENT = 1;
 com_github_mathieuanthoine_gaf_Main.main();
 })(typeof exports != "undefined" ? exports : typeof window != "undefined" ? window : typeof self != "undefined" ? self : this, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
+
+//# sourceMappingURL=named_parts.js.map

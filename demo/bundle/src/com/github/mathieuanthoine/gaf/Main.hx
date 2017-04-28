@@ -57,7 +57,7 @@ class Main
 		new Perf("TL");
 		
 		var converter: ZipToGAFAssetConverter = new ZipToGAFAssetConverter();
-		converter.on(GAFEvent.COMPLETE, onConverted);		
+		converter.once(GAFEvent.COMPLETE, onConverted);		
 		converter.convert(["bundle/skeleton.gaf","bundle/ufo-monster.gaf"]);
 		
 	}
@@ -97,8 +97,7 @@ class Main
 		var timeline: GAFTimeline = gafBundle.getGAFTimeline(swfName, "rootTimeline");
 
 		gafMovieClip = new GAFMovieClip(timeline);
-		//TODO: check why true is needed here and not with Starling
-		gafMovieClip.play(true);
+		gafMovieClip.play();
 		
 		stage.addChild(gafMovieClip);
 	}
