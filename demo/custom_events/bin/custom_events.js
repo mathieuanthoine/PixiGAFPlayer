@@ -3831,8 +3831,6 @@ com_github_haxePixiGAF_display_IGAFDisplayObject.prototype = {
 };
 var com_github_haxePixiGAF_display_GAFContainer = function() {
 	PIXI.Container.call(this);
-	this.on("added",$bind(this,this.bob));
-	this.on("removed",$bind(this,this.bill));
 };
 com_github_haxePixiGAF_display_GAFContainer.__name__ = ["com","github","haxePixiGAF","display","GAFContainer"];
 com_github_haxePixiGAF_display_GAFContainer.__interfaces__ = [com_github_haxePixiGAF_display_IMaxSize,com_github_haxePixiGAF_display_IGAFDisplayObject];
@@ -3860,13 +3858,6 @@ com_github_haxePixiGAF_display_GAFContainer.prototype = $extend(PIXI.Container.p
 	,get_pivotMatrix: function() {
 		com_github_haxePixiGAF_display_GAFContainer.HELPER_MATRIX.identity();
 		return com_github_haxePixiGAF_display_GAFContainer.HELPER_MATRIX;
-	}
-	,bob: function() {
-		haxe_Log.trace("add",{ fileName : "GAFContainer.hx", lineNumber : 125, className : "com.github.haxePixiGAF.display.GAFContainer", methodName : "bob", customParams : [this.name]});
-	}
-	,bill: function() {
-		haxe_Log.trace("remove",{ fileName : "GAFContainer.hx", lineNumber : 129, className : "com.github.haxePixiGAF.display.GAFContainer", methodName : "bill", customParams : [this.name]});
-		debugger;
 	}
 	,__class__: com_github_haxePixiGAF_display_GAFContainer
 });
@@ -4375,7 +4366,6 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(com_github_haxeP
 		this.removeChildren();
 	}
 	,draw: function() {
-		haxe_Log.trace("=============== GAMELOOP ===================",{ fileName : "GAFMovieClip.hx", lineNumber : 702, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "draw"});
 		var i = 0;
 		var l = 0;
 		if(this._config.get_debugRegions() != null) {
@@ -4494,11 +4484,11 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(com_github_haxeP
 	}
 	,renderDebug: function(mc,instance,masked) {
 		if(com_github_haxePixiGAF_utils_DebugUtility.RENDERING_DEBUG && mc != null) {
-			haxe_Log.trace("TODO renderDebug",{ fileName : "GAFMovieClip.hx", lineNumber : 867, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "renderDebug"});
+			haxe_Log.trace("TODO renderDebug",{ fileName : "GAFMovieClip.hx", lineNumber : 865, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "renderDebug"});
 		}
 	}
 	,addDebugRegions: function() {
-		haxe_Log.trace("TODO addDebugRegions",{ fileName : "GAFMovieClip.hx", lineNumber : 898, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "addDebugRegions"});
+		haxe_Log.trace("TODO addDebugRegions",{ fileName : "GAFMovieClip.hx", lineNumber : 896, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "addDebugRegions"});
 	}
 	,reset: function() {
 		this._gotoAndStop((this._reverse?this._finalFrame:this._startFrame) + 1);
@@ -4524,12 +4514,12 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(com_github_haxeP
 			var animationObjectConfig = tmp.next();
 			switch(animationObjectConfig.get_type()) {
 			case "textField":
-				displayObject = new com_github_haxePixiGAF_display_GAFTextField(this._config.get_textFields().get_textFieldObjectsDictionary().get(animationObjectConfig.get_regionID()),this._scale,this._contentScaleFactor,true);
+				displayObject = new com_github_haxePixiGAF_display_GAFTextField(this._config.get_textFields().get_textFieldObjectsDictionary().get(animationObjectConfig.get_regionID()),this._scale,this._contentScaleFactor);
 				break;
 			case "texture":
 				var texture = textureAtlas.getTexture(animationObjectConfig.get_regionID());
 				if(js_Boot.__instanceof(texture,com_github_haxePixiGAF_display_GAFScale9Texture) && !animationObjectConfig.get_mask()) {
-					haxe_Log.trace("TODO initialize GAFScale9Texture",{ fileName : "GAFMovieClip.hx", lineNumber : 965, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "initialize"});
+					haxe_Log.trace("TODO initialize GAFScale9Texture",{ fileName : "GAFMovieClip.hx", lineNumber : 963, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "initialize"});
 				} else {
 					displayObject = new com_github_haxePixiGAF_display_GAFImage(texture);
 					(js_Boot.__cast(displayObject , com_github_haxePixiGAF_display_GAFImage)).set_textureSmoothing(this._smoothing);
@@ -4586,7 +4576,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(com_github_haxeP
 		}
 	}
 	,updateBounds: function(bounds) {
-		haxe_Log.trace("TODO updateBounds",{ fileName : "GAFMovieClip.hx", lineNumber : 1036, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "updateBounds"});
+		haxe_Log.trace("TODO updateBounds",{ fileName : "GAFMovieClip.hx", lineNumber : 1034, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "updateBounds"});
 	}
 	,__debugHighlight: function() {
 		if(isNaN(this.__debugOriginalAlpha)) {
@@ -4607,7 +4597,7 @@ com_github_haxePixiGAF_display_GAFMovieClip.prototype = $extend(com_github_haxeP
 		}
 	}
 	,removeChildAt: function(index) {
-		haxe_Log.trace("TODO: removeChildAt",{ fileName : "GAFMovieClip.hx", lineNumber : 1106, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "removeChildAt"});
+		haxe_Log.trace("TODO: removeChildAt",{ fileName : "GAFMovieClip.hx", lineNumber : 1104, className : "com.github.haxePixiGAF.display.GAFMovieClip", methodName : "removeChildAt"});
 		this.getChildAt(index).destroy();
 		return com_github_haxePixiGAF_display_GAFContainer.prototype.removeChildAt.call(this,index);
 	}
@@ -5288,13 +5278,13 @@ com_github_haxePixiGAF_utils_VectorUtility.copyMatrix = function(source,dest) {
 	}
 };
 var com_github_mathieuanthoine_gaf_Main = function() {
-	this.renderer = PIXI.autoDetectRenderer(400,300,{ backgroundColor : 2695483});
+	this.renderer = PIXI.autoDetectRenderer(700,400,{ backgroundColor : 16777215});
 	window.document.body.appendChild(this.renderer.view);
 	this.stage = new PIXI.Container();
 	new Perf("TL");
 	var converter = new com_github_haxePixiGAF_core_ZipToGAFAssetConverter();
 	converter.once("complete",$bind(this,this.onConverted));
-	converter.convert("text_field_demo/text_field_demo.gaf");
+	converter.convert("fireman/fireman.gaf");
 };
 com_github_mathieuanthoine_gaf_Main.__name__ = ["com","github","mathieuanthoine","gaf","Main"];
 com_github_mathieuanthoine_gaf_Main.main = function() {
@@ -5302,20 +5292,18 @@ com_github_mathieuanthoine_gaf_Main.main = function() {
 };
 com_github_mathieuanthoine_gaf_Main.prototype = {
 	onConverted: function(pEvent) {
-		this.mc = new com_github_haxePixiGAF_display_GAFMovieClip((js_Boot.__cast(pEvent.target , com_github_haxePixiGAF_core_ZipToGAFAssetConverter)).get_gafBundle().getGAFTimeline("text_field_demo","rootTimeline"));
-		this.swapBtn = js_Boot.__cast(this.mc.getChildByName("swapBtn") , com_github_haxePixiGAF_display_GAFMovieClip);
-		this.stage.addChild(this.mc);
-		this.swapBtn.interactive = true;
-		this.swapBtn.on("mousedown",$bind(this,this.onMouseDown));
-		this.swapBtn.on("mouseup",$bind(this,this.onMouseUp));
+		this.gafMovieClip = new com_github_haxePixiGAF_display_GAFMovieClip((js_Boot.__cast(pEvent.target , com_github_haxePixiGAF_core_ZipToGAFAssetConverter)).get_gafBundle().getGAFTimeline("fireman"));
+		this.gafMovieClip.on("showSubtitles",$bind(this,this.onShow));
+		this.gafMovieClip.on("hideSubtitles",$bind(this,this.onHide));
+		this.gafMovieClip.play(true);
+		this.stage.addChild(this.gafMovieClip);
 		window.requestAnimationFrame($bind(this,this.gameLoop));
 	}
-	,onMouseDown: function(pEvent) {
-		this.swapBtn.gotoAndStop("Down");
+	,onHide: function(pEvent) {
+		(js_Boot.__cast(this.gafMovieClip.getChildByName("subtitles_txt") , com_github_haxePixiGAF_display_GAFTextField)).set_text("");
 	}
-	,onMouseUp: function(pEvent) {
-		this.swapBtn.gotoAndStop("Up");
-		(js_Boot.__cast(this.mc.getChildByName("dynamic_txt") , com_github_haxePixiGAF_display_GAFTextField)).set_text((js_Boot.__cast(this.mc.getChildByName("input_txt") , com_github_haxePixiGAF_display_GAFTextField)).get_text() + "\n");
+	,onShow: function(pEvent) {
+		(js_Boot.__cast(this.gafMovieClip.getChildByName("subtitles_txt") , com_github_haxePixiGAF_display_GAFTextField)).set_text(com_github_mathieuanthoine_gaf_Main.subtitles[(pEvent.data | 0) - 1]);
 	}
 	,gameLoop: function(pIdentifier) {
 		window.requestAnimationFrame($bind(this,this.gameLoop));
@@ -6053,6 +6041,7 @@ com_github_haxePixiGAF_utils_DebugUtility.cHB = [0,0,0,255,255,255,0];
 com_github_haxePixiGAF_utils_DebugUtility.aryRGB = [com_github_haxePixiGAF_utils_DebugUtility.cHR,com_github_haxePixiGAF_utils_DebugUtility.cHG,com_github_haxePixiGAF_utils_DebugUtility.cHB];
 com_github_haxePixiGAF_utils_MathUtility.epsilon = 0.00001;
 com_github_haxePixiGAF_utils_MathUtility.PI_Q = Math.PI / 4.0;
+com_github_mathieuanthoine_gaf_Main.subtitles = ["- Our game is on fire!","- GAF Team, there is a job for us!","- Go and do your best!"];
 haxe_ds_ObjectMap.count = 0;
 js_Boot.__toStr = { }.toString;
 js_html_compat_Uint8Array.BYTES_PER_ELEMENT = 1;

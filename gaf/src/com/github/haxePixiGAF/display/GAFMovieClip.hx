@@ -20,6 +20,7 @@ import pixi.core.display.DisplayObject;
 import pixi.core.math.Matrix;
 import pixi.core.math.Point;
 import pixi.core.math.shapes.Rectangle;
+import pixi.interaction.InteractionEvent;
 
 using com.github.haxePixiGAF.utils.MatrixUtility;
 using com.github.haxePixiGAF.utils.EventEmitterUtility;
@@ -622,8 +623,6 @@ class GAFMovieClip extends GAFContainer implements IAnimatable
 					case CFrameAction.GOTO_AND_PLAY:
 						gotoAndPlay(action.params[0]);
 					case CFrameAction.DISPATCH_EVENT:
-						//TODO CFrameAction.DISPATCH_EVENT
-						trace ("CFrameAction.DISPATCH_EVENT");
 						var actionType:String=action.params[0];
 						if(hasEventListener(actionType))
 						{
@@ -743,7 +742,8 @@ class GAFMovieClip extends GAFContainer implements IAnimatable
 			{
 				instance=instances[i++];
 
-				displayObject=_displayObjectsDictionary[instance.id];
+				displayObject = _displayObjectsDictionary[instance.id];
+				
 				if(displayObject!=null)
 				{
 					objectPivotMatrix=getTransformMatrix(displayObject, GAFContainer.HELPER_MATRIX);
@@ -970,7 +970,7 @@ class GAFMovieClip extends GAFContainer implements IAnimatable
 					}
 				case CAnimationObject.TYPE_TEXTFIELD:
 					var tfObj:CTextFieldObject=_config.textFields.textFieldObjectsDictionary[animationObjectConfig.regionID];
-					displayObject=new GAFTextField(tfObj, _scale, _contentScaleFactor);
+					displayObject = new GAFTextField(tfObj, _scale, _contentScaleFactor);
 				case CAnimationObject.TYPE_TIMELINE:
 					var timeline:GAFTimeline=gafAsset.getGAFTimelineByID(animationObjectConfig.regionID);
 					displayObject=new GAFMovieClip(timeline, Std.int(fps), false);
