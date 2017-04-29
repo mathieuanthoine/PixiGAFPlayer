@@ -280,7 +280,9 @@ class GAFTimeline
 	 * Timeline identifier(name given at animation's upload or assigned by developer)
 	 */
 	public var id(get_id, null):String;
- 	private function get_id():String
+	
+ 	@:keep
+	private function get_id():String
 	{
 		return config.id;
 	}
@@ -289,6 +291,8 @@ class GAFTimeline
 	 * Timeline linkage in a *.fla file library
 	 */
 	public var linkage(get_linkage, null):String;
+	
+	@:keep
  	private function get_linkage():String
 	{
 		return config.linkage;
@@ -333,6 +337,7 @@ class GAFTimeline
 	 * with different scale assign appropriate scale to<code>GAFTimeline</code>and only after that instantiate<code>GAFMovieClip</code>.
 	 * Possible values are values from converted animation config. They are depends from project settings on site converter
 	 */
+	@:keep
 	private function set_scale(value:Float):Float
 	{
 		var scale:Float=_gafAsset.getValidScale(value);
@@ -377,6 +382,8 @@ class GAFTimeline
 	}
 
 	public var scale(get_scale, set_scale):Float;
+	
+	@:keep
  	private function get_scale():Float
 	{
 		return _gafAsset.scale;
@@ -387,7 +394,8 @@ class GAFTimeline
 	 * with different csf assign appropriate csf to<code>GAFTimeline</code>and only after that instantiate<code>GAFMovieClip</code>.
 	 * Possible values are values from converted animation config. They are depends from project settings on site converter
 	 */
-	private function set_contentScaleFactor(csf:Float):Void
+	@:keep
+	private function set_contentScaleFactor(csf:Float):Float
 	{
 		if(_gafAsset.hasCSF(csf))
 		{
@@ -396,7 +404,7 @@ class GAFTimeline
 
 		if(_config.textureAtlas==null)
 		{
-			return;
+			return null;
 		}
 
 		var taCSF:CTextureAtlasCSF=_config.textureAtlas.getTextureAtlasForCSF(csf);
@@ -409,9 +417,13 @@ class GAFTimeline
 		{
 			throw "There is no csf " + csf + "in timeline config";
 		}
+		
+		return _gafAsset.csf;
 	}
 
-	public var contentScaleFactor(get_contentScaleFactor, null):Float;
+	public var contentScaleFactor(get_contentScaleFactor, set_contentScaleFactor):Float;
+	
+	@:keep
  	private function get_contentScaleFactor():Float
 	{
 		return _gafAsset.csf;
@@ -420,13 +432,16 @@ class GAFTimeline
 	/**
 	 * Graphical data storage that used by<code>GAFTimeline</code>.
 	 */
+	@:keep
 	private function set_gafgfxData(gafgfxData:GAFGFXData):GAFGFXData
 	{
 		return _gafgfxData=gafgfxData;
 	}
 
 	public var gafgfxData(get_gafgfxData, set_gafgfxData):GAFGFXData;
- 	private function get_gafgfxData():GAFGFXData
+
+ 	@:keep
+	private function get_gafgfxData():GAFGFXData
 	{
 		return _gafgfxData;
 	}
@@ -458,4 +473,14 @@ class GAFTimeline
 	//  STATIC METHODS
 	//
 	//--------------------------------------------------------------------------
+	
+	static function __init__():Void {
+        #if js
+        untyped Object.defineProperty(GAFTimeline.prototype, "id", { get: GAFTimeline.prototype.get_id });
+        untyped Object.defineProperty(GAFTimeline.prototype, "linkage", { get: GAFTimeline.prototype.get_linkage });
+        untyped Object.defineProperty(GAFTimeline.prototype, "scale", { get: GAFTimeline.prototype.get_scale, set: GAFTimeline.prototype.set_scale });
+        untyped Object.defineProperty(GAFTimeline.prototype, "contentScaleFactor", { get: GAFTimeline.prototype.get_contentScaleFactor, set: GAFTimeline.prototype.set_contentScaleFactor });
+        untyped Object.defineProperty(GAFTimeline.prototype, "gafgfxData", { get: GAFTimeline.prototype.get_gafgfxData, set: GAFTimeline.prototype.set_gafgfxData });
+        #end
+    }
 }
