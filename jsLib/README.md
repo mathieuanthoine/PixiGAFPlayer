@@ -22,6 +22,3 @@ Example
 
 A simple pure [Javascript demo](https://github.com/mathieuanthoine/PixiGAFPlayer/tree/master/demo/js) is available.
 
-Warning
------------------
-At this stage, Haxe getter setter are not exposed. If you need to access a getter or a setter property, you need to call the method directly. For example, if you need to access the gafBundle property of a ZipToGAFAssetConverter instance, you need to call get_gafBundle() instead.

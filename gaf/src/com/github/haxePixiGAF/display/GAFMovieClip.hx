@@ -1311,7 +1311,9 @@ class GAFMovieClip extends GAFContainer implements IAnimatable
 	 * Specifies the number of the frame in which the playhead is located in the timeline of the GAFMovieClip instance. First frame is "1"
 	 */
 	public var currentFrame(get_currentFrame, null):Int;
- 	private function get_currentFrame():Int
+ 	
+	//@:keep
+	private function get_currentFrame():Int
 	{
 		return _currentFrame + 1;// Like in standart AS3 API for MovieClip first frame is "1" instead of "0"(but Internally used "0")
 	}
@@ -1320,7 +1322,9 @@ class GAFMovieClip extends GAFContainer implements IAnimatable
 	 * The total number of frames in the GAFMovieClip instance.
 	 */
 	public var totalFrames(get_totalFrames, null):Int;
- 	private function get_totalFrames():Int
+ 	
+	//@:keep
+	private function get_totalFrames():Int
 	{
 		return _totalFrames;
 	}
@@ -1329,7 +1333,9 @@ class GAFMovieClip extends GAFContainer implements IAnimatable
 	 * Indicates whether GAFMovieClip instance already in play
 	 */
 	public var inPlay(get_inPlay, null):Bool;
- 	private function get_inPlay():Bool
+ 	
+	//@:keep
+	private function get_inPlay():Bool
 	{
 		return _inPlay;
 	}
@@ -1338,11 +1344,14 @@ class GAFMovieClip extends GAFContainer implements IAnimatable
 	 * Indicates whether GAFMovieClip instance continue playing from start frame after playback reached animation end
 	 */
 	public var loop(get_loop, set_loop):Bool;
- 	private function get_loop():Bool
+ 	
+	//@:keep
+	private function get_loop():Bool
 	{
 		return _loop;
 	}
 
+	//@:keep
 	private function set_loop(loop:Bool):Bool
 	{
 		return _loop=loop;
@@ -1351,6 +1360,7 @@ class GAFMovieClip extends GAFContainer implements IAnimatable
 	/**
 	 * The smoothing filter that is used for the texture. Possible values are<code>TextureSmoothing.BILINEAR, TextureSmoothing.NONE, TextureSmoothing.TRILINEAR</code>
 	 */
+	//@:keep
 	private function set_smoothing(value:String):String
 	{
 		//if(TextureSmoothing.isValid(value))
@@ -1368,13 +1378,17 @@ class GAFMovieClip extends GAFContainer implements IAnimatable
 	}
 
 	public var smoothing(get_smoothing, set_smoothing):String;
- 	private function get_smoothing():String
+ 	
+	//@:keep
+	private function get_smoothing():String
 	{
 		return null;// _smoothing;
 	}
 
 	public var useClipping(get_useClipping, set_useClipping):Bool;
- 	private function get_useClipping():Bool
+ 	
+	//@:keep
+	private function get_useClipping():Bool
 	{
 		return _useClipping;
 	}
@@ -1384,6 +1398,7 @@ class GAFMovieClip extends GAFContainer implements IAnimatable
 	/**
 	 * if set<code>true</code>-<code>GAFMivieclip</code>will be clipped with flash stage dimensions
 	 */
+	//@:keep
 	private function set_useClipping(value:Bool):Bool
 	{
 		_useClipping=value;
@@ -1401,6 +1416,8 @@ class GAFMovieClip extends GAFContainer implements IAnimatable
 	}
 
 	public var fps(get_fps, set_fps):Float;
+	
+	//@:keep
  	private function get_fps():Float
 	{
 		if(_frameDuration==Math.POSITIVE_INFINITY)
@@ -1413,6 +1430,7 @@ class GAFMovieClip extends GAFContainer implements IAnimatable
 	/**
 	 * Sets an individual frame rate for<code>GAFMovieClip</code>. If this value is lower than stage fps -  the<code>GAFMovieClip</code>will skip frames.
 	 */
+	//@:keep
 	private function set_fps(value:Float):Float
 	{
 		if(value<=0)
@@ -1435,6 +1453,8 @@ class GAFMovieClip extends GAFContainer implements IAnimatable
 	}
 
 	public var reverse(get_reverse, set_reverse):Bool;
+	
+	//@:keep
  	private function get_reverse():Bool
 	{
 		return _reverse;
@@ -1443,6 +1463,7 @@ class GAFMovieClip extends GAFContainer implements IAnimatable
 	/**
 	 * If<code>true</code>animation will be playing in reverse mode
 	 */
+	//@:keep
 	private function set_reverse(value:Bool):Bool
 	{
 		_reverse=value;
@@ -1457,6 +1478,8 @@ class GAFMovieClip extends GAFContainer implements IAnimatable
 	}
 
 	public var skipFrames(get_skipFrames, set_skipFrames):Bool;
+	
+	//@:keep
  	private function get_skipFrames():Bool
 	{
 		return _skipFrames;
@@ -1467,6 +1490,7 @@ class GAFMovieClip extends GAFContainer implements IAnimatable
 	 * Value false will force GAFMovieClip to play each frame not depending on application fps(the same behavior as in regular Flash Movie Clip).
 	 * Value true will force GAFMovieClip to play animation "in time". And when application fps drops down it will start skipping frames(default behavior).
 	 */
+	//@:keep
 	private function set_skipFrames(value:Bool):Bool
 	{
 		_skipFrames=value;
@@ -1494,6 +1518,20 @@ class GAFMovieClip extends GAFContainer implements IAnimatable
 		matrix.copyFrom(displayObject.pivotMatrix);
 		return matrix;
 	}
+	
+	static function __init__():Void {
+        #if js
+        untyped Object.defineProperty(GAFMovieClip.prototype, "currentFrame", { get: GAFMovieClip.prototype.get_currentFrame });
+        untyped Object.defineProperty(GAFMovieClip.prototype, "totalFrames", { get: GAFMovieClip.prototype.get_totalFrames });
+        untyped Object.defineProperty(GAFMovieClip.prototype, "inPlay", { get: GAFMovieClip.prototype.get_inPlay });
+        untyped Object.defineProperty(GAFMovieClip.prototype, "loop", { get: GAFMovieClip.prototype.get_loop, set: GAFMovieClip.prototype.set_loop });
+        untyped Object.defineProperty(GAFMovieClip.prototype, "smoothing", { get: GAFMovieClip.prototype.get_smoothing, set: GAFMovieClip.prototype.set_smoothing });
+        untyped Object.defineProperty(GAFMovieClip.prototype, "useClipping", { get: GAFMovieClip.prototype.get_useClipping, set: GAFMovieClip.prototype.set_useClipping });
+        untyped Object.defineProperty(GAFMovieClip.prototype, "fps", { get: GAFMovieClip.prototype.get_fps, set: GAFMovieClip.prototype.set_fps });
+        untyped Object.defineProperty(GAFMovieClip.prototype, "reverse", { get: GAFMovieClip.prototype.get_reverse, set: GAFMovieClip.prototype.set_reverse });
+        untyped Object.defineProperty(GAFMovieClip.prototype, "skipFrames", { get: GAFMovieClip.prototype.get_skipFrames, set: GAFMovieClip.prototype.set_skipFrames });
+        #end
+    }
 
 	
 }

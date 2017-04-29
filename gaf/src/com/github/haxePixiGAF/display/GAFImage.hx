@@ -397,7 +397,9 @@ class GAFImage extends Sprite implements IGAFImage implements IMaxSize implement
 	 * @return current<code>IGAFTexture</code>
 	 */
 	public var assetTexture(get_assetTexture, null):IGAFTexture;
- 	private function get_assetTexture():IGAFTexture
+ 	
+	@:keep
+	private function get_assetTexture():IGAFTexture
 	{
 		return _assetTexture;
 	}
@@ -436,5 +438,12 @@ class GAFImage extends Sprite implements IGAFImage implements IMaxSize implement
 		//return _style.textureSmoothing = value;
 		return "";
 	}
+	
+		
+	static function __init__():Void {
+        #if js
+        untyped Object.defineProperty(GAFImage.prototype, "assetTexture", { get: GAFImage.prototype.get_assetTexture });
+        #end
+    }
 	
 }

@@ -592,12 +592,19 @@ class ZipToGAFAssetConverter extends EventEmitter
 	/**
 	 * Return converted<code>GAFBundle</code>. If GAF asset file created as single animation - returns null.
 	 */
-	@:keep
 	public var gafBundle(get_gafBundle, null):GAFBundle;
- 	private function get_gafBundle():GAFBundle
+ 	
+	@:keep
+	private function get_gafBundle():GAFBundle
 	{
 		return _gafBundle;
 	}
+	
+	static function __init__():Void {
+        #if js
+        untyped Object.defineProperty(ZipToGAFAssetConverter.prototype, "gafBundle", { get: ZipToGAFAssetConverter.prototype.get_gafBundle });
+        #end
+    }
 	
 	
 }

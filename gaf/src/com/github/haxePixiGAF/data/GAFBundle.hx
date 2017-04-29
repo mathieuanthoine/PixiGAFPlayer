@@ -192,13 +192,22 @@ import com.github.haxePixiGAF.sound.GAFSoundData;
 	 * ZipToGAFAssetConverter sets the bundle name equal to the name of the *.gaf config file.
 	 */
 	public var name(get_name, set_name):String;
- 	private function get_name():String
+ 	
+	//@:keep
+	private function get_name():String
 	{
 		return _name;
 	}
 
+	//@:keep
 	private function set_name(name:String):String
 	{
 		return _name=name;
 	}
+	
+	static function __init__():Void {
+        #if js
+        untyped Object.defineProperty(GAFBundle.prototype, "name", { get: untyped GAFBundle.prototype.get_name, set: GAFBundle.prototype.set_name });
+        #end
+    }
 }

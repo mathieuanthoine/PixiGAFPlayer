@@ -1137,7 +1137,7 @@ com_github_haxePixiGAF_data_GAFTimeline.prototype = {
 			this._gafAsset.set_csf(csf);
 		}
 		if(this._config.get_textureAtlas() == null) {
-			return;
+			return null;
 		}
 		var taCSF = this._config.get_textureAtlas().getTextureAtlasForCSF(csf);
 		if(taCSF != null) {
@@ -1145,6 +1145,7 @@ com_github_haxePixiGAF_data_GAFTimeline.prototype = {
 		} else {
 			throw new js__$Boot_HaxeError("There is no csf " + csf + "in timeline config");
 		}
+		return this._gafAsset.get_csf();
 	}
 	,get_contentScaleFactor: function() {
 		return this._gafAsset.get_csf();
@@ -5633,6 +5634,23 @@ var Bool = Boolean;
 Bool.__ename__ = ["Bool"];
 var Class = { __name__ : ["Class"]};
 var Enum = { };
+Object.defineProperty(com_github_haxePixiGAF_core_ZipToGAFAssetConverter.prototype,"gafBundle",{ get : com_github_haxePixiGAF_core_ZipToGAFAssetConverter.prototype.get_gafBundle});
+Object.defineProperty(com_github_haxePixiGAF_data_GAFBundle.prototype,"name",{ get : com_github_haxePixiGAF_data_GAFBundle.prototype.get_name, set : com_github_haxePixiGAF_data_GAFBundle.prototype.set_name});
+Object.defineProperty(com_github_haxePixiGAF_data_GAFTimeline.prototype,"id",{ get : com_github_haxePixiGAF_data_GAFTimeline.prototype.get_id});
+Object.defineProperty(com_github_haxePixiGAF_data_GAFTimeline.prototype,"linkage",{ get : com_github_haxePixiGAF_data_GAFTimeline.prototype.get_linkage});
+Object.defineProperty(com_github_haxePixiGAF_data_GAFTimeline.prototype,"scale",{ get : com_github_haxePixiGAF_data_GAFTimeline.prototype.get_scale, set : com_github_haxePixiGAF_data_GAFTimeline.prototype.set_scale});
+Object.defineProperty(com_github_haxePixiGAF_data_GAFTimeline.prototype,"contentScaleFactor",{ get : com_github_haxePixiGAF_data_GAFTimeline.prototype.get_contentScaleFactor, set : com_github_haxePixiGAF_data_GAFTimeline.prototype.set_contentScaleFactor});
+Object.defineProperty(com_github_haxePixiGAF_data_GAFTimeline.prototype,"gafgfxData",{ get : com_github_haxePixiGAF_data_GAFTimeline.prototype.get_gafgfxData, set : com_github_haxePixiGAF_data_GAFTimeline.prototype.set_gafgfxData});
+Object.defineProperty(com_github_haxePixiGAF_display_GAFImage.prototype,"assetTexture",{ get : com_github_haxePixiGAF_display_GAFImage.prototype.get_assetTexture});
+Object.defineProperty(com_github_haxePixiGAF_display_GAFMovieClip.prototype,"currentFrame",{ get : com_github_haxePixiGAF_display_GAFMovieClip.prototype.get_currentFrame});
+Object.defineProperty(com_github_haxePixiGAF_display_GAFMovieClip.prototype,"totalFrames",{ get : com_github_haxePixiGAF_display_GAFMovieClip.prototype.get_totalFrames});
+Object.defineProperty(com_github_haxePixiGAF_display_GAFMovieClip.prototype,"inPlay",{ get : com_github_haxePixiGAF_display_GAFMovieClip.prototype.get_inPlay});
+Object.defineProperty(com_github_haxePixiGAF_display_GAFMovieClip.prototype,"loop",{ get : com_github_haxePixiGAF_display_GAFMovieClip.prototype.get_loop, set : com_github_haxePixiGAF_display_GAFMovieClip.prototype.set_loop});
+Object.defineProperty(com_github_haxePixiGAF_display_GAFMovieClip.prototype,"smoothing",{ get : com_github_haxePixiGAF_display_GAFMovieClip.prototype.get_smoothing, set : com_github_haxePixiGAF_display_GAFMovieClip.prototype.set_smoothing});
+Object.defineProperty(com_github_haxePixiGAF_display_GAFMovieClip.prototype,"useClipping",{ get : com_github_haxePixiGAF_display_GAFMovieClip.prototype.get_useClipping, set : com_github_haxePixiGAF_display_GAFMovieClip.prototype.set_useClipping});
+Object.defineProperty(com_github_haxePixiGAF_display_GAFMovieClip.prototype,"fps",{ get : com_github_haxePixiGAF_display_GAFMovieClip.prototype.get_fps, set : com_github_haxePixiGAF_display_GAFMovieClip.prototype.set_fps});
+Object.defineProperty(com_github_haxePixiGAF_display_GAFMovieClip.prototype,"reverse",{ get : com_github_haxePixiGAF_display_GAFMovieClip.prototype.get_reverse, set : com_github_haxePixiGAF_display_GAFMovieClip.prototype.set_reverse});
+Object.defineProperty(com_github_haxePixiGAF_display_GAFMovieClip.prototype,"skipFrames",{ get : com_github_haxePixiGAF_display_GAFMovieClip.prototype.get_skipFrames, set : com_github_haxePixiGAF_display_GAFMovieClip.prototype.set_skipFrames});
 var __map_reserved = {}
 var ArrayBuffer = $global.ArrayBuffer || js_html_compat_ArrayBuffer;
 if(ArrayBuffer.prototype.slice == null) {

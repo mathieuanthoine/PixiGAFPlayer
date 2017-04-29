@@ -399,4 +399,5 @@ class GAFTextField extends GAFContainer implements IGAFDebug
 
 		return result;
 	}
+
 }
