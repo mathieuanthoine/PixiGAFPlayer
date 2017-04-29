@@ -4,6 +4,7 @@ import com.github.haxePixiGAF.data.GAF;
 import com.github.haxePixiGAF.data.config.CFilter;
 import com.github.haxePixiGAF.data.config.CTextFieldObject;
 import com.github.haxePixiGAF.text.TextFormatAlign;
+import js.Lib;
 import pixi.core.display.DisplayObject.DestroyOptions;
 import pixi.core.graphics.Graphics;
 import pixi.core.math.Matrix;
@@ -69,7 +70,7 @@ class GAFTextField extends GAFContainer implements IGAFDebug
 	{
 		
 		super();
-
+		
 		config.textFormat.wordWrap = true;
 		config.textFormat.wordWrapWidth = config.width;
 		
@@ -120,7 +121,8 @@ class GAFTextField extends GAFContainer implements IGAFDebug
 		
 		invalidateSize();
 
-		_config=config;
+		_config = config;
+
 	}
 
 	//--------------------------------------------------------------------------
@@ -399,5 +401,6 @@ class GAFTextField extends GAFContainer implements IGAFDebug
 
 		return result;
 	}
+	
 
 }
