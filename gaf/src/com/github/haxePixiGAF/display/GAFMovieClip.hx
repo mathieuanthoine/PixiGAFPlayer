@@ -995,7 +995,7 @@ class GAFMovieClip extends GAFContainer implements IAnimatable
 				var instanceName:String=_config.namedParts[animationObjectConfig.instanceID];
 				if (instanceName != null)
 				{
-					if(!Reflect.hasField(this, instanceName)
+					if(!Reflect.hasField(this, instanceName))
 					{
 						Reflect.setField(this, _config.namedParts[animationObjectConfig.instanceID], displayObject);
 					}
