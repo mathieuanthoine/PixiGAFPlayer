@@ -26,7 +26,7 @@ class GAFBytesInput extends BytesInput {
 	
 	public function readShort():Int {
 		var lByte:Int = readUInt16();
-		return lByte > 128 ? lByte-256 : lByte;
+		return lByte > 32767 ? lByte-65536 : lByte;
 	}	
 	
 	public function readUnsignedShort ():UInt {
